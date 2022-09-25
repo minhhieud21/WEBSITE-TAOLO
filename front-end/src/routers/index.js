@@ -7,7 +7,7 @@ import Login from "../pages/Login";
 import ProductDetail from "../pages/ProductDetail";
 import Shop from "../pages/Shop";
 import ContainerTest from "../pages/Test";
-
+import { getLocalStorage, setLocalStorage } from "../services/LocalStorageService"
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 
@@ -29,6 +29,7 @@ const Routers = () => {
           return;
         }
         const token = await user.getIdToken();
+        setLocalStorage("username",user.displayName)
         console.log("Login in user: ", user.displayName);
         console.log("Login in user: ", token);
       });
