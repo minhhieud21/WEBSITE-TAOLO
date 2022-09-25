@@ -1,17 +1,24 @@
 import React, { useCallback, useEffect } from "react";
 import ImgGG from "../../assets/img/google.svg";
 //import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
+//import firebase from "firebase/compat/app";
 //import { FirebaseAuth } from "react-firebaseui";
-
+import firebase, { auth } from "../../firebase/config"
+/*
 const uiConfig = {
   signInFlow: "popup",
   signInSuccessUrl: "/",
   signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
-};
-
+};*/
+const ggProvider = new firebase.auth.GoogleAuthProvider();
 const Login = () => {
+  const handleSignInWithGoogle = () => {
+    auth.signInWithPopup(ggProvider).then(res => {
+      console.log(res);
+    }).catch(err => {
+      console.log(err);
+    });
+  }
   return (
     <>
       <div className="card mb-4" id="forms">
@@ -52,26 +59,31 @@ const Login = () => {
                 Check me out
               </label>
             </div>
-            <button className="btn btn-primary" type="submit">
-              Submit
-            </button>
-            {/* <div className="mt-3">
-              <button className="btn border" type="submit">
-                <img
-                  className="me-2"
-                  src={ImgGG}
-                  alt="google"
-                  style={{ width: "20px", height: "20px" }}
-                />
-                Google
-              </button>
-            </div> */}
+            <div className="d-flex">
+              <div>
+                <button className="btn btn-primary me-3" type="submit">
+                  Submit
+                </button>
+
+              </div>
+            </div>
             {/*
             <StyledFirebaseAuth
-              uiConfig={uiConfig}
-              firebaseAuth={firebase.auth()}
-            />*/}
+            uiConfig={uiConfig}
+            firebaseAuth={firebase.auth()}
+          />*/}
           </form>
+          <div className="">
+            <button className="btn border" onClick={handleSignInWithGoogle}>
+              <img
+                className="me-2"
+                src={ImgGG}
+                alt="google"
+                style={{ width: "20px", height: "20px" }}
+              />
+              Google
+            </button>
+          </div>
           {/* <hr className="my-5" />
           <h4 className="mb-5">Horizontal form</h4>
           <form className="row row-cols-lg-auto g-3 align-items-center">

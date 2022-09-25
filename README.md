@@ -1,2 +1,1 @@
-start api : & 'C:\Program Files\Java\jdk-17.0.2\bin\java.exe' '-XX:+ShowCodeDetailsInExceptionMessages' '@C:\Users\ADMIN\AppData\Local\Temp\cp_68hhz5mq3gmw8oi4bxqm8q8oa.argfile' 'com.example.JavaSpring.JavaSpringApplication'
-start FE : cd front-end | npm start
+start FE : cd front-end | npm start ------ or ------ yarn web.start

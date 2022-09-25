@@ -6,7 +6,7 @@ import Routers from "./routers";
 import { persistor, store } from "./store";
 
 //import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-import firebase from 'firebase/compat/app';
+//import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth'
 
 import "./assets/css/style.default.css";
@@ -16,7 +16,7 @@ const config = {
   authDomain: 'ptpmmmn.firebaseapp.com',
   // ...
 };
-firebase.initializeApp(config);
+//firebase.initializeApp(config);
 
 
 function App() {

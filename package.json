@@ -1,0 +1,20 @@
+{
+  "name": "ptudmnm",
+  "version": "1.0.0",
+  "description": "start api : & 'C:\\Program Files\\Java\\jdk-17.0.2\\bin\\java.exe' '-XX:+ShowCodeDetailsInExceptionMessages' '@C:\\Users\\ADMIN\\AppData\\Local\\Temp\\cp_68hhz5mq3gmw8oi4bxqm8q8oa.argfile' 'com.example.JavaSpring.JavaSpringApplication'\r start FE : cd front-end | npm start",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "web.start" : "cd ./front-end && npm run start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/HienLam2604/ptudmnm.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/HienLam2604/ptudmnm/issues"
+  },
+  "homepage": "https://gitlab.com/HienLam2604/ptudmnm#readme"
+}

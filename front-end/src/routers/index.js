@@ -16,7 +16,7 @@ const config = {
   authDomain: "ptpmmmn.firebaseapp.com",
   // ...
 };
-firebase.initializeApp(config);
+//firebase.initializeApp(config);
 
 const Routers = () => {
   useEffect(() => {
