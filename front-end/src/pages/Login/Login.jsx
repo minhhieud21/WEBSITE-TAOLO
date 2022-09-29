@@ -3,7 +3,8 @@ import ImgGG from "../../assets/img/google.svg";
 //import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 //import firebase from "firebase/compat/app";
 //import { FirebaseAuth } from "react-firebaseui";
-import firebase, { auth } from "../../firebase/config"
+import firebase, { auth } from "../../firebase/config";
+import { useNavigate } from 'react-router-dom';
 /*
 const uiConfig = {
   signInFlow: "popup",
@@ -12,8 +13,11 @@ const uiConfig = {
 };*/
 const ggProvider = new firebase.auth.GoogleAuthProvider();
 const Login = () => {
+  const navigate = useNavigate();
   const handleSignInWithGoogle = () => {
     auth.signInWithPopup(ggProvider).then(res => {
+      navigate("/");
+      window.location.reload();
       console.log(res);
     }).catch(err => {
       console.log(err);
@@ -61,17 +65,21 @@ const Login = () => {
             </div>
             <div>
               <button className="btn btn-primary me-3" type="submit">
-                Submit
+                Login
               </button>
             </div>
           </form>
-          <div className="ml-3">
+          <div style={{
+            position: 'absolute',
+            left: '7%',
+            bottom: '5%'
+          }}>
             <button className="btn border" onClick={handleSignInWithGoogle}>
               <img
-                className="me-2"
+                className=""
                 src={ImgGG}
                 alt="google"
-                style={{ width: "20px", height: "20px" }}
+                style={{ width: "21px", height: "21px" }}
               />
               Google
             </button>

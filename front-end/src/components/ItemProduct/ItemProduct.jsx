@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import Popup from "../Popup";
-
+import { Link } from "react-router-dom";
 import img from "../../assets/img/cat-img-1.jpg";
 
 const ItemProduct = () => {
@@ -19,9 +19,9 @@ const ItemProduct = () => {
             {/* <div className="badge text-white bg-danger">Sold</div> */}
             {/* <div className="badge text-white bg-primary">Sale</div> */}
             {/* <div className="badge text-white bg-info">New</div> */}
-            <a className="d-block" href="detail.html">
+            <Link className="d-block" to="/detail">
               <img className="img-fluid w-100" src={img} alt="..." />
-            </a>
+            </Link>
             <div className="product-overlay">
               <ul className="mb-0 list-inline">
                 <li className="list-inline-item m-0 p-0">
@@ -30,9 +30,9 @@ const ItemProduct = () => {
                   </a>
                 </li>
                 <li className="list-inline-item m-0 p-0">
-                  <a className="btn btn-sm btn-dark" href="cart.html">
+                  <Link className="btn btn-sm btn-dark" to="/cart">
                     Add to cart
-                  </a>
+                  </Link>
                 </li>
                 <li
                   className="list-inline-item me-0"
@@ -53,9 +53,9 @@ const ItemProduct = () => {
           </div>
           <h6>
             {" "}
-            <a className="reset-anchor" href="detail.html">
+            <Link className="reset-anchor" to="/detail">
               Red digital smartwatch
-            </a>
+            </Link>
           </h6>
           <p className="small text-muted">$250</p>
         </div>

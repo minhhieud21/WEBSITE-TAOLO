@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import ItemCart from "./ItemCart";
 
 
@@ -43,16 +44,16 @@ const CartTable = () => {
         <div className="bg-light px-4 py-3">
           <div className="row align-items-center text-center">
             <div className="col-md-6 mb-3 mb-md-0 text-md-start">
-              <a className="btn btn-link p-0 text-dark btn-sm" href="shop.html">
+              <Link className="btn btn-link p-0 text-dark btn-sm" to="/shop">
                 <i className="fas fa-long-arrow-alt-left me-2"> </i>
                 Continue shopping
-              </a>
+              </Link>
             </div>
             <div className="col-md-6 text-md-end">
-              <a className="btn btn-outline-dark btn-sm" href="checkout.html">
+              <Link className="btn btn-outline-dark btn-sm" to="/checkout">
                 Procceed to checkout
                 <i className="fas fa-long-arrow-alt-right ms-2" />
-              </a>
+              </Link>
             </div>
           </div>
         </div>

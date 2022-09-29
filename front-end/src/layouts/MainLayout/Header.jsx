@@ -3,10 +3,9 @@ import { Link } from "react-router-dom";
 import * as LocalStorageService from "../../services/LocalStorageService"
 import Logout from "../../pages/Login/Logout";
 import { useState } from "react";
+
 const Header = () => {
-  const [userName, setuserName] = useState("");
-  const checkLogin = LocalStorageService.checkLocalStorage;
-  console.log(checkLogin)
+  const checkLogin = LocalStorageService.checkLocalStorage('username');
   return (
     <>
       <header className="header bg-white">
@@ -39,7 +38,7 @@ const Header = () => {
                 </li>
               </ul>
               <ul className="navbar-nav ms-auto">
-                <li className="nav-item">
+                <li className="nav-item pt-2">
                   <Link className="nav-link" to="/cart">
                     {" "}
                     <i className="fas fa-dolly-flatbed me-1 text-gray" />
@@ -56,9 +55,8 @@ const Header = () => {
                 <li className="nav-item">
                   <Link className="nav-link" to="/login">
                     {
-                      checkLogin ?  <Logout username={LocalStorageService.getLocalStorage('username')} /> : <div><i className="fas fa-user me-1 text-gray fw-normal" />Login</div>
+                      checkLogin ?  <Logout username={LocalStorageService.getLocalStorage('username')} /> : <div className="pt-2"><i className="fas fa-user me-1 text-gray fw-normal" />Login</div>
                     }
-                    
                   </Link>
                 </li>
               </ul>

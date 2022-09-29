@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import img from "../../../assets/img/product-1.jpg";
 
 const ItemCart = () => {
@@ -7,17 +8,17 @@ const ItemCart = () => {
       <tr>
         <th className="ps-0 py-3 border-light" scope="row">
           <div className="d-flex align-items-center">
-            <a
+            <Link
               className="reset-anchor d-block animsition-link"
-              href="detail.html"
+              to="/detail"
             >
               <img src={img} alt="..." width={70} />
-            </a>
+            </Link>
             <div className="ms-3">
               <strong className="h6">
-                <a className="reset-anchor animsition-link" href="detail.html">
+                <Link className="reset-anchor animsition-link" to="/detail">
                   Red digital smartwatch
-                </a>
+                </Link>
               </strong>
             </div>
           </div>

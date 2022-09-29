@@ -7,9 +7,8 @@ const getLocalStorage = (key) => {
     return localStorage.getItem(key);
 }
 
-const checkLocalStorage = (key, value) => {
-    const check = getLocalStorage(key, value);
-    return  check ? true : false;
+const checkLocalStorage = (key) => {
+    return getLocalStorage(key) ? true : false;
 }
 
 const removeLocalStorage = (key) => {

@@ -1,6 +1,6 @@
 import React from "react";
 import img from "../../../assets/img/cat-img-1.jpg";
-
+import { Link } from "react-router-dom";
 const Categories = () => {
   return (
     <>
@@ -13,22 +13,22 @@ const Categories = () => {
         </header>
         <div className="row">
           <div className="col-md-4">
-            <a className="category-item" href="shop.html">
+            <Link className="category-item" to="/shop">
               <img className="img-fluid" src={img} alt="" />
               <strong className="category-item-title">Clothes</strong>
-            </a>
+            </Link>
           </div>
           <div className="col-md-4">
-            <a className="category-item" href="shop.html">
+            <Link className="category-item" to="/shop">
               <img className="img-fluid" src={img} alt="" />
               <strong className="category-item-title">Clothes</strong>
-            </a>
+            </Link>
           </div>
           <div className="col-md-4">
-            <a className="category-item" href="shop.html">
+            <Link className="category-item" to="/shop">
               <img className="img-fluid" src={img} alt="" />
               <strong className="category-item-title">Clothes</strong>
-            </a>
+            </Link>
           </div>
         </div>
       </section>

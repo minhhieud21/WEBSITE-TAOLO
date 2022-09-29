@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const PopupDetailProduct = () => {
   return (
@@ -86,12 +87,12 @@ const PopupDetailProduct = () => {
                         </div>
                       </div>
                       <div className="col-sm-5">
-                        <a
+                        <Link
                           className="btn btn-dark btn-sm w-100 h-100 d-flex align-items-center justify-content-center px-0"
-                          href="cart.html"
+                          to="/cart"
                         >
                           Add to cart
-                        </a>
+                        </Link>
                       </div>
                     </div>
                     <a
