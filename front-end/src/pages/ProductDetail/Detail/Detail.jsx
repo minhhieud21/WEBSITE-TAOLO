@@ -1,15 +1,9 @@
 import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-
+import * as cartService from '../../../services/CartService'
 const Detail = () => {
-  const [quantity, setQuantity] = useState(1);
-  const increaseQuantity = () => {
-    setQuantity(quantity + 1);
-  }
-  const decreaseQuantity = () => {
-    setQuantity(quantity - 1);
-  }
+  const [quantity, setQuantity] = useState(1)
   return (
     <>
       <div className="col-lg-6">
@@ -46,7 +40,7 @@ const Detail = () => {
               </span>
               <div className="quantity">
                 <button className="dec-btn p-0">
-                  <i className="fas fa-caret-left" onClick={decreaseQuantity} />
+                  <i className="fas fa-caret-left" onClick={() => {return setQuantity(cartService.decreaseQuantity(quantity)) }} />
                 </button>
                 <input
                   className="form-control border-0 shadow-0 p-0"
@@ -55,7 +49,7 @@ const Detail = () => {
                   onChange={() => setQuantity(quantity)}
                 />
                 <button className="inc-btn p-0">
-                  <i className="fas fa-caret-right" onClick={increaseQuantity} />
+                  <i className="fas fa-caret-right" onClick={ () => {return setQuantity(cartService.increaseQuantity(quantity)) }} />
                 </button>
               </div>
             </div>

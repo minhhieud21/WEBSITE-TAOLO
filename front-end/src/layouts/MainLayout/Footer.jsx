@@ -1,4 +1,5 @@
 import React from "react";
+import footer from "../../assets/js/footer.json"
 const Footer = () => {
   return (
     <>
@@ -6,26 +7,26 @@ const Footer = () => {
         <div className="container py-4">
           <div className="row py-5">
             <div className="col-md-4 mb-3 mb-md-0">
-              <h6 className="text-uppercase mb-3">Customer services</h6>
+              <h6 className="text-uppercase mb-3">{footer.CUSTOMER_SERVICES}</h6>
               <ul className="list-unstyled mb-0">
                 <li>
                   <a className="footer-link" href="#!">
-                    Help &amp; Contact Us
+                    {footer.Help_Contact_Us}
                   </a>
                 </li>
                 <li>
                   <a className="footer-link" href="#!">
-                    Returns &amp; Refunds
+                    {footer.Returns_Refunds}
                   </a>
                 </li>
                 <li>
                   <a className="footer-link" href="#!">
-                    Online Stores
+                    {footer.Online_Stores}
                   </a>
                 </li>
                 <li>
                   <a className="footer-link" href="#!">
-                    Terms &amp; Conditions
+                    {footer.Terms_Conditions}
                   </a>
                 </li>
               </ul>

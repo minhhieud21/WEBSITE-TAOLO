@@ -12,7 +12,7 @@ const Header = () => {
         <div className="container px-lg-3">
           <nav className="navbar navbar-expand-lg navbar-light py-3 px-lg-0">
             <Link className="navbar-brand" to="/">
-              <span className="fw-bold text-uppercase text-dark">Boutique</span>
+              <span className="fw-bold text-uppercase text-dark">Taolo</span>
             </Link>
             <button
               className="navbar-toggler navbar-toggler-end"
@@ -33,7 +33,7 @@ const Header = () => {
                 <li className="nav-item">
                   {/* Link*/}
                   <Link className="nav-link" to="/shop">
-                    Shop
+                    Taolo
                   </Link>
                 </li>
               </ul>
@@ -55,7 +55,7 @@ const Header = () => {
                 <li className="nav-item">
                   <Link className="nav-link" to="/login">
                     {
-                      checkLogin ?  <Logout username={LocalStorageService.getLocalStorage('username')} /> : <div className="pt-2"><i className="fas fa-user me-1 text-gray fw-normal" />Login</div>
+                      checkLogin ? <Logout username={LocalStorageService.getLocalStorage('username')} /> : <div className="pt-2"><i className="fas fa-user me-1 text-gray fw-normal" />Login</div>
                     }
                   </Link>
                 </li>

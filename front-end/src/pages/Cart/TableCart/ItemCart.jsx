@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import img from "../../../assets/img/product-1.jpg";
-
+import * as cartService from '../../../services/CartService'
 const ItemCart = () => {
+  const [quantity, setQuantity] = useState(1)
   return (
     <>
       <tr>
@@ -33,15 +34,16 @@ const ItemCart = () => {
             </span>
             <div className="quantity">
               <button className="dec-btn p-0">
-                <i className="fas fa-caret-left" />
+                <i className="fas fa-caret-left" onClick={() => { return setQuantity(cartService.decreaseQuantity(quantity)) }} />
               </button>
               <input
                 className="form-control form-control-sm border-0 shadow-0 p-0"
                 type="text"
-                defaultValue={1}
+                value={quantity}
+                onChange={() => setQuantity(quantity)}
               />
               <button className="inc-btn p-0">
-                <i className="fas fa-caret-right" />
+                <i className="fas fa-caret-right" onClick={() => { return setQuantity(cartService.increaseQuantity(quantity)) }} />
               </button>
             </div>
           </div>

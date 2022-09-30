@@ -69,10 +69,11 @@ const Login = () => {
               </button>
             </div>
           </form>
-          <div style={{
+          <div className="ml-2" style={{
             position: 'absolute',
             left: '7%',
-            bottom: '5%'
+            bottom: '5%',
+            marginLeft: '10px',
           }}>
             <button className="btn border" onClick={handleSignInWithGoogle}>
               <img

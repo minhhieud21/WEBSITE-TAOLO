@@ -1,5 +1,4 @@
 import React from "react";
-
 const FormCheckout = () => {
   return (
     <>
@@ -62,7 +61,7 @@ const FormCheckout = () => {
                 placeholder="e.g. +02 245354745"
               />
             </div>
-            <div className="col-lg-6">
+            <div className="col-lg-12">
               <label
                 className="form-label text-sm text-uppercase"
                 htmlFor="company"
@@ -76,21 +75,7 @@ const FormCheckout = () => {
                 placeholder="Your company name"
               />
             </div>
-            <div className="col-lg-6 form-group">
-              <label
-                className="form-label text-sm text-uppercase"
-                htmlFor="country"
-              >
-                Country
-              </label>
-              <select
-                className="country"
-                id="country"
-                data-customclass="form-control form-control-lg rounded-0"
-              >
-                <option value>Choose your country</option>
-              </select>
-            </div>
+   
             <div className="col-lg-12">
               <label
                 className="form-label text-sm text-uppercase"
@@ -317,7 +302,7 @@ const FormCheckout = () => {
             </div>
             <div className="col-lg-12 form-group">
               <button className="btn btn-dark" type="submit">
-                Place order
+                Checkout
               </button>
             </div>
           </div>
