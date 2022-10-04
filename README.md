@@ -1,1 +1,3 @@
-start FE : cd front-end | npm start ------ or ------ yarn web.start
+start FE 
+- cd ./front-end/user | npm start ------ or ------ yarn web.start
+- cd ./front-end/admin | npm start ------ or ------ yarn web.start
