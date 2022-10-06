@@ -12,6 +12,5 @@ public interface BlogService {
     void saveBlog(BlogModel newBlog);
     void deleteBlog(Long id);
     void updateBlog(Long id, BlogModel newBlog);
-
     List<BlogModel> getBlogByName(String title);
 }
