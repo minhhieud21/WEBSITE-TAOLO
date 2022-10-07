@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ProductModel {
     String ProID,ProName,Desciption,Price,CateID,ImageID;
     int Quantity,WarrantyMonth,Status;
-
+    //hello
     public ProductModel(String proID, String proName, String desciption, String price, String cateID, String imageID, int quantity, int warrantyMonth, int status) {
         ProID = proID;
         ProName = proName;
