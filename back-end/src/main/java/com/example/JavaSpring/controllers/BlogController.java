@@ -2,11 +2,14 @@ package com.example.JavaSpring.controllers;
 
 
 import com.example.JavaSpring.models.BlogModel;
+import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,28 +50,45 @@ public class BlogController {
     }
     // GET by id: localhost:8080/api/v1/blog/:id
     @GetMapping("/{id}")
-    Optional<BlogModel> getBlogById(@PathVariable("id") Long id){
-        return blogService.getBlogById(id);
+    ResponseEntity<ResponseObject> getBlogById(@PathVariable("id") Long id){
+        Optional<BlogModel> check = blogService.getBlogById(id);
+        return check.isPresent() ?
+                ResponseEntity.status(HttpStatus.OK).body(
+                        new ResponseObject("200","Find Blog id = "+id+" done",check)
+                ):
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                        new ResponseObject("403","Find Blog id = "+id+" failed","")
+                );
     }
     @PostMapping("/add")
     void addNewBlog(@RequestBody BlogModel newBlog){
         blogService.saveBlog(newBlog);
-
     }
     // DETELE: localhost:8080/api/v1/blog/:id
     // Detele prouct
-    @DeleteMapping("/{id}")
-    void deleteBlog(@PathVariable("id") Long id){
-        blogService.deleteBlog(id);
-    }
-    @PatchMapping("/{id}")
-    void updateBlog(@PathVariable("id") Long id, @RequestBody BlogModel newBlog){
-        blogService.updateBlog(id, newBlog);
-    }
+
 
     @GetMapping("/search") //localhost:8080/api/v1/blog/search?title=?
     List<BlogModel> searchBlog(@RequestParam(required = false) String title){
         //System.out.println(title);
         return blogService.getBlogByName(title);
+    }
+    @PutMapping("/{id}")
+    void updateBlog(@RequestBody BlogModel newBlog,@PathVariable Long id){
+        blogService.updateBlog(id, newBlog);
+    }
+    @DeleteMapping("/{id}")
+    ResponseEntity<ResponseObject> deleteBlog(@PathVariable Long id){
+        Optional<BlogModel> check = blogService.getBlogById(id);
+         if(check.isPresent() ){
+             blogService.deleteBlog(id);
+             return ResponseEntity.status(HttpStatus.OK).body(
+                        new ResponseObject("200","DELETE Blog id = "+id+" done","")
+                );}
+         else {
+             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                     new ResponseObject("403","DELETE Blog id = "+id+" failed","")
+             );
+         }
     }
 }
