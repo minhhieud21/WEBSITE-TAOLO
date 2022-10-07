@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 public class ProductController {
 
-    @Autowired
-    ProductService productService;
-
-    public ProductController(ProductService productService) {
+//    @Autowired
+//    ProductService productService;
+//
+//    public ProductController(ProductService productService) {
         //ssss
-    }
+//    }
 
     //test
 
