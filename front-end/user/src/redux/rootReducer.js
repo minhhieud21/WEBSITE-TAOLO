@@ -1,18 +1,27 @@
-import { combineReducers } from "@reduxjs/toolkit";
-import produce from "immer";
 
-import test from "./features/test/reducer";
+const initState = {
+  cart: [
+    {
+      id: '',
+      name: '',
+      amount: 1
+    }
+  ]
+}
 
-const appReudcer = combineReducers({
-  //import keys reducer
-  test,
-});
+const rootReducer = (state = initState, action) => {
+  switch (action.type) {
+    case 'cart/increment':
+      return {
+        ...state,
+        cart: [
+          ...state.cart,
+          state.cart.amount + 1
+        ]
+      }
 
-const rootReducer = (state, action) => {
-  const newState = produce(state, (draft) => {
-    // can handle global action here
-  });
-  return appReudcer(newState, action);
-};
-
+    default:
+      return state;
+  }
+}
 export default rootReducer;

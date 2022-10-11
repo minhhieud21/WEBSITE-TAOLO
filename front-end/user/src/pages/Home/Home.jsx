@@ -5,8 +5,9 @@ import Categories from "./Categories/Categories";
 import HomeProduct from "./HomeProduct/HomeProduct";
 import NewsLetter from "./NewsLetter/NewsLetter";
 import Services from "./Services/Services";
-
+import { v4 as uuidv4 } from "uuid";
 const Home = () => {
+  console.log(uuidv4())
   return (
     <>
       <Popup />

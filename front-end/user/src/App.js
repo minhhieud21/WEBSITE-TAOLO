@@ -23,16 +23,16 @@ function App() {
   //   });
 
   //   return () => unregisterAuthObserver();
+  //<PersistGate loading={<div>Loading...</div>} persistor={persistor}>
+  //</PersistGate>
   // }, []);
 
   return (
     <>
       <Provider store={store}>
-        <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
           <ContainerMainLayout>
             <Routers />
           </ContainerMainLayout>
-        </PersistGate>
       </Provider>
     </>
   );

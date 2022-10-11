@@ -1,14 +1,19 @@
 package com.example.JavaSpring.models;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document("Product")
 public class ProductModel {
-    String ProID,ProName,Desciption,Price,CateID,ImageID;
+
+    @Id
+    String proID;
+    String ProName,Desciption,Price,CateID,ImageID;
     int Quantity,WarrantyMonth,Status;
-    //hello
-    public ProductModel(String proID, String proName, String desciption, String price, String cateID, String imageID, int quantity, int warrantyMonth, int status) {
-        ProID = proID;
+
+    public ProductModel(String ProID, String proName, String desciption, String price, String cateID, String imageID, int quantity, int warrantyMonth, int status) {
+        proID = ProID;
         ProName = proName;
         Desciption = desciption;
         Price = price;
@@ -22,7 +27,7 @@ public class ProductModel {
     @Override
     public String toString() {
         return "ProductModel{" +
-                "ProID='" + ProID + '\'' +
+                "ProID='" + proID + '\'' +
                 ", ProName='" + ProName + '\'' +
                 ", Desciption='" + Desciption + '\'' +
                 ", Price='" + Price + '\'' +
@@ -35,11 +40,11 @@ public class ProductModel {
     }
 
     public String getProID() {
-        return ProID;
+        return proID;
     }
 
-    public void setProID(String proID) {
-        ProID = proID;
+    public void setProID(String ProID) {
+        proID = ProID;
     }
 
     public String getProName() {
