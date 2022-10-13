@@ -57,4 +57,19 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(productModel);
     }
 
+    @Override
+    public void updateProduct(ProductModel productModel, String proId) {
+        ProductModel productModel1 = productRepository.getProductByID(proId);
+        productModel.set_id(productModel1.get_id());
+        productModel.setproId(productModel1.getproId());
+        productModel.setStatus(productModel1.getStatus());
+        productRepository.save(productModel);
+    }
+
+    @Override
+    public List<ProductModel> searchProduct(String proName) {
+        return productRepository.getBlogByName(proName);
+    }
+
+
 }

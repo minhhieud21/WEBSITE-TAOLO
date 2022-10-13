@@ -22,4 +22,8 @@ public interface ProductService {
     void statusShow(String proId);
 
     void updatePrice(String proId, Long price);
+
+    void updateProduct(ProductModel productModel, String proId);
+
+    List<ProductModel> searchProduct(String proName);
 }

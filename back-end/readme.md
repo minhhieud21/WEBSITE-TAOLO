@@ -1,4 +1,4 @@
-git check -b 'name' tạo nhánh
+git checkout -b 'name' tạo nhánh
 git checkout main
 git pull
 git add .

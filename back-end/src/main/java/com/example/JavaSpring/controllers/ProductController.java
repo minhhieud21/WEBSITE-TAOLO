@@ -1,6 +1,5 @@
 package com.example.JavaSpring.controllers;
 
-import com.example.JavaSpring.models.BlogModel;
 import com.example.JavaSpring.models.ProductModel;
 import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.service.ProductService;
@@ -18,7 +17,6 @@ import java.util.Optional;
 @CrossOrigin(origins ="http://localhost:4200")
 
 public class ProductController {
-
     @Autowired
     ProductService productService;
 
@@ -149,7 +147,7 @@ public class ProductController {
     ResponseEntity<ResponseObject> setPrice(@RequestParam(required = false) String proId,@RequestParam(required = false) Long price){
         ProductModel productModel = productService.getProductById(proId);
         Optional<ProductModel> check = Optional.ofNullable(productModel);
-        if(check.isPresent() == true && productModel.getPrice() != price){
+        if(check.isPresent() == true ){
             productService.updatePrice(proId,price);
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject(true,"")
@@ -158,5 +156,25 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     new ResponseObject(false, "")
             );}
+    }
+
+    @PostMapping("updateProduct")
+    ResponseEntity<ResponseObject> updateProduct(@RequestBody ProductModel newProduct, @RequestParam(required = false) String proId){
+        ProductModel productModel = productService.getProductById(proId);
+        Optional<ProductModel> check = Optional.ofNullable(productModel);
+        if(check.isPresent() == true ){
+            productService.updateProduct(newProduct,proId);
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject(true,"")
+            );}
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ResponseObject(false, "")
+            );}
+    }
+
+    @GetMapping("/search") //localhost:8080/api/v1/blog/search?description=?
+    List<ProductModel> searchProduct(@RequestParam(required = false) String proName){
+        return productService.searchProduct(proName);
     }
 }
