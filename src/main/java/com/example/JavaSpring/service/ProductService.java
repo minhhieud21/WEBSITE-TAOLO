@@ -14,12 +14,5 @@ public interface ProductService {
 
     List<ProductModel> getProductByCateID(String cateId);
 
-    void deleteProduct(String proId);
-
-
-    void statusHide(String proId);
-
-    void statusShow(String proId);
-
-    void updatePrice(String proId, Long price);
+    void showHide(String proId);
 }

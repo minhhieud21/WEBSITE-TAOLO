@@ -33,28 +33,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteProduct(String proId) {
+    public void showHide(String proId) {
         productRepository.deleteById(proId);
     }
-
-    @Override
-    public void statusHide(String proId){
-        ProductModel productModel = productRepository.getProductByID(proId);
-        productModel.setStatus(0);
-        productRepository.save(productModel);
-    }
-    @Override
-    public void statusShow(String proId){
-        ProductModel productModel = productRepository.getProductByID(proId);
-        productModel.setStatus(1);
-        productRepository.save(productModel);
-    }
-
-    @Override
-    public void updatePrice(String proId, Long price) {
-        ProductModel productModel = productRepository.getProductByID(proId);
-        productModel.setPrice(price);
-        productRepository.save(productModel);
-    }
-
 }

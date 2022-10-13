@@ -1,4 +1,4 @@
-package com.example.JavaSpring.jwt.controllers;
+package com.example.JavaSpring.jwt.filter.controllers;
 
 import com.example.JavaSpring.jwt.models.AuthenticationResponse;
 import com.example.JavaSpring.jwt.models.UserModel;

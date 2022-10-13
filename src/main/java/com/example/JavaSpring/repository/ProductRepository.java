@@ -1,6 +1,5 @@
 package com.example.JavaSpring.repository;
 
-import com.example.JavaSpring.models.BlogModel;
 import com.example.JavaSpring.models.ProductModel;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -17,5 +16,6 @@ public interface ProductRepository extends MongoRepository<ProductModel,String> 
     @Query("{cateId:/?0/}") //SELECT * FROM Product WHERE title like ?
     List<ProductModel> getProductByCateID(String cateId) ;
 
-
+    @Query("{proId:/?0/}") //SELECT * FROM Product WHERE title like ?
+    void deleteById (String proId) ;
 }
