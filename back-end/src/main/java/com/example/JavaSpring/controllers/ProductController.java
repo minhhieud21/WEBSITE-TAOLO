@@ -95,7 +95,7 @@ public class ProductController {
                     new ResponseObject(false,Error.DUPLICATE_ID_MESSAGE, "")
             );
         } else {
-            List<ProductModel> list = productService.getAllProductUser();
+                List<ProductModel> list = productService.getAllProductUser();
             Long max = Long.valueOf(0);
             for (int i=0;i<list.size();i++){
                 if(max < list.get(i).get_id()){

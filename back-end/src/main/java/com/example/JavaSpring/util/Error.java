@@ -22,4 +22,13 @@ public class Error {
 
     public static final int NO_VALUE_BY_ID = 406;
     public static final String NO_VALUE_BY_ID_MESSAGE = "Value nay ko co co gia tri tra ve";
+    public static final int WRONG_USERNAME = 407;
+    public static final String WRONG_USERNAME_MESSAGE = "Username sai";
+
+    public static final int WRONG_PASSWORD = 408;
+    public static final String WRONG_PASSWORD_MESSAGE = "Password sai";
+    public static final int WRONG_STATUS = 409;
+    public static final String WRONG_STATUS_MESSAGE = "Dang o trang thai bi khoa";
+    public static final int WRONG_ACCESS_RIGHTS = 410;
+    public static final String WRONG_ACCESS_RIGHTS_MESSAGE = "Loi quyen truy cap";
 }
