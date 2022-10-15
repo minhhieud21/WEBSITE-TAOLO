@@ -1,18 +1,25 @@
 package com.example.JavaSpring.service;
 
+import com.example.JavaSpring.models.BlogModel;
 import com.example.JavaSpring.models.ProductModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface ProductService {
-    List<ProductModel> getAllProduct();
+
+
+    Page<ProductModel> getAllProductAdmin(Pageable paging);
+
+    List<ProductModel> getAllProductUser();
 
     ProductModel getProductById(String id);
 
 
     void saveProduct(ProductModel productModel);
 
-    List<ProductModel> getProductByCateID(String cateId);
+    List<ProductModel> getProductByCateID(String cateId,int Type);
 
     void deleteProduct(String proId);
 

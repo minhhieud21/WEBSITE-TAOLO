@@ -2,19 +2,30 @@ package com.example.JavaSpring.models;
 
 public class ResponseObject {
     private boolean status;
+    private String message;
     private Object data;
-
-    public ResponseObject(boolean status, Object data) {
-        this.status = status;
-        this.data = data;
-    }
 
     @Override
     public String toString() {
         return "ResponseObject{" +
                 "status=" + status +
+                ", message='" + message + '\'' +
                 ", data=" + data +
                 '}';
+    }
+
+    public ResponseObject(boolean status, String message, Object data) {
+        this.status = status;
+        this.message = message;
+        this.data = data;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public boolean isStatus() {
