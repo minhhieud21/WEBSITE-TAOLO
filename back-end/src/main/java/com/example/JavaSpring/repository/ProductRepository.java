@@ -17,5 +17,4 @@ public interface ProductRepository extends MongoRepository<ProductModel,String> 
     @Query("{cateId:/?0/}") //SELECT * FROM Product WHERE title like ?
     List<ProductModel> getProductByCateID(String cateId) ;
 
-
 }

@@ -34,6 +34,7 @@ public class ProductController {
                         new ResponseObject(true, check)
                 );
     }
+
     @GetMapping("getAllProductUser")
     ResponseEntity<ResponseObject> getAllProductUser() {
         List<ProductModel> kq = productService.getAllProduct();
@@ -51,7 +52,6 @@ public class ProductController {
                         new ResponseObject(true, check)
                 );
     }
-
     // GET by id: localhost:8080/api/v1/product/:id
     @GetMapping("/{id}")
     ResponseEntity<ResponseObject> getProductById(@PathVariable("id") String id) {

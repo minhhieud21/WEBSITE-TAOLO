@@ -1,5 +1,6 @@
 package com.example.JavaSpring.models;
 
+import com.mongodb.lang.Nullable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -7,6 +8,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Document("Category")
 public class CategoryModel {
     @Id
+    private String _id;
+    @Field("cateID")
     String cateID;
     @Field("status")
     int status;
@@ -15,8 +18,26 @@ public class CategoryModel {
 
     public CategoryModel(String cateID, int status, String cateName) {
         this.cateID = cateID;
-        this.status = status;
         this.cateName = cateName;
+        this.status = status;
+
+    }
+
+    @Override
+    public String toString() {
+        return "CategoryModel{" +
+                ", cateID='" + cateID + '\'' +
+                ", status=" + status +
+                ", cateName='" + cateName + '\'' +
+                '}';
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public String getCateID() {
