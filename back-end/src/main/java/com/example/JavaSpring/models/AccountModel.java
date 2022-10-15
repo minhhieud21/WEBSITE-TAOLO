@@ -1,60 +1,80 @@
 package com.example.JavaSpring.models;
 
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document("Account")
 
 public class AccountModel {
-    String AccID,Username,Password;
-    int Status;
-
-    public AccountModel(String accID, String username, String password, int status) {
-        AccID = accID;
-        Username = username;
-        Password = password;
-        Status = status;
-    }
+    @Id
+    private String _id;
+    @Field("accID")
+    String accID;
+    @Field("password")
+    String password;
+    @Field("username")
+    String username;
+    @Field("status")
+    int status;
 
     @Override
     public String toString() {
         return "AccountModel{" +
-                "AccID='" + AccID + '\'' +
-                ", Username='" + Username + '\'' +
-                ", Password='" + Password + '\'' +
-                ", Status=" + Status +
+                "_id=" + _id +
+                ", accID='" + accID + '\'' +
+                ", password='" + password + '\'' +
+                ", username='" + username + '\'' +
+                ", status=" + status +
                 '}';
     }
 
+    public AccountModel(String _id, String accID, String password, String username, int status) {
+        this._id = _id;
+        this.accID = accID;
+        this.password = password;
+        this.username = username;
+        this.status = status;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
     public String getAccID() {
-        return AccID;
+        return accID;
     }
 
     public void setAccID(String accID) {
-        AccID = accID;
-    }
-
-    public String getUsername() {
-        return Username;
-    }
-
-    public void setUsername(String username) {
-        Username = username;
+        this.accID = accID;
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
 
     public void setPassword(String password) {
-        Password = password;
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public int getStatus() {
-        return Status;
+        return status;
     }
 
     public void setStatus(int status) {
-        Status = status;
+        this.status = status;
     }
 }
