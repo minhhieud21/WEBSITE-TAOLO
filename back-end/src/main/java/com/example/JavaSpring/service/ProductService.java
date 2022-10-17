@@ -23,7 +23,6 @@ public interface ProductService {
 
     void deleteProduct(String proId);
 
-
     void statusHide(String proId);
 
     void statusShow(String proId);
