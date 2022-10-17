@@ -92,7 +92,6 @@ public class AccountController {
                     }
                 }
                 accountModel.setAccID(createID(dsAccount.get(vt).getAccID()));
-                accountModel.setUserID(createID(dsAccount.get(vt).getAccID()));
                 accountModel.setUsername("nothave");
                 accountModel.setPassword("nothave");
                 accountModel.setStatus(1);
@@ -180,7 +179,6 @@ public class AccountController {
                 }
             }
             accountModel.setAccID(createID(dsAccount.get(vt).getAccID()));
-            accountModel.setUserID(createID(dsAccount.get(vt).getAccID()));
             String password = convertHashToString(accountModel.getPassword());
             accountModel.setPassword(password);
             accountModel.setStatus(1);
@@ -208,7 +206,6 @@ public class AccountController {
                 }
             }
             accountModel.setAccID(createAdminID(dsAccount.get(vt).getAccID()));
-            accountModel.setUserID(createAdminID(dsAccount.get(vt).getAccID()));
             String password = convertHashToString(accountModel.getPassword());
             accountModel.setPassword(password);
             accountModel.setStatus(1);

@@ -1,2 +1,7 @@
-package com.example.JavaSpring.repository;public interface UserRepository {
+package com.example.JavaSpring.repository;
+
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserRepository {
 }
