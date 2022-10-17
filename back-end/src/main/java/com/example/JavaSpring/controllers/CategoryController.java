@@ -4,6 +4,7 @@ import com.example.JavaSpring.models.CategoryModel;
 import com.example.JavaSpring.models.ProductModel;
 import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.service.CategoryService;
+import com.example.JavaSpring.util.Error;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,11 +27,11 @@ public class CategoryController {
     ResponseEntity<ResponseObject> getAllCategoryAdmin(){
         List<CategoryModel> check = categoryService.getAllCategory();
         return check.isEmpty() ?
-                ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                        new ResponseObject(false, "")
+                ResponseEntity.status(Error.LIST_EMPTY).body(
+                        new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,"")
                 ) :
-                ResponseEntity.status(HttpStatus.OK).body(
-                        new ResponseObject(true, check)
+                ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true,Error.OK_MESSAGE, check)
                 );
     }
 
@@ -45,11 +46,11 @@ public class CategoryController {
             }
         }
         return check.isEmpty() ?
-                ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                        new ResponseObject(false, "")
+                ResponseEntity.status(Error.LIST_EMPTY).body(
+                        new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,"")
                 ) :
-                ResponseEntity.status(HttpStatus.OK).body(
-                        new ResponseObject(true, check)
+                ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true,Error.OK_MESSAGE, check)
                 );
     }
 
@@ -58,11 +59,11 @@ public class CategoryController {
     ResponseEntity<ResponseObject> getCategoryById(@PathVariable("id") String id) {
         Optional<CategoryModel> check = Optional.ofNullable(categoryService.getCateByID(id));
         return check.isPresent() ?
-                ResponseEntity.status(HttpStatus.OK).body(
-                        new ResponseObject(true, check)
+                ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true,Error.OK_MESSAGE, check)
                 ) :
-                ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                        new ResponseObject(false, "")
+                ResponseEntity.status(Error.LIST_EMPTY).body(
+                        new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,"")
                 );
     }
 
@@ -71,13 +72,13 @@ public class CategoryController {
     ResponseEntity<ResponseObject> addnewCategory(@RequestBody CategoryModel cateModel){
         Optional<CategoryModel> check = Optional.ofNullable(categoryService.getCateByID(cateModel.getCateID()));
         if (check.isPresent() == true) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject(false, "")
+            return ResponseEntity.status(Error.LIST_EMPTY).body(
+                    new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,"")
             );
         } else {
             categoryService.saveCate(cateModel);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject(true, "")
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(true,Error.OK_MESSAGE, "")
             );
         }
     }
@@ -88,12 +89,12 @@ public class CategoryController {
         Optional<CategoryModel> check = Optional.ofNullable(cateModel);
         if(check.isPresent() == true && cateModel.getCateName() != cateName){
             categoryService.updateCateName(cateID,cateName);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject(true,"")
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(true,Error.OK_MESSAGE,"")
             );}
         else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject(false, "")
+            return ResponseEntity.status(Error.DUPLICATE_NAME).body(
+                    new ResponseObject(false,Error.DUPLICATE_NAME_MESSAGE, "")
             );}
     }
 
@@ -103,12 +104,12 @@ public class CategoryController {
         Optional<CategoryModel> check = Optional.ofNullable(cateModel);
         if(check.isPresent() == true && cateModel.getStatus() != 0){
             categoryService.statusHide(cateID);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject(true,"")
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(true,Error.OK_MESSAGE,"")
             );}
         else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject(false, "")
+            return ResponseEntity.status(Error.FAIL_STATUS_CHANGE).body(
+                    new ResponseObject(false,Error.FAIL_STATUS_CHANGE_MESSAGE, "")
             );}
     }
 
@@ -118,12 +119,12 @@ public class CategoryController {
         Optional<CategoryModel> check = Optional.ofNullable(cateModel);
         if(check.isPresent() == true && cateModel.getStatus() != 1){
             categoryService.statusShow(cateID);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject(true,"")
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(true,Error.OK_MESSAGE,"")
             );}
         else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject(false, "")
+            return ResponseEntity.status(Error.FAIL_STATUS_CHANGE).body(
+                    new ResponseObject(false, Error.FAIL_STATUS_CHANGE_MESSAGE,"")
             );}
     }
 
