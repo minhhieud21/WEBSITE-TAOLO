@@ -3,7 +3,7 @@ import Popup from "../Popup";
 import { Link } from "react-router-dom";
 import img from "../../assets/img/cat-img-1.jpg";
 
-const ItemProduct = () => {
+const ItemProduct = ({proName,price}) => {
   const [popup, setPopup] = useState(false);
 
   const openPopup = useCallback(() => {
@@ -54,10 +54,10 @@ const ItemProduct = () => {
           <h6>
             {" "}
             <Link className="reset-anchor" to="/detail">
-              Red digital smartwatch
+              {proName}
             </Link>
           </h6>
-          <p className="small text-muted">$250</p>
+          <p className="small text-muted">{price}</p>
         </div>
       </div>
     </>

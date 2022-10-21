@@ -1,7 +1,10 @@
 import React from "react";
 import img from "../../../assets/img/cat-img-1.jpg";
 import { Link } from "react-router-dom";
-const Categories = () => {
+import { getAllCategories } from "../../../services/CategoryService";
+const Categories = ({cateName}) => {
+  const data = getAllCategories()
+  //console.log(data)
   return (
     <>
       <section className="pt-5">
@@ -12,22 +15,10 @@ const Categories = () => {
           <h2 className="h5 text-uppercase mb-4">Browse our categories</h2>
         </header>
         <div className="row">
-          <div className="col-md-4">
+          <div className="col-md-3">
             <Link className="category-item" to="/shop">
               <img className="img-fluid" src={img} alt="" />
-              <strong className="category-item-title">Clothes</strong>
-            </Link>
-          </div>
-          <div className="col-md-4">
-            <Link className="category-item" to="/shop">
-              <img className="img-fluid" src={img} alt="" />
-              <strong className="category-item-title">Clothes</strong>
-            </Link>
-          </div>
-          <div className="col-md-4">
-            <Link className="category-item" to="/shop">
-              <img className="img-fluid" src={img} alt="" />
-              <strong className="category-item-title">Clothes</strong>
+              <strong className="category-item-title">{cateName}</strong>
             </Link>
           </div>
         </div>
