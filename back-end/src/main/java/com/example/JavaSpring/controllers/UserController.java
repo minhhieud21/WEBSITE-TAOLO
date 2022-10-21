@@ -1,6 +1,5 @@
 package com.example.JavaSpring.controllers;
 
-<<<<<<< HEAD
 import com.example.JavaSpring.models.UserModel;
 import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.service.UserService;
@@ -8,29 +7,17 @@ import com.example.JavaSpring.util.Error;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 
-@RestController
-@RequestMapping(path = "/api/v1/user") //localhost:8080/api/v1/user
-=======
-import com.example.JavaSpring.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "/api/v1/user") //localhost:8080/api/v1/account
->>>>>>> 535af6fdbed5801fc67b061ff554fe4088f19561
 @CrossOrigin(origins ="http://localhost:4200")
 public class UserController {
     @Autowired
     UserService userService;
 
-<<<<<<< HEAD
     @GetMapping("")
     ResponseEntity<ResponseObject> getallUser() {
         List<UserModel> check = userService.getAllUser();
@@ -57,6 +44,4 @@ public class UserController {
             );
         }
     }
-=======
->>>>>>> 535af6fdbed5801fc67b061ff554fe4088f19561
 }
