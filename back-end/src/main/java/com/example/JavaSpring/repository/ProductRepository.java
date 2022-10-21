@@ -2,6 +2,7 @@ package com.example.JavaSpring.repository;
 
 import com.example.JavaSpring.models.ProductModel;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -11,13 +12,17 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends MongoRepository<ProductModel,String> {
+
+    @Query("{status:?0}") //SELECT * FROM Product WHERE ProID = ?0
+    Page<ProductModel> getAllProductUser(Pageable paging,int status);
     @Query("{proId:?0}") //SELECT * FROM Product WHERE ProID = ?0
     ProductModel getProductByID(String id);
 
     @Query("{cateId:/?0/}") //SELECT * FROM Product WHERE title like ?
     List<ProductModel> getProductByCateID(String cateId, Sort sort) ;
-
     @Query("{'proName': { '$regex' : ?0 , $options: 'i'}}")
-    List<ProductModel> getBlogByName(String proName) ;
+    Page<ProductModel> getProductAdmin(Pageable paging,String text) ;
 
+    @Query("{'proName': { '$regex' : ?0 , $options: 'i'} ,'status': ?1}")
+    Page<ProductModel> getProductUser(Pageable paging,String proName,int status) ;
 }

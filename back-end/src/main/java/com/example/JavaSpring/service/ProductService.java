@@ -10,9 +10,9 @@ import java.util.List;
 public interface ProductService {
 
 
-    Page<ProductModel> getAllProductAdmin(Pageable paging);
+    Page<ProductModel> getAllProduct(Pageable paging);
 
-    List<ProductModel> getAllProductUser();
+    Page<ProductModel> getAllProductUser(Pageable paging);
 
     ProductModel getProductById(String id);
 
@@ -31,5 +31,7 @@ public interface ProductService {
 
     void updateProduct(ProductModel productModel, String proId);
 
-    List<ProductModel> searchProduct(String proName);
+    Page<ProductModel> searchProductAdmin(Pageable paging,String text);
+
+    Page<ProductModel> searchProductUser(Pageable paging, String text);
 }

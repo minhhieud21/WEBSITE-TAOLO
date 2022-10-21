@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/api/v1/cart") //localhost:8080/api/v1/product
-@CrossOrigin(origins ="http://localhost:4200")
+@CrossOrigin(origins ="*")
 
 public class CartController {
 
