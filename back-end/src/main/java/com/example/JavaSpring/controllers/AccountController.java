@@ -185,7 +185,6 @@ public class AccountController {
             AccountModel accountModel = new AccountModel();
             UserModel userModel = new UserModel();
             accountModel.setAccID(createID(dsAccount.get(vt).getAccID()));
-            userModel.setUserID(accountModel.getAccID());
             accountModel.setUsername(String.valueOf(object.get("username")));
             String password = convertHashToString(String.valueOf(object.get("password")));
             accountModel.setPassword(password);

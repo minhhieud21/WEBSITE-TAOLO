@@ -10,4 +10,5 @@ public interface UserService {
     void saveUser(UserModel accountModel);
 
     List<UserModel> getAllUser();
+
 }
