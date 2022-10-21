@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/api/v1/product") //localhost:8080/api/v1/product
-@CrossOrigin(origins ="http://localhost:4200")
+@CrossOrigin(origins ="*")
 
 public class ProductController {
     @Autowired
@@ -95,7 +95,7 @@ public class ProductController {
                     new ResponseObject(false,Error.DUPLICATE_ID_MESSAGE, "")
             );
         } else {
-                List<ProductModel> list = productService.getAllProductUser();
+            List<ProductModel> list = productService.getAllProductUser();
             Long max = Long.valueOf(0);
             for (int i=0;i<list.size();i++){
                 if(max < list.get(i).get_id()){
@@ -188,11 +188,11 @@ public class ProductController {
 
     // POST : localhost:8080/api/v1/product/updateProduct?proId=abc        + JSON(ProductModel)  // ko thay doi dc proId + status
     @PostMapping("updateProduct")
-    ResponseEntity<ResponseObject> updateProduct(@RequestBody ProductModel newProduct, @RequestParam(required = false) String proId){
-        ProductModel productModel = productService.getProductById(proId);
+    ResponseEntity<ResponseObject> updateProduct(@RequestBody ProductModel newProduct){
+        ProductModel productModel = productService.getProductById(newProduct.getproId());
         Optional<ProductModel> check = Optional.ofNullable(productModel);
         if(check.isPresent() == true ){
-            productService.updateProduct(newProduct,proId);
+            productService.updateProduct(newProduct,newProduct.getproId());
             return ResponseEntity.status(Error.OK).body(
                     new ResponseObject(true,Error.OK_MESSAGE,"")
             );}

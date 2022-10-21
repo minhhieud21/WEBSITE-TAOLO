@@ -12,8 +12,6 @@ public class AccountModel {
     private String _id;
     @Field("accID")
     String accID;
-    @Field("userID")
-    String userID;
     @Field("password")
     String password;
     @Field("username")
@@ -32,7 +30,6 @@ public class AccountModel {
         return "AccountModel{" +
                 "_id='" + _id + '\'' +
                 ", accID='" + accID + '\'' +
-                ", userID='" + userID + '\'' +
                 ", password='" + password + '\'' +
                 ", username='" + username + '\'' +
                 ", google_login=" + google_login +
@@ -41,10 +38,9 @@ public class AccountModel {
                 '}';
     }
 
-    public AccountModel(String _id, String accID, String userID, String password, String username, boolean google_login, String urlID, int status) {
+    public AccountModel(String _id, String accID, String password, String username, boolean google_login, String urlID, int status) {
         this._id = _id;
         this.accID = accID;
-        this.userID = userID;
         this.password = password;
         this.username = username;
         this.google_login = google_login;
@@ -55,14 +51,6 @@ public class AccountModel {
 
     public boolean isGoogle_login() {
         return google_login;
-    }
-
-    public String getUserID() {
-        return userID;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
     }
 
     public void setGoogle_login(boolean google_login) {
