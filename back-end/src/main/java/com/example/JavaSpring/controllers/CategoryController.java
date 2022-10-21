@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/category") //localhost:8080/api/v1/category
-@CrossOrigin("*")
+@CrossOrigin(origins = "*")
 public class CategoryController {
 
     @Autowired
@@ -112,7 +112,6 @@ public class CategoryController {
                     new ResponseObject(false,Error.FAIL_STATUS_CHANGE_MESSAGE, "")
             );}
     }
-
     @PostMapping("/statusShow")
     ResponseEntity<ResponseObject> statusShow(@RequestParam(required = false) String cateID){
         CategoryModel cateModel = categoryService.getCateByID(cateID);
@@ -127,6 +126,4 @@ public class CategoryController {
                     new ResponseObject(false, Error.FAIL_STATUS_CHANGE_MESSAGE,"")
             );}
     }
-
-
 }

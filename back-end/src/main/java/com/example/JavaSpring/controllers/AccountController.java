@@ -10,18 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 
 @RestController
 @RequestMapping(path = "/api/v1/account") //localhost:8080/api/v1/account
-@CrossOrigin(origins ="http://localhost:4200")
+@CrossOrigin(origins ="*")
 public class AccountController {
     @Autowired
     AccountService accountService;
@@ -82,9 +80,15 @@ public class AccountController {
         return kt;
     }
 
-    @GetMapping("/checklogin")
-        ResponseEntity<ResponseObject> getUserByUsername(@RequestBody AccountModel accountModel,@RequestParam(required = false) boolean google_login, @RequestParam(defaultValue = "notthing") String urlID) throws NoSuchAlgorithmException {
+    @GetMapping("/login")
+        ResponseEntity<ResponseObject> getUserByUsername(@RequestBody(required = false) Map<String,Object> object,@RequestParam(required = false) boolean google_login, @RequestParam(defaultValue = "notthing") String urlID) throws NoSuchAlgorithmException {
         AccountModel check = new AccountModel();
+        AccountModel accountModel = new AccountModel();
+        if(google_login == true && urlID.equals("notthing")==true ) {
+            return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
+                    new ResponseObject(false,Error.WRONG_ACCESS_RIGHTS_MESSAGE,"" )
+            );
+        }
         if(google_login == true){
             check = accountService.getUserByUrlID(urlID);
             if(check == null){
@@ -118,13 +122,18 @@ public class AccountController {
             }
         }
         else {
-            check = accountService.getUserByUsername(accountModel.getUsername().toLowerCase());
+            if(String.valueOf(object.get("username")).equals("nothave") == true){
+                return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
+                        new ResponseObject(false,Error.WRONG_ACCESS_RIGHTS_MESSAGE,"" )
+                );
+            }
+                check = accountService.getUserByUsername(String.valueOf(object.get("username")).toLowerCase());
             if(check == null){
                 return ResponseEntity.status(Error.WRONG_USERNAME).body(
                         new ResponseObject(false, Error.WRONG_USERNAME_MESSAGE,"")
                 );}
             else {
-                String checkPassword = convertHashToString(accountModel.getPassword());
+                String checkPassword = convertHashToString(String.valueOf(object.get("password")));
                 if(check.getPassword().equals(checkPassword)){
                     if(check.getStatus() == 1){
                         return ResponseEntity.status(Error.OK).body(
@@ -142,33 +151,9 @@ public class AccountController {
             }
         }
     }
-    @GetMapping("/loginadmin")
-    ResponseEntity<ResponseObject> checkadmin(@RequestBody AccountModel accountModel) throws NoSuchAlgorithmException {
-        AccountModel check = accountService.getUserByUsername(accountModel.getUsername().toLowerCase());
-        if(check == null){
-            return ResponseEntity.status(Error.WRONG_USERNAME).body(
-                    new ResponseObject(false, Error.WRONG_USERNAME_MESSAGE,"")
-            );}
-        else {
-            String checkPassword = convertHashToString(accountModel.getPassword());
-            if(check.getPassword().equals(checkPassword)){
-                if(check.getAccID().contains("AM") == true){
-                    return ResponseEntity.status(Error.OK).body(
-                            new ResponseObject(true,Error.OK_MESSAGE,check.getAccID())
-                    );}
-                else {
-                    return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS ).body(
-                            new ResponseObject(false,Error.WRONG_ACCESS_RIGHTS_MESSAGE, ""));
-                }
-            }
-            else {
-                return ResponseEntity.status(Error.WRONG_PASSWORD).body(
-                        new ResponseObject(false,Error.WRONG_PASSWORD_MESSAGE, ""));
-            }
-        }
-    }
+
     @PostMapping("/addUser")
-    ResponseEntity<ResponseObject> addnewUser(@RequestBody Map<String,Object> object) throws NoSuchAlgorithmException {
+    ResponseEntity<ResponseObject> addnewUser(@RequestBody Map<String,Object> object,@RequestParam(defaultValue = "1") int type) throws NoSuchAlgorithmException {
         AccountModel check = accountService.getUserByUsername(String.valueOf(object.get("username")));
         if (check != null) {
             return ResponseEntity.status(Error.DUPLICATE_ID).body(
@@ -177,14 +162,27 @@ public class AccountController {
         } else {
             int max = 0, vt = 0, i;
             List<AccountModel> dsAccount = accountService.getAllAccount();
-            for (i = 0; i < dsAccount.size(); i++) {
-                if (Number(dsAccount.get(i).getAccID()) > max && "U".equals(String.valueOf(dsAccount.get(i).getAccID().charAt(0)))) {
-                    vt = i;
+            if(type==1){
+                for (i = 0; i < dsAccount.size(); i++) {
+                    if (Number(dsAccount.get(i).getAccID()) > max && "U".equals(String.valueOf(dsAccount.get(i).getAccID().charAt(0)))) {
+                        vt = i;
+                    }
+                }}
+            else if(type == 0){
+                for(i = 0 ; i<dsAccount.size(); i++){
+                    if (Number(dsAccount.get(i).getAccID())>max && "A".equals(String.valueOf(dsAccount.get(i).getAccID().charAt(0))) ){
+                        vt = i;
+                    }
                 }
             }
             AccountModel accountModel = new AccountModel();
             UserModel userModel = new UserModel();
-            accountModel.setAccID(createID(dsAccount.get(vt).getAccID()));
+            if(type==1){
+                accountModel.setAccID(createID(dsAccount.get(vt).getAccID()));
+            }
+            else if(type == 0){
+                accountModel.setAccID(createAdminID(dsAccount.get(vt).getAccID()));
+            }
             accountModel.setUsername(String.valueOf(object.get("username")));
             String password = convertHashToString(String.valueOf(object.get("password")));
             accountModel.setPassword(password);
@@ -204,42 +202,5 @@ public class AccountController {
             );
         }
     }
-    @PostMapping("/addAdmin")
-    ResponseEntity<ResponseObject> addnewAdmin(@RequestBody Map<String,Object> object) throws NoSuchAlgorithmException {
-        AccountModel check = accountService.getUserByUsername(String.valueOf(object.get("username")));
-        if (check != null) {
-            return ResponseEntity.status(Error.DUPLICATE_ID).body(
-                    new ResponseObject(false,Error.DUPLICATE_ID_MESSAGE, "")
-            );
-        } else {
-            int max = 0,vt=0,i;
-            List<AccountModel> dsAccount = accountService.getAllAccount();
-            for(i = 0 ; i<dsAccount.size(); i++){
-                if (Number(dsAccount.get(i).getAccID())>max && "A".equals(String.valueOf(dsAccount.get(i).getAccID().charAt(0))) ){
-                    vt = i;
-                }
-            }
-            AccountModel accountModel = new AccountModel();
-            UserModel userModel = new UserModel();
-            accountModel.setAccID(createAdminID(dsAccount.get(vt).getAccID()));
-            userModel.setUserID(accountModel.getAccID());
-            accountModel.setUsername(String.valueOf(object.get("username")));
-            String password = convertHashToString(String.valueOf(object.get("password")));
-            accountModel.setPassword(password);
-            accountModel.setStatus(1);
-            accountModel.setGoogle_login(false);
-            accountModel.setUrlID("nothave");
-            accountService.saveAccount(accountModel);
-            userModel.setName(String.valueOf(object.get("name")));
-            userModel.setPhone(String.valueOf(object.get("phone")));
-            userModel.setAddress(String.valueOf(object.get("address")));
-            userModel.setGmail(String.valueOf(object.get("gmail")));
-            userModel.setSex(Integer.parseInt(String.valueOf(object.get("sex"))));
-            userModel.setAge(Integer.parseInt(String.valueOf(object.get("age"))));
-            userService.saveUser(userModel);
-            return ResponseEntity.status(Error.OK).body(
-                    new ResponseObject(true,Error.OK_MESSAGE,"")
-            );
-        }
-    }
+
 }

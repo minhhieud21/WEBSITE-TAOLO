@@ -17,15 +17,13 @@ public class ProductServiceImpl implements ProductService {
     ProductRepository productRepository;
 
     @Override
-    public Page<ProductModel> getAllProductAdmin(Pageable paging) {
+    public Page<ProductModel> getAllProduct(Pageable paging) {
         return productRepository.findAll(paging);
     }
-
     @Override
-    public List<ProductModel> getAllProductUser() {
-        return productRepository.findAll();
+    public Page<ProductModel> getAllProductUser(Pageable paging) {
+        return productRepository.getAllProductUser(paging,1);
     }
-
     @Override
     public ProductModel getProductById(String id) {
         return productRepository.getProductByID(id);
@@ -88,7 +86,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductModel> searchProduct(String proName) {
-        return productRepository.getBlogByName(proName);
+    public Page<ProductModel> searchProductAdmin(Pageable paging,String text) {
+        return productRepository.getProductAdmin(paging,text);
+    }
+    @Override
+    public Page<ProductModel> searchProductUser(Pageable paging, String text) {
+        return productRepository.getProductUser(paging,text,1);
     }
 }
