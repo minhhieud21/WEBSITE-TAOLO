@@ -5,6 +5,7 @@ import ImgGG from "../../assets/img/google.svg";
 //import { FirebaseAuth } from "react-firebaseui";
 import firebase, { auth } from "../../firebase/config";
 import { useNavigate } from 'react-router-dom';
+import { getLocalStorage } from "../../services/LocalStorageService";
 /*
 const uiConfig = {
   signInFlow: "popup",
@@ -14,6 +15,9 @@ const uiConfig = {
 const ggProvider = new firebase.auth.GoogleAuthProvider();
 const Login = () => {
   const navigate = useNavigate();
+  if(getLocalStorage('username')){
+    navigate("/")
+  }
   const handleSignInWithGoogle = () => {
     auth.signInWithPopup(ggProvider).then(res => {
       navigate("/");

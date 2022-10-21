@@ -2,8 +2,9 @@ import React, { useCallback, useState } from "react";
 import Popup from "../Popup";
 import { Link } from "react-router-dom";
 import img from "../../assets/img/cat-img-1.jpg";
+import { formatVnd } from "../../services";
 
-const ItemProduct = ({proName,price}) => {
+const ItemProduct = ({proName,price,proId}) => {
   const [popup, setPopup] = useState(false);
 
   const openPopup = useCallback(() => {
@@ -16,10 +17,7 @@ const ItemProduct = ({proName,price}) => {
       <div className="col-xl-3 col-lg-4 col-sm-6">
         <div className="product text-center">
           <div className="position-relative mb-3">
-            {/* <div className="badge text-white bg-danger">Sold</div> */}
-            {/* <div className="badge text-white bg-primary">Sale</div> */}
-            {/* <div className="badge text-white bg-info">New</div> */}
-            <Link className="d-block" to="/detail">
+            <Link className="d-block" to={`/detail/${proName}/${proId}`}>
               <img className="img-fluid w-100" src={img} alt="..." />
             </Link>
             <div className="product-overlay">
@@ -53,7 +51,7 @@ const ItemProduct = ({proName,price}) => {
           </div>
           <h6>
             {" "}
-            <Link className="reset-anchor" to="/detail">
+            <Link className="reset-anchor" to={`/detail/${proName}/${proId}`}>
               {proName}
             </Link>
           </h6>

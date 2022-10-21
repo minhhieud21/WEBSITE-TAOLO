@@ -38,13 +38,15 @@ const Header = () => {
                 </li>
               </ul>
               <ul className="navbar-nav ms-auto">
+                {
+                  checkLogin ?
                 <li className="nav-item pt-2">
                   <Link className="nav-link" to="/cart">
-                    {" "}
                     <i className="fas fa-dolly-flatbed me-1 text-gray" />
                     Cart<small className="text-gray fw-normal">(2)</small>
                   </Link>
-                </li>
+                </li> : ""
+                }
                 {/* <li className="nav-item">
                   <Link className="nav-link" href="#!">
                     {" "}

@@ -14,7 +14,7 @@ const SliderProduct = () => {
           <div className="col-sm-2 p-sm-0 order-2 order-sm-1 mt-2 mt-sm-0 px-xl-2">
             <div className="swiper product-slider-thumbs">
               <div className="swiper-wrapper">
-                {arrImg.map(img => <DetailSliderProduct img={img} callBack= {()=> setCurrentImg(img)}/>)}
+                {arrImg.map((img,index) => <DetailSliderProduct key={index} img={img} callBack= {()=> setCurrentImg(img)}/>)}
               </div>
             </div>
           </div>
