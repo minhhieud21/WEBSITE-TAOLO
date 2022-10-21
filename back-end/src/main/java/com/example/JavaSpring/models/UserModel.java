@@ -23,6 +23,7 @@ public class UserModel {
     @Field("age")
     int age;
 
+    public UserModel(){}
     public UserModel(String _id, String userID, String name, String phone, String address, String gmail, int sex, int age) {
         this._id = _id;
         this.userID = userID;
