@@ -1,32 +1,16 @@
-/*!
-
-=========================================================
-* Light Bootstrap Dashboard React - v2.0.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/light-bootstrap-dashboard-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/light-bootstrap-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import Dashboard from "views/Dashboard.js";
-import UserProfile from "views/UserProfile.js";
-import TableList from "views/TableList.js";
+import Product from "views/Product";
 import Typography from "views/Typography.js";
 import Icons from "views/Icons.js";
 import Maps from "views/Maps.js";
 import Notifications from "views/Notifications.js";
 import Upgrade from "views/Upgrade.js";
+import UsersPage from "views/UsersPage";
+import Bill from "views/Bill";
 
 const dashboardRoutes = [
   {
-    upgrade: true,
+    bottom: true,
     path: "/upgrade",
     name: "Go user page",
     icon: "nc-icon nc-stre-left",
@@ -42,16 +26,23 @@ const dashboardRoutes = [
   },
   {
     path: "/user",
-    name: "User Profile",
+    name: "User",
     icon: "nc-icon nc-circle-09",
-    component: UserProfile,
+    component: UsersPage,
     layout: "/admin"
   },
   {
-    path: "/table",
-    name: "Table List",
+    path: "/product",
+    name: "Product",
+    icon: "nc-icon nc-app",
+    component: Product,
+    layout: "/admin"
+  },
+  {
+    path: "/bill",
+    name: "Bill",
     icon: "nc-icon nc-notes",
-    component: TableList,
+    component: Bill,
     layout: "/admin"
   },
   {

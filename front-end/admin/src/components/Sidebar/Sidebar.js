@@ -38,7 +38,7 @@ function Sidebar({ color, image, routes }) {
               return (
                 <li
                   className={
-                    prop.upgrade
+                    prop.bottom
                       ? "active active-pro"
                       : activeRoute(prop.layout + prop.path)
                   }

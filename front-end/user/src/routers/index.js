@@ -10,13 +10,6 @@ import { getLocalStorage, setLocalStorage } from "../services/LocalStorageServic
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 
-const config = {
-  apiKey: "AIzaSyBG-v1I8sw1lSQ4ElDQD5wIU6uLfV6fGMY",
-  authDomain: "ptpmmmn.firebaseapp.com",
-  // ...
-};
-//firebase.initializeApp(config);
-
 const Routers = () => {
   useEffect(() => {
     const unregisterAuthObserver = firebase
@@ -29,8 +22,6 @@ const Routers = () => {
         }
         const token = await user.getIdToken();
         setLocalStorage("username",user.displayName)
-        console.log("Login in user: ", user.displayName);
-        console.log("Login in user: ", token);
       });
 
     return () => unregisterAuthObserver();
@@ -42,7 +33,7 @@ const Routers = () => {
         <Route path="/" element={<Home />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/detail" element={<ProductDetail />} />
+        <Route path="/detail/:productName/:proId" element={<ProductDetail />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/login" element={<Login />} />
       </Routes>

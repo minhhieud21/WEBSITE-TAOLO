@@ -1,6 +1,6 @@
-export const incrementCart = (data) => {
+export const addProduct = (data) => {
     return {
-        type: 'cart/increment',
+        type: 'product/addProduct',
         payload: data
     }
 }

@@ -7,9 +7,9 @@ const HomeProduct = () => {
 	const [products, setProducts] = useState([])
 
 	useEffect(() => {
-		getAllProduct().then(res =>{
-			setProducts(res.data);
-		});
+		getAllProduct().then((res) => {
+			setProducts(res.data.content)
+		})
 	}, [])
 
 	return (
@@ -22,10 +22,14 @@ const HomeProduct = () => {
 					<h2 className="h5 text-uppercase mb-4">Top trending products</h2>
 				</header>
 				<div className="row">
-					{/* {products.map((product) => (
-						<ItemProduct key={product.proId} proName={product.proName} price={product.price} />
-					))} */}
-
+					{products.map((product) => (
+						<ItemProduct
+							key={product.proId}
+							proId={product.proId}
+							proName={product.proName}
+							price={product.price}
+						/>
+					))}
 				</div>
 			</section>
 		</>

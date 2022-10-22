@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1/user") //localhost:8080/api/v1/account
-@CrossOrigin(origins ="*")
+@CrossOrigin(origins = {"*"})
 public class UserController {
     @Autowired
     UserService userService;
