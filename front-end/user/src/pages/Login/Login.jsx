@@ -6,6 +6,9 @@ import ImgGG from "../../assets/img/google.svg";
 import firebase, { auth } from "../../firebase/config";
 import { useNavigate } from 'react-router-dom';
 import { getLocalStorage } from "../../services/LocalStorageService";
+import { useDispatch} from 'react-redux'
+import { isLogged } from "../../redux/actions";
+
 /*
 const uiConfig = {
   signInFlow: "popup",
@@ -14,6 +17,8 @@ const uiConfig = {
 };*/
 const ggProvider = new firebase.auth.GoogleAuthProvider();
 const Login = () => {
+  const dispatch = useDispatch()
+
   const navigate = useNavigate();
   if(getLocalStorage('username')){
     navigate("/")

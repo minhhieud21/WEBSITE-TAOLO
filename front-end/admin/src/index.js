@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import { Provider } from "react-redux";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./assets/css/animate.min.css";
@@ -11,13 +12,17 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 
 import AdminLayout from "layouts/Admin.js";
 import Login from "components/Login/Login";
+import store  from "./redux/store"
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
-  <BrowserRouter>
-    <Switch>
-      <Route path="/admin/login" component={Login} />
-      <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
-    </Switch>
-  </BrowserRouter>
+  <Provider store={store}>
+    <BrowserRouter>
+      <Switch>
+        <Route path="/admin/login" component={Login} />
+        <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
+      </Switch>
+    </BrowserRouter>
+  </Provider>
 );

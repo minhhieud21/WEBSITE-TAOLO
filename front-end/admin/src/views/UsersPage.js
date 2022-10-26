@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React, { useState, useEffect } from 'react'
 import {
     Badge,
     Button,
@@ -10,14 +10,36 @@ import {
     Row,
     Col,
 } from "react-bootstrap";
+
 import User from './UserProfile';
 import Confirm from 'components/Popup/Confirm';
+import { getAllProduct, getAllUsers } from 'services';
+import { useDispatch, useSelector } from 'react-redux';
+import { productSelector, userSelector } from 'redux/selector';
+import { addProduct, addUser,getAllUsersRedux } from 'redux/actions';
+
 export default function UsersPage() {
+    const dispatch = useDispatch();
+
     const [open, setOpen] = useState(false)
     const [del, setDel] = useState(false)
+    const [userList, setUserList] = useState([])
+    const users = useSelector(userSelector)
+
+    useEffect(() => {
+        getAllUsers().then((res) => {
+            dispatch(addUser(
+                res.data
+            ))
+            setUserList(res.data)
+        })
+
+    }, [])
+    console.log(userList)
+
     return (
         <>
-            { del ? <Confirm isOpen ={del} /> : ''}
+            {del ? <Confirm isOpen={del} /> : ''}
             <Container fluid>
                 <Row>
                     <Col md="12">
@@ -30,63 +52,33 @@ export default function UsersPage() {
                                 <Table className="table-hover">
                                     <thead>
                                         <tr>
-                                            <th className="border-0">ID</th>
+                                            <th className="border-0">#</th>
+                                            <th className="border-0">User Id</th>
                                             <th className="border-0">Name</th>
-                                            <th className="border-0">Salary</th>
-                                            <th className="border-0">Country</th>
-                                            <th className="border-0">City</th>
+                                            <th className="border-0">Phone</th>
+                                            <th className="border-0">Age</th>
                                             <th className="border-0">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Dakota Rice</td>
-                                            <td>$36,738</td>
-                                            <td>Niger</td>
-                                            <td>Oud-Turnhout</td>
-                                            <td>
-                                                <div className='d-flex '>
-                                                    <i className="nc-icon nc-simple-remove text-danger pr-3"onClick={() => setDel(!del)}></i>
-                                                    <i className="nc-icon nc-settings-gear-64" onClick={() => setOpen(!open)}></i>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>Minerva Hooper</td>
-                                            <td>$23,789</td>
-                                            <td>Curaçao</td>
-                                            <td>Sinaai-Waas</td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>Sage Rodriguez</td>
-                                            <td>$56,142</td>
-                                            <td>Netherlands</td>
-                                            <td>Baileux</td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td>Philip Chaney</td>
-                                            <td>$38,735</td>
-                                            <td>Korea, South</td>
-                                            <td>Overland Park</td>
-                                        </tr>
-                                        <tr>
-                                            <td>5</td>
-                                            <td>Doris Greene</td>
-                                            <td>$63,542</td>
-                                            <td>Malawi</td>
-                                            <td>Feldkirchen in Kärnten</td>
-                                        </tr>
-                                        <tr>
-                                            <td>6</td>
-                                            <td>Mason Porter</td>
-                                            <td>$78,615</td>
-                                            <td>Chile</td>
-                                            <td>Gloucester</td>
-                                        </tr>
+                                        {userList.map((user,index) => 
+                                            <tr key={user.userID}>
+                                                <td>{index+1}</td>
+                                                <td>{user.userID}</td>
+                                                <td>{user.name}</td>
+                                                <td>{user.phone}</td>
+                                                <td>{user.age}</td>
+                                                <td>
+                                                    <div className='d-flex' style={{cursor:"pointer"}}>
+                                                        <i className="nc-icon nc-simple-remove text-danger pr-3" onClick={() => setDel(!del)}></i>
+                                                        <i className="nc-icon nc-settings-gear-64" onClick={() => setOpen(!open)}></i>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ) }
+
+
+
                                     </tbody>
                                 </Table>
                             </Card.Body>
@@ -94,7 +86,7 @@ export default function UsersPage() {
                     </Col>
                 </Row>
                 {
-                  open ?  <User/> : ''
+                    open ? <User /> : ''
                 }
             </Container>
         </>
