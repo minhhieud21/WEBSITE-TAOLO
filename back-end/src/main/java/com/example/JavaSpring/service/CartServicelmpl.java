@@ -9,6 +9,7 @@ import java.util.List;
 
 @Service
 public class CartServicelmpl implements CartService{
+
     @Autowired
     CartRepository cartRepository;
 
@@ -20,6 +21,11 @@ public class CartServicelmpl implements CartService{
     @Override
     public CartModel getCartByID(String cartID){
         return cartRepository.getCartByID(cartID);
+    }
+
+    @Override
+    public CartModel getCartByAccID(String accID){
+        return cartRepository.getCartByAccID(accID);
     }
 
     @Override
@@ -38,6 +44,14 @@ public class CartServicelmpl implements CartService{
     public void updateTotalCost(String cartID, long tCost){
         CartModel cartModel = cartRepository.getCartByID(cartID);
         cartModel.setTotalCost(tCost);
+        cartRepository.save(cartModel);
+    }
+
+    @Override
+    public void updateCart(String cartID, int quantity, long cost){
+        CartModel cartModel = cartRepository.getCartByID(cartID);
+        cartModel.setTotalQuantity(quantity);
+        cartModel.setTotalCost(cost);
         cartRepository.save(cartModel);
     }
 
