@@ -31,4 +31,6 @@ public class Error {
     public static final String WRONG_STATUS_MESSAGE = "Dang o trang thai bi khoa";
     public static final int WRONG_ACCESS_RIGHTS = 410;
     public static final String WRONG_ACCESS_RIGHTS_MESSAGE = "Loi quyen truy cap";
+    public static final int NOT_IMAGE = 411;
+    public static final String NOT_IMAGE_MESSAGE = "Day khong phai la file anh";
 }

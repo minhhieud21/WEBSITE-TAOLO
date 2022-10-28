@@ -9,12 +9,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.util.*;
+
 
 @RestController
 @RequestMapping(path = "/api/v1/product") //localhost:8080/api/v1/product
@@ -23,66 +24,136 @@ import java.util.Optional;
 public class ProductController {
     @Autowired
     ProductService productService;
-
+    @Autowired
+    ImageController imageController = new ImageController();
     // GET all : localhost:8080/api/v1/product/getAllProduct/?Type=0&page=1
     @GetMapping("getAllProduct")
     ResponseEntity<ResponseObject>getAllProduct(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,@RequestParam(defaultValue = "1") int Type){
+        if(Type > 1 || Type < 0){
+            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
+            );
+        }
         Pageable paging = PageRequest.of(page,size);
         Page<ProductModel> check ;
-       if(Type == 1){
+        Map<String,String> object = new HashMap<String,String>();
+        Map<String,Object> kq = new HashMap<String,Object>();
+        if(Type < 0 || Type > 1){
+            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
+            );
+        }
+        if(Type == 1){
            check = productService.getAllProductUser(paging);
        }
        else {
            check = productService.getAllProduct(paging);
-       }
+        }
+        List<ProductModel> a =check.getContent();
+        for(int i=0;i<a.size();i++) {
+            if(imageController.getPathImageByID(a.get(i).getproId()) != null){
+                object.put(a.get(i).getproId(),imageController.getPathImageByID(a.get(i).getproId()).getImgPath());
+            }}
+        kq.put("Product",a);
+        kq.put("Image",object);
         if(check.isEmpty() == true){
             return ResponseEntity.status(Error.LIST_EMPTY).body(
                     new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,""));
         }
         else {
             return ResponseEntity.status(Error.OK).body(
-                    new ResponseObject(true,Error.OK_MESSAGE, check)); }
+                    new ResponseObject(true,Error.OK_MESSAGE,kq)); }
     }
 
     // GET by id: localhost:8080/api/v1/product/abc
     @GetMapping("/{id}")
     ResponseEntity<ResponseObject> getProductById(@PathVariable("id") String id) {
         Optional<ProductModel> check = Optional.ofNullable(productService.getProductById(id));
-        return check.isPresent() ?
-                ResponseEntity.status(Error.OK).body(
-                        new ResponseObject(true, Error.OK_MESSAGE,check)
-                ) :
-                ResponseEntity.status(Error.NO_VALUE_BY_ID).body(
+        if (check.isPresent()== true ){
+                Map<String,Object> kq = new HashMap<String,Object>();
+                ProductModel a =check.get();
+                kq.put("Product",a);
+                if(imageController.getPathImage(id).isEmpty()==false){
+                    kq.put("Image",imageController.getPathImage(id));}
+                return ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true, Error.OK_MESSAGE,kq)
+                );}
+        else{
+                return ResponseEntity.status(Error.NO_VALUE_BY_ID).body(
                         new ResponseObject(false, Error.NO_VALUE_BY_ID_MESSAGE,"")
-                );
+                );}
     }
 
     //GET : localhost:8080/api/v1/product/getProduct?cateId=MBA&Type=0
     // Type = 0 lay theo binh thuong, Type = 1 lay theo a->z , Type = 2 lay theo z->a , Type = 3 lay gia thap den cao , Type = 4 lay gia cao den thap
     @GetMapping("/getProduct")
     ResponseEntity<ResponseObject> getProductByCateID(@RequestParam(required = false) String cateId,@RequestParam(required = false) int Type) {
+        if( Type < 0 || Type > 1 || cateId.length()==0){
+            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
+            );
+        }
         List<ProductModel> check = productService.getProductByCateID(cateId,Type);
-        return check.isEmpty() ?
-                ResponseEntity.status(Error.LIST_EMPTY).body(
+        Map<String,String> object = new HashMap<String,String>();
+        Map<String,Object> kq = new HashMap<String,Object>();
+        if(check.isEmpty() ==true){
+                return ResponseEntity.status(Error.LIST_EMPTY).body(
                         new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,"")
-                ) :
-                ResponseEntity.status(Error.OK).body(
-                        new ResponseObject(true,Error.OK_MESSAGE, check)
-                );
+                );}
+        else {
+            for(int i=0;i<check.size();i++) {
+                if(imageController.getPathImageByID(check.get(i).getproId()) != null){
+                    object.put(check.get(i).getproId(),imageController.getPathImageByID(check.get(i).getproId()).getImgPath());
+                }};
+            kq.put("Product",check);
+            kq.put("Image",object);
+                return ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true,Error.OK_MESSAGE, kq)
+                );}
     }
 
     // POST : localhost:8080/api/v1/product/add         +    JSON(ProductModel)
-    @PostMapping("/add")
-    ResponseEntity<ResponseObject> addnewProduct(@RequestBody ProductModel productModel) {
-        Optional<ProductModel> check = Optional.ofNullable(productService.getProductById(productModel.getproId()));
-        if (check.isPresent() == true) {
-            return ResponseEntity.status(Error.DUPLICATE_ID).body(
-                    new ResponseObject(false,Error.DUPLICATE_ID_MESSAGE, "")
+    @PostMapping("/addProduct")
+    ResponseEntity<ResponseObject> addnewProduct(@RequestParam("proId") String proId,@RequestParam("proName") String proName, @RequestParam("description")String description,@RequestParam("price") Long price, @RequestParam("cateId") String cateId,@RequestParam("color") String color,@RequestParam("quantity") int quantity,@RequestParam("warrantyMonth") int warrantyMonth,@RequestParam("image") MultipartFile[] image) throws IOException {
+        Optional<ProductModel> check1 = Optional.ofNullable(productService.getProductById(proId));
+        if(proId.length() == 0 ||proName.length() == 0 || description.length() == 0|| price <= 0 || cateId.length() == 0 || color.length() == 0 || warrantyMonth == 0){
+            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
             );
-        } else {
+        }
+        if (check1.isPresent() != true) {
+            ProductModel productModel = new ProductModel();
+            productModel.setproId(proId);
+            productModel.setProName(proName);
+            productModel.setDescription(description);
+            productModel.setCateId(cateId);
+            productModel.setColor(color);
+            productModel.setWarrantyMonth(warrantyMonth);
+            productModel.setQuantity(quantity);
+            productModel.setPrice(price);
+            Pageable paging = PageRequest.of(0,300);
+            Page<ProductModel> check = productService.getAllProduct(paging);
+            List<ProductModel> list =check.getContent();
+            int max = 0;
+            for (int i=0;i<list.size();i++){
+                if(max < list.get(i).get_id()){
+                    max = list.get(i).get_id();
+                }
+            }
+            productModel.set_id(max+1);
+            if(image.length == 1 && !image[0].getOriginalFilename().equals("") || image.length > 1) {
+                ResponseEntity<ResponseObject> aa = imageController.addImage(image, proId);
+                if(aa.getStatusCodeValue()!=200){
+                    return aa;
+                }
+            }
             productService.saveProduct(productModel);
             return ResponseEntity.status(Error.OK).body(
-                    new ResponseObject(true,Error.OK_MESSAGE,"")
+                    new ResponseObject(true,Error.OK_MESSAGE, "")
+            );
+        } else {
+            return ResponseEntity.status(Error.DUPLICATE_ID).body(
+                    new ResponseObject(false,Error.DUPLICATE_ID_MESSAGE,"")
             );
         }
     }
@@ -103,9 +174,14 @@ public class ProductController {
 //                );}
     }
 
-    // POST : localhost:8080/api/v1/product/changestatus?proId=d17866b0-ad70-4501-9ff6-5d46644dff01&status=1
+    // POST : localhost:8080/api/v1/product/statusHide?proId=abc
     @PostMapping("/changestatus")
     ResponseEntity<ResponseObject> changestatus(@RequestParam String proId,@RequestParam int status){
+        if(status > 1 || status < 0 || proId.length()==0){
+                return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+                        new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
+                );
+        }
         ProductModel productModel = productService.getProductById(proId);
         Optional<ProductModel> check = Optional.ofNullable(productModel);
         if(check.isPresent() != true ){
@@ -133,6 +209,11 @@ public class ProductController {
     // POST : localhost:8080/api/v1/product/setPrice?proId=abc&price=100
     @PostMapping("/setPrice")
     ResponseEntity<ResponseObject> setPrice(@RequestParam String proId,@RequestParam Long price){
+        if(proId.length()==0){
+            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
+            );
+        }
         ProductModel productModel = productService.getProductById(proId);
         Optional<ProductModel> check = Optional.ofNullable(productModel);
         if(check.isPresent() == true ){
@@ -148,10 +229,23 @@ public class ProductController {
 
     // POST : localhost:8080/api/v1/product/updateProduct?proId=abc        + JSON(ProductModel)  // ko thay doi dc proId + status
     @PostMapping("updateProduct")
-    ResponseEntity<ResponseObject> updateProduct(@RequestBody ProductModel newProduct){
-        ProductModel productModel = productService.getProductById(newProduct.getproId());
-        Optional<ProductModel> check = Optional.ofNullable(productModel);
-        if(check.isPresent() == true ){
+    ResponseEntity<ResponseObject> updateProduct(@RequestParam("proId") String proId,@RequestParam("proName") String proName, @RequestParam("description")String description,@RequestParam("price") Long price, @RequestParam("cateId") String cateId,@RequestParam("color") String color,@RequestParam("quantity") int quantity,@RequestParam("warrantyMonth") int warrantyMonth){
+        if(proName.length() == 0 || description.length() == 0|| price <= 0 || cateId.length() == 0 || color.length() == 0 || warrantyMonth == 0){
+            return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
+                    new ResponseObject(false,Error.WRONG_ACCESS_RIGHTS_MESSAGE,"")
+            );
+        }
+        ProductModel newProduct = new ProductModel();
+        newProduct.setproId(proId);
+        newProduct.setProName(proName);
+        newProduct.setDescription(description);
+        newProduct.setPrice(price);
+        newProduct.setCateId(cateId);
+        newProduct.setColor(color);
+        newProduct.setWarrantyMonth(warrantyMonth);
+        newProduct.setQuantity(quantity);
+        ProductModel productModel = productService.getProductById(proId);
+        if(productModel != null ){
             productService.updateProduct(newProduct,newProduct.getproId());
             return ResponseEntity.status(Error.OK).body(
                     new ResponseObject(true,Error.OK_MESSAGE,"")
@@ -162,24 +256,38 @@ public class ProductController {
             );}
     }
 
-    // GET : localhost:8080/api/v1/product/search/?type=1&text=mac&page=1
+    // GET : localhost:8080/api/v1/product/search/?type=1&text=Macbook
     @GetMapping("/search")
     ResponseEntity<ResponseObject>search(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,@RequestParam(defaultValue = "1") int type,@RequestParam(defaultValue = "") String text){
+        if(type<0 || type>1){
+            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
+            );
+        }
         Pageable paging = PageRequest.of(page,size);
         Page<ProductModel> check ;
+        Map<String,String> object = new HashMap<String,String>();
+        Map<String,Object> kq = new HashMap<String,Object>();
         if(type == 1){
             check = productService.searchProductUser(paging,text);
         }
         else {
             check = productService.searchProductAdmin(paging,text);
         }
+        List<ProductModel> a =check.getContent();
+        for(int i=0;i<a.size();i++) {
+            if(imageController.getPathImageByID(a.get(i).getproId()) != null){
+                object.put(a.get(i).getproId(),imageController.getPathImageByID(a.get(i).getproId()).getImgPath());
+            }}
+        kq.put("Product",a);
+        kq.put("Image",object);
         if(check.isEmpty() == true){
             return ResponseEntity.status(Error.LIST_EMPTY).body(
                     new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,""));
         }
         else {
             return ResponseEntity.status(Error.OK).body(
-                    new ResponseObject(true,Error.OK_MESSAGE, check)); }
+                    new ResponseObject(true,Error.OK_MESSAGE, kq)); }
     }
     // GET : localhost:8080/api/v1/product/searchUser?proName=abc
 }

@@ -8,7 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -24,6 +26,7 @@ public class ProductServiceImpl implements ProductService {
     public Page<ProductModel> getAllProductUser(Pageable paging) {
         return productRepository.getAllProductUser(paging,1);
     }
+
     @Override
     public ProductModel getProductById(String id) {
         return productRepository.getProductByID(id);
@@ -31,6 +34,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void saveProduct(ProductModel productModel){
+        productModel.setStatus(0);
         productRepository.save(productModel);
     }
     @Override
@@ -81,6 +85,7 @@ public class ProductServiceImpl implements ProductService {
         ProductModel productModel1 = productRepository.getProductByID(proId);
         productModel.set_id(productModel1.get_id());
         productModel.setproId(productModel1.getproId());
+        productModel.setCateId(productModel1.getCateId())   ;
         productModel.setStatus(productModel1.getStatus());
         productRepository.save(productModel);
     }
