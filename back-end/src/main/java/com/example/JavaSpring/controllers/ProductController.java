@@ -26,7 +26,7 @@ public class ProductController {
     ProductService productService;
     @Autowired
     ImageController imageController = new ImageController();
-    // GET all : localhost:8080/api/v1/product/getAllProduct/?Type=0&page=1
+    // GET all : localhost:8080/api/v1/product/getAllProduct/?Type=0&page=1 
     @GetMapping("getAllProduct")
     ResponseEntity<ResponseObject>getAllProduct(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,@RequestParam(defaultValue = "1") int Type){
         if(Type > 1 || Type < 0){
