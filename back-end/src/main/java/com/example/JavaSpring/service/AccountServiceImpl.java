@@ -19,6 +19,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public AccountModel getUserByAccID(String accID) {
+        return accountRepository.getUserByAccID(accID);
+    }
+
+    @Override
     public AccountModel getUserByUrlID(String urlID) {
         return accountRepository.getUserByUrlID(urlID);
     }
@@ -32,4 +37,15 @@ public class AccountServiceImpl implements AccountService {
     public List<AccountModel> getAllAccount() {
         return accountRepository.findAll();
     }
+
+    @Override
+    public void updatePassword(AccountModel accountModel){
+        accountRepository.save(accountModel);
+    }
+
+    @Override
+    public void changestatus(AccountModel accountModel){
+        accountRepository.save(accountModel);
+    }
+
 }

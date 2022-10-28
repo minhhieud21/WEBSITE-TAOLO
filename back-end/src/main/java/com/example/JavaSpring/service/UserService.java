@@ -11,4 +11,5 @@ public interface UserService {
 
     List<UserModel> getAllUser();
 
+    void updateUser(UserModel userModel, String userID);
 }

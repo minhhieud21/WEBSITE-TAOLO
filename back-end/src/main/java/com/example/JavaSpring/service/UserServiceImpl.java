@@ -1,5 +1,6 @@
 package com.example.JavaSpring.service;
 
+import com.example.JavaSpring.models.ProductModel;
 import com.example.JavaSpring.models.UserModel;
 import com.example.JavaSpring.repository.UserRepository1;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +27,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserModel> getAllUser() {
         return userRepository1.findAll();
+    }
+
+
+
+    @Override
+    public void updateUser(UserModel userModel, String userID) {
+        UserModel userModel1 = userRepository1.getUserByUserID(userID);
+        userModel.set_id(userModel1.get_id());
+        userModel.setUserID(userModel1.getUserID());
+        userRepository1.save(userModel);
     }
 }
