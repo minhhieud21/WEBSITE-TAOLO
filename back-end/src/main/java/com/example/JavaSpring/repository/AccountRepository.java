@@ -11,6 +11,9 @@ public interface AccountRepository extends MongoRepository<AccountModel,String> 
     @Query("{username: ?0}") //SELECT * FROM Product WHERE title like ?
     AccountModel getUserByUsername(String username) ;
 
+    @Query("{accID: ?0}") //SELECT * FROM Product WHERE title like ?
+    AccountModel getUserByAccID(String accID) ;
+
     @Query("{urlID: ?0}") //SELECT * FROM Product WHERE title like ?
     AccountModel getUserByUrlID(String urlID) ;
 }

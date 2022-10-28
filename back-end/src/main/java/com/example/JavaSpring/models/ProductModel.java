@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class ProductModel {
 
     @Id
-    private Long _id;
+    private int _id;
     @Field("proId")
     String proId;
     @Field("proName")
@@ -28,7 +28,9 @@ public class ProductModel {
     @Field("status")
     int status;
 
-    public ProductModel(Long _id, String proId, String proName, String description, Long price, String cateId, String color, int quantity, int warrantyMonth, int status) {
+    public ProductModel(){}
+
+    public ProductModel(int _id, String proId, String proName, String description, Long price, String cateId, String color, int quantity, int warrantyMonth, int status) {
         this._id = _id;
         this.proId = proId;
         this.proName = proName;
@@ -56,11 +58,11 @@ public class ProductModel {
                 '}';
     }
 
-    public Long get_id() {
+    public int get_id() {
         return _id;
     }
 
-    public void set_id(Long _id) {
+    public void set_id(int _id) {
         this._id = _id;
     }
 
