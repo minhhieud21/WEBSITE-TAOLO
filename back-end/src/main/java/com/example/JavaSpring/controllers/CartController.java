@@ -79,7 +79,6 @@ public class CartController {
 //        return productController.getProductByProID(proID);
 //    }
     ResponseEntity<ResponseObject> addnewCart(@RequestParam("accID") String accID, @RequestParam("quantity") int quantity, @RequestParam("proID") String proID) {
-
         int ck = 0;
         String cartID = autoIDCart();
         String cartDID = cartDetailController.autoIDCartDetail();
@@ -171,12 +170,14 @@ public class CartController {
         Optional<CartModel> check = Optional.ofNullable(cartModel);
         if(check.isPresent() == true && cartModel.getTotalQuantity() != tQuantity){
             cartService.updateTotalQuantity(cartID, tQuantity);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject(true,"")
+
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(true,Error.OK_MESSAGE,"")
             );}
         else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject(false, "")
+
+            return ResponseEntity.status(Error.LIST_EMPTY).body(
+                    new ResponseObject(false,Error.LIST_EMPTY_MESSAGE,"")
             );}
     }
 
@@ -186,15 +187,18 @@ public class CartController {
         Optional<CartModel> check = Optional.ofNullable(cartModel);
         if(check.isPresent() == true && cartModel.getTotalCost() != tCost){
             cartService.updateTotalCost(cartID, tCost);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject(true,"")
+
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(true,Error.OK_MESSAGE,"")
             );}
         else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject(false, "")
+
+            return ResponseEntity.status(Error.LIST_EMPTY).body(
+                    new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
             );}
     }
 
+    //
     @DeleteMapping("/delete/{cartID}")
     ResponseEntity<ResponseObject> deleteCart(@PathVariable("cartID") String cartID){
         CartModel cartModel = cartService.getCartByID(cartID);
@@ -210,16 +214,36 @@ public class CartController {
                         new ResponseObject(true,Error.OK_MESSAGE,"")
                 );
             }else{
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                        new ResponseObject(false, "")
+                return ResponseEntity.status(Error.LIST_EMPTY).body(
+                        new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
                 );
             }
         }else{
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject(false, "")
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(false,Error.OK_MESSAGE,"")
             );
         }
+
+
     }
 
+
+//    int deleteAllCartDetail(String cartID) {
+//        List<CartDetailModel> check = cartDetailService.getCartDetailByCartID(cartID);
+//        if(!check.isEmpty()){
+//            List<CartDetailModel> cartDetailModelList = cartDetailService.getCartDetailByCartID(cartID);
+//            for(int i = 0;i < cartDetailModelList.size();i++){
+//                cartDetailService.deleteCartDetail(cartDetailModelList.get(i).getCartDID());
+//            }
+//            List<CartDetailModel> check1 = cartDetailService.getCartDetailByCartID(cartID);
+//            if(check1.isEmpty()){
+//                return 1;
+//            }else{
+//                return 0;
+//            }
+//        }else{
+//            return 0;
+//        }
+//    }
 
 }

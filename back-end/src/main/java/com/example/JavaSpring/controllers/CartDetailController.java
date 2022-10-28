@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/api/v1/cartdetail") //localhost:8080/api/v1/cartdetail
-@CrossOrigin(origins ="http://localhost:4200")
+@CrossOrigin(origins ="*")
 
 public class CartDetailController {
 
@@ -67,16 +67,19 @@ public class CartDetailController {
     }
 
     // localhost:8080/api/v1/cartdetail/getCartDetailByCartID?cartID=?
-    @GetMapping("/getCartDetailByCartID")
-    ResponseEntity<ResponseObject> getCartDetailByCartID(String cartID) {
-        List<CartDetailModel> check = cartDetailService.getCartDetailByCartID(cartID);
-        return check.isEmpty() ?
-                ResponseEntity.status(Error.LIST_EMPTY).body(
-                        new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
-                ) :
-                ResponseEntity.status(Error.OK).body(
-                        new ResponseObject(true,Error.OK_MESSAGE, check)
-                );
+//    @GetMapping("/getCartDetailByCartID")
+//    ResponseEntity<ResponseObject> getCartDetailByCartID(String cartID) {
+//        List<CartDetailModel> check = cartDetailService.getCartDetailByCartID(cartID);
+//        return check.isEmpty() ?
+//                ResponseEntity.status(Error.LIST_EMPTY).body(
+//                        new ResponseObject(false, Error.LIST_EMPTY_MESSAGE, "")
+//                ) :
+//                ResponseEntity.status(Error.OK).body(
+//                        new ResponseObject(true, Error.OK_MESSAGE, check)
+//                );
+//    }
+
+
 //    @GetMapping("/{cartDID}")
 //    ResponseEntity<ResponseObject> getCartDetailById(@PathVariable("cartDID") String cartDID) {
 //        Optional<CartDetailModel> check = Optional.ofNullable(cartDetailService.getCartDetailByID(cartDID));
@@ -116,11 +119,11 @@ public class CartDetailController {
         CartDetailModel cartDetailModel = cartDetailService.getCartDetailByProID(cartID,proID);
         Optional<CartDetailModel> check = Optional.ofNullable(cartDetailModel);
         return check.isEmpty() ?
-                ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                        new ResponseObject(false, "")
+                ResponseEntity.status(Error.LIST_EMPTY).body(
+                        new ResponseObject(false,Error.LIST_EMPTY_MESSAGE,"")
                 ) :
-                ResponseEntity.status(HttpStatus.OK).body(
-                        new ResponseObject(true, check)
+                ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true,Error.OK_MESSAGE,"")
                 );
     }
     CartDetailModel getCartDetailByProID(String cartID,String proID) {
@@ -132,26 +135,26 @@ public class CartDetailController {
     ResponseEntity<ResponseObject> addnewCartDetail(@RequestBody CartDetailModel cartDetailModel) {
         Optional<CartDetailModel> check = Optional.ofNullable(cartDetailService.getCartDetailByID(cartDetailModel.getCartDID()));
         if (check.isPresent() == true) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject(false, "")
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(true,Error.OK_MESSAGE,"")
             );
         } else {
             cartDetailService.saveCartDetail(cartDetailModel);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject(true, "")
+            return ResponseEntity.status(Error.LIST_EMPTY).body(
+                    new ResponseObject(false,Error.LIST_EMPTY_MESSAGE,"")
             );
         }
     }
 
     // localhost:8080/api/v1/cartdetail/setQuantity?cartDID=?&quantity=?
-    @PostMapping("/setQuantity")
-    ResponseEntity<ResponseObject> setQuantity(String cartDID, int quantity) {
-        CartDetailModel cartDetailModel = cartDetailService.getCartDetailByID(cartDID);
-        Optional<CartDetailModel> check = Optional.ofNullable(cartDetailModel);
-        if(check.isPresent() == true && cartDetailModel.getQuantity() != quantity){
-            cartDetailService.updateQuantity(cartDID,quantity);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject(true,"")
+//    @PostMapping("/setQuantity")
+//    ResponseEntity<ResponseObject> setQuantity(String cartDID, int quantity) {
+//        CartDetailModel cartDetailModel = cartDetailService.getCartDetailByID(cartDID);
+//        Optional<CartDetailModel> check = Optional.ofNullable(cartDetailModel);
+//        if(check.isPresent() == true && cartDetailModel.getQuantity() != quantity){
+//            cartDetailService.updateQuantity(cartDID,quantity);
+//            return ResponseEntity.status(HttpStatus.OK).body(
+//                    new ResponseObject(true,"")
 
     String autoIDCartDetail(){
         List<CartDetailModel> cartDetailModelList = cartDetailService.getAllCartDetail();
@@ -189,7 +192,6 @@ public class CartDetailController {
         if (check.isPresent() && cartDetailModelNew.getQuantity() == quantity && cartDetailModelNew.getCost() == CostNew){
             return ResponseEntity.status(Error.OK).body(
                     new ResponseObject(true, Error.OK_MESSAGE,"")
->>>>>>> Stashed changes
             );}
         else {
             return ResponseEntity.status(Error.LIST_EMPTY).body(
@@ -208,7 +210,7 @@ public class CartDetailController {
 
 
     //DELETE localhost:8080/api/v1/cartdetail/deleteCartDetail/?
-    @DeleteMapping("/deleteCartDetail")
+    @DeleteMapping("/deleteCartDetail/{cartDID}")
     ResponseEntity<ResponseObject> deleteCartDetail(@PathVariable("cartDID") String cartDID) {
         CartDetailModel cartDetailModel = cartDetailService.getCartDetailByID(cartDID);
         Optional<CartDetailModel> check = Optional.ofNullable(cartDetailModel);
