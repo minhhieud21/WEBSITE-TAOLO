@@ -18,6 +18,6 @@ public interface CartDetailRepository extends MongoRepository<CartDetailModel,St
     @Query("{cartID:/?0/}")
     List<CartDetailModel> getCartDetailByCartID(String cartID);
 
-    @Query("{proID:/?0/}")
-    List<CartDetailModel> getCartDetailByProID(String proID);
+    @Query("{cartID:/?0/,proID:/?1/}")
+    CartDetailModel getCartDetailByProID(String cartID,String proID);
 }

@@ -22,6 +22,7 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
+<<<<<<< Updated upstream
     // GET all : localhost:8080/api/v1/product
     @GetMapping("getAllProductAdmin")
     ResponseEntity<ResponseObject> getAllProductAdmin() {
@@ -33,6 +34,29 @@ public class ProductController {
                 ResponseEntity.status(HttpStatus.OK).body(
                         new ResponseObject(true, check)
                 );
+=======
+    public ProductController() {
+    }
+
+    // GET all : localhost:8080/api/v1/product/getAllProduct/?Type=0&page=1
+    @GetMapping("getAllProduct")
+    ResponseEntity<ResponseObject>getAllProduct(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,@RequestParam(defaultValue = "1") int Type){
+        Pageable paging = PageRequest.of(page,size);
+        Page<ProductModel> check ;
+       if(Type == 1){
+           check = productService.getAllProductUser(paging);
+       }
+       else {
+           check = productService.getAllProduct(paging);
+       }
+        if(check.isEmpty() == true){
+            return ResponseEntity.status(Error.LIST_EMPTY).body(
+                    new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,""));
+        }
+        else {
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(true,Error.OK_MESSAGE, check)); }
+>>>>>>> Stashed changes
     }
 
     @GetMapping("getAllProductUser")
@@ -64,7 +88,17 @@ public class ProductController {
                         new ResponseObject(false, "")
                 );
     }
+<<<<<<< Updated upstream
     //localhost:8080/api/v1/product/getProduct?cateId=?
+=======
+    ProductModel getProductByProID( String id) {
+        return productService.getProductById(id);
+    }
+
+
+    //GET : localhost:8080/api/v1/product/getProduct?cateId=MBA&Type=0
+    // Type = 0 lay theo binh thuong, Type = 1 lay theo a->z , Type = 2 lay theo z->a , Type = 3 lay gia thap den cao , Type = 4 lay gia cao den thap
+>>>>>>> Stashed changes
     @GetMapping("/getProduct")
     ResponseEntity<ResponseObject> getProductByCateID(@RequestParam(required = false) String cateId) {
         List<ProductModel> check = productService.getProductByCateID(cateId);

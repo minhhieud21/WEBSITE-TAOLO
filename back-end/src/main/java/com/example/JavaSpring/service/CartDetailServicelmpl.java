@@ -30,8 +30,8 @@ public class CartDetailServicelmpl implements CartDetailService{
     }
 
     @Override
-    public List<CartDetailModel> getCartDetailByProID(String proID){
-        return cartDetailRepository.getCartDetailByProID(proID);
+    public CartDetailModel getCartDetailByProID(String cartID,String proID){
+        return cartDetailRepository.getCartDetailByProID(cartID,proID);
     }
 
     @Override
@@ -40,9 +40,10 @@ public class CartDetailServicelmpl implements CartDetailService{
     }
 
     @Override
-    public void updateQuantity(String cartDID, int quantity){
+    public void updateCartDetail(String cartDID, int quantity, long cost){
         CartDetailModel cartDetailModel = cartDetailRepository.getCartDetailByID(cartDID);
         cartDetailModel.setQuantity(quantity);
+        cartDetailModel.setCost(cost);
         cartDetailRepository.save(cartDetailModel);
     }
 
@@ -52,5 +53,10 @@ public class CartDetailServicelmpl implements CartDetailService{
         cartDetailRepository.delete(cartDetailModel);
     }
 
+    @Override
+    public void deleteAllCartDetail(String cartID){
+        List<CartDetailModel> cartDetailModel = cartDetailRepository.getCartDetailByCartID(cartID);
+        cartDetailRepository.deleteAll(cartDetailModel);
+    }
 
 }
