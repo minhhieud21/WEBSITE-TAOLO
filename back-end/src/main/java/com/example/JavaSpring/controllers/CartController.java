@@ -5,11 +5,7 @@ import com.example.JavaSpring.models.CartModel;
 import com.example.JavaSpring.models.ProductModel;
 import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.service.CartService;
-<<<<<<< Updated upstream
-=======
-import com.example.JavaSpring.service.CartDetailService;
 import com.example.JavaSpring.util.Error;
->>>>>>> Stashed changes
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
