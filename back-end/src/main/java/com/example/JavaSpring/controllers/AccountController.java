@@ -80,7 +80,7 @@ public class AccountController {
         return kt;
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
         ResponseEntity<ResponseObject> getUserByUsername(@RequestBody(required = false) Map<String,Object> object,@RequestParam(required = false) boolean google_login, @RequestParam(defaultValue = "notthing") String urlID) throws NoSuchAlgorithmException {
         AccountModel check = new AccountModel();
         AccountModel accountModel = new AccountModel();

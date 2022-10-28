@@ -11,12 +11,15 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 
 import AdminLayout from "layouts/Admin.js";
 import Login from "components/Login/Login";
+import UserEdit from "views/UserProfile";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <BrowserRouter>
     <Switch>
       <Route path="/admin/login" component={Login} />
+      <Route path="/admin/user/:userId" component={UserEdit} />
       <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
     </Switch>
   </BrowserRouter>

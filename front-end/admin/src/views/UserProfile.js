@@ -13,7 +13,7 @@ import {
   Col
 } from "react-bootstrap";
 
-function User() {
+function UserEdit() {
   return (
     <>
       <Container fluid>
@@ -212,4 +212,4 @@ function User() {
   );
 }
 
-export default User;
+export default UserEdit;

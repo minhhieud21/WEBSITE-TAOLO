@@ -7,14 +7,11 @@ const Detail = () => {
   const [quantity, setQuantity] = useState(1)
   const [data, setData] = useState({})
   const {proId} = useParams()
-  console.log(proId)
+
   useEffect(() => {
     getProductById(proId).then(data =>{
       setData(data.data)
-      console.log(data.data)
     })
-  
-    
   }, [proId])
   
   return (
