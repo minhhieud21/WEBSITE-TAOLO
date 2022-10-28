@@ -97,7 +97,6 @@ public class CartController {
 //        return productController.getProductByProID(proID);
 //    }
     ResponseEntity<ResponseObject> addnewCart(@RequestParam("accID") String accID, @RequestParam("quantity") int quantity, @RequestParam("proID") String proID) {
-
         int ck = 0;
         String cartID = autoIDCart();
         String cartDID = cartDetailController.autoIDCartDetail();
@@ -192,10 +191,14 @@ public class CartController {
             cartService.updateTotalQuantity(cartID, tQuantity);
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject(true,"")
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(true,Error.OK_MESSAGE,"")
             );}
         else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     new ResponseObject(false, "")
+            return ResponseEntity.status(Error.LIST_EMPTY).body(
+                    new ResponseObject(false,Error.LIST_EMPTY_MESSAGE,"")
             );}
     }
 
@@ -207,10 +210,14 @@ public class CartController {
             cartService.updateTotalCost(cartID, tCost);
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject(true,"")
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(true,Error.OK_MESSAGE,"")
             );}
         else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     new ResponseObject(false, "")
+            return ResponseEntity.status(Error.LIST_EMPTY).body(
+                    new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
             );}
     }
 
@@ -237,11 +244,15 @@ public class CartController {
             }else{
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                         new ResponseObject(false, "")
+                return ResponseEntity.status(Error.LIST_EMPTY).body(
+                        new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
                 );
             }
         }else{
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     new ResponseObject(false, "")
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(false,Error.OK_MESSAGE,"")
             );
         }
 

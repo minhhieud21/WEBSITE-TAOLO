@@ -35,5 +35,8 @@ public class Error {
     public static final int WRONG_ACCESS_RIGHTS = 410;
     public static final String WRONG_ACCESS_RIGHTS_MESSAGE = "Loi quyen truy cap";
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 }
