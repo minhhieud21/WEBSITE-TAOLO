@@ -13,21 +13,21 @@ import {
 import PropTypes from 'prop-types';
 
 function Confirm(props) {
-  const { className, isOpen } = props;
+  const { className, isOpen, productName } = props;
   const [modal,setModal] = useState(isOpen);
-  const toggle = () => setModal(!isOpen);
+  const toggle = () => setModal(!modal);
+  console.log('c',isOpen)
 
   return (
     <div>
       <Modal
         isOpen={modal}
-        toggle={modal}
         className={className}
         backdrop={true}
       >
         <ModalHeader toggle={toggle}>Xác nhận xóa ?</ModalHeader>
         <ModalBody>
-          Bạn có chắc muốn xóa sản phẩm abc... ?
+          Bạn có chắc muốn xóa sản phẩm {productName} ?
         </ModalBody>
         <ModalFooter>
           <Button color="danger" onClick={toggle}>

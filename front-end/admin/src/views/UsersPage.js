@@ -20,23 +20,20 @@ import { productSelector, userSelector } from 'redux/selector';
 import { addProduct, addUser,getAllUsersRedux } from 'redux/actions';
 
 export default function UsersPage() {
-    const dispatch = useDispatch();
+    //const dispatch = useDispatch();
 
     const [open, setOpen] = useState(false)
     const [del, setDel] = useState(false)
     const [userList, setUserList] = useState([])
-    const users = useSelector(userSelector)
+   // const users = useSelector(userSelector)
+    console.log('del',del)
 
     useEffect(() => {
         getAllUsers().then((res) => {
-            dispatch(addUser(
-                res.data
-            ))
             setUserList(res.data)
         })
 
     }, [])
-    console.log(userList)
 
     return (
         <>

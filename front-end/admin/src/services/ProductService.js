@@ -1,8 +1,8 @@
 import axios from 'axios';
+import {API_URL, API_PRODUCT} from 'constant';
 
 const getAllProduct = async () => {
-  //const res = await axios.get(`${process.env.REACT_APP_DEV_ENV}${process.env.REACT_APP_API_PRODUCT}`)
-  const res = await axios.get(`http://localhost:8080/api/v1/product/getAllProduct`)
+  const res = await axios.get(`${API_URL}${API_PRODUCT}`)
   return res.data;
 }
 

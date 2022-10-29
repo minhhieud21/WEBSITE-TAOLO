@@ -12,7 +12,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 
 import AdminLayout from "layouts/Admin.js";
 import Login from "components/Login/Login";
-import UserEdit from "views/UserProfile";
+import UserEdit from "views/UserEdit";
 
 import store  from "./redux/store"
 
@@ -24,6 +24,7 @@ root.render(
       <Route path="/admin/login" component={Login} />
       <Route path="/admin/user/:userId" component={UserEdit} />
       <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
+      <Redirect from="/" to="/admin/dashboard" />
     </Switch>
   </BrowserRouter>
 );
