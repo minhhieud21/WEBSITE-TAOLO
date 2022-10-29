@@ -36,13 +36,7 @@ public class ProductController {
         }
         Pageable paging = PageRequest.of(page,size);
         Page<ProductModel> check ;
-        Map<String,String> object = new HashMap<String,String>();
-        Map<String,Object> kq = new HashMap<String,Object>();
-        if(Type < 0 || Type > 1){
-            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
-                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
-            );
-        }
+        List<Object> kq = new ArrayList<Object>();
         if(Type == 1){
            check = productService.getAllProductUser(paging);
        }
@@ -51,11 +45,22 @@ public class ProductController {
         }
         List<ProductModel> a =check.getContent();
         for(int i=0;i<a.size();i++) {
+            HashMap<String,String> object = new HashMap<String,String>();
+            object.put("_id",String.valueOf(a.get(i).get_id()));
+            object.put("proId",String.valueOf(a.get(i).getproId()));
+            object.put("proName",String.valueOf(a.get(i).getProName()));
+            object.put("description",String.valueOf(a.get(i).getDescription()));
+            object.put("price",String.valueOf(a.get(i).getPrice()));
+            object.put("cateId",String.valueOf(a.get(i).getCateId()));
+            object.put("color",String.valueOf(a.get(i).getColor()));
+            object.put("quantity",String.valueOf(a.get(i).getQuantity()));
+            object.put("warrantyMonth",String.valueOf(a.get(i).getWarrantyMonth()));
+            object.put("status",String.valueOf(a.get(i).getStatus()));
             if(imageController.getPathImageByID(a.get(i).getproId()) != null){
-                object.put(a.get(i).getproId(),imageController.getPathImageByID(a.get(i).getproId()).getImgPath());
-            }}
-        kq.put("Product",a);
-        kq.put("Image",object);
+                object.put("image",imageController.getPathImageByID(a.get(i).getproId()).getImgPath());
+            }
+            kq.add(object);
+        }
         if(check.isEmpty() == true){
             return ResponseEntity.status(Error.LIST_EMPTY).body(
                     new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,""));
@@ -70,13 +75,22 @@ public class ProductController {
     ResponseEntity<ResponseObject> getProductById(@PathVariable("id") String id) {
         Optional<ProductModel> check = Optional.ofNullable(productService.getProductById(id));
         if (check.isPresent()== true ){
-                Map<String,Object> kq = new HashMap<String,Object>();
+                HashMap<String,String> object = new HashMap<String,String>();
                 ProductModel a =check.get();
-                kq.put("Product",a);
+                object.put("_id",String.valueOf(a.get_id()));
+                object.put("proId",String.valueOf(a.getproId()));
+                object.put("proName",String.valueOf(a.getProName()));
+                object.put("description",String.valueOf(a.getDescription()));
+                object.put("price",String.valueOf(a.getPrice()));
+                object.put("cateId",String.valueOf(a.getCateId()));
+                object.put("color",String.valueOf(a.getColor()));
+                object.put("quantity",String.valueOf(a.getQuantity()));
+                object.put("warrantyMonth",String.valueOf(a.getWarrantyMonth()));
+                object.put("status",String.valueOf(a.getStatus()));
                 if(imageController.getPathImage(id).isEmpty()==false){
-                    kq.put("Image",imageController.getPathImage(id));}
+                    object.put("Image",String.valueOf(imageController.getPathImage(id)));}
                 return ResponseEntity.status(Error.OK).body(
-                        new ResponseObject(true, Error.OK_MESSAGE,kq)
+                        new ResponseObject(true, Error.OK_MESSAGE,object)
                 );}
         else{
                 return ResponseEntity.status(Error.NO_VALUE_BY_ID).body(
@@ -87,30 +101,47 @@ public class ProductController {
     //GET : localhost:8080/api/v1/product/getProduct?cateId=MBA&Type=0
     // Type = 0 lay theo binh thuong, Type = 1 lay theo a->z , Type = 2 lay theo z->a , Type = 3 lay gia thap den cao , Type = 4 lay gia cao den thap
     @GetMapping("/getProduct")
-    ResponseEntity<ResponseObject> getProductByCateID(@RequestParam(required = false) String cateId,@RequestParam(required = false) int Type) {
-        if( Type < 0 || Type > 1 || cateId.length()==0){
+    ResponseEntity<ResponseObject> getProductByCateID(@RequestParam(required = false) String cateId,@RequestParam(defaultValue = "0") int Type,@RequestParam(defaultValue = "0") int sort) {
+        if( Type < 0 || Type > 1 || cateId.length()==0 || sort<0 || sort>4){
             return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
                     new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
             );
         }
-        List<ProductModel> check = productService.getProductByCateID(cateId,Type);
-        Map<String,String> object = new HashMap<String,String>();
-        Map<String,Object> kq = new HashMap<String,Object>();
-        if(check.isEmpty() ==true){
+        List<ProductModel> a;
+        if(Type == 0){
+          a   = productService.getProductByCateID(cateId,sort);}
+        else {a = productService.getProductByCateIDUser(cateId,sort);}
+        List<Object> kq = new ArrayList<Object>();
+        if(a.isEmpty() ==true){
                 return ResponseEntity.status(Error.LIST_EMPTY).body(
                         new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,"")
                 );}
         else {
-            for(int i=0;i<check.size();i++) {
-                if(imageController.getPathImageByID(check.get(i).getproId()) != null){
-                    object.put(check.get(i).getproId(),imageController.getPathImageByID(check.get(i).getproId()).getImgPath());
-                }};
-            kq.put("Product",check);
-            kq.put("Image",object);
+            for(int i=0;i<a.size();i++) {
+                HashMap<String,String> object = new HashMap<String,String>();
+                object.put("_id",String.valueOf(a.get(i).get_id()));
+                object.put("proId",String.valueOf(a.get(i).getproId()));
+                object.put("proName",String.valueOf(a.get(i).getProName()));
+                object.put("description",String.valueOf(a.get(i).getDescription()));
+                object.put("price",String.valueOf(a.get(i).getPrice()));
+                object.put("cateId",String.valueOf(a.get(i).getCateId()));
+                object.put("color",String.valueOf(a.get(i).getColor()));
+                object.put("quantity",String.valueOf(a.get(i).getQuantity()));
+                object.put("warrantyMonth",String.valueOf(a.get(i).getWarrantyMonth()));
+                object.put("status",String.valueOf(a.get(i).getStatus()));
+                if(imageController.getPathImageByID(a.get(i).getproId()) != null){
+                    object.put("image",imageController.getPathImageByID(a.get(i).getproId()).getImgPath());
+                }
+                kq.add(object);
+            }
+            if(a.isEmpty() == true){
+                return ResponseEntity.status(Error.LIST_EMPTY).body(
+                        new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,""));
+            }
+            else {
                 return ResponseEntity.status(Error.OK).body(
-                        new ResponseObject(true,Error.OK_MESSAGE, kq)
-                );}
-    }
+                        new ResponseObject(true,Error.OK_MESSAGE,kq)); }
+    }}
 
     // POST : localhost:8080/api/v1/product/add         +    JSON(ProductModel)
     @PostMapping("/addProduct")
@@ -206,27 +237,6 @@ public class ProductController {
         }
     }
 
-    // POST : localhost:8080/api/v1/product/setPrice?proId=abc&price=100
-    @PostMapping("/setPrice")
-    ResponseEntity<ResponseObject> setPrice(@RequestParam String proId,@RequestParam Long price){
-        if(proId.length()==0){
-            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
-                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
-            );
-        }
-        ProductModel productModel = productService.getProductById(proId);
-        Optional<ProductModel> check = Optional.ofNullable(productModel);
-        if(check.isPresent() == true ){
-            productService.updatePrice(proId,price);
-            return ResponseEntity.status(Error.OK).body(
-                    new ResponseObject(true,Error.OK_MESSAGE,"")
-            );}
-        else {
-            return ResponseEntity.status(Error.NO_VALUE_BY_ID).body(
-                    new ResponseObject(false, Error.NO_VALUE_BY_ID_MESSAGE,"")
-            );}
-    }
-
     // POST : localhost:8080/api/v1/product/updateProduct?proId=abc        + JSON(ProductModel)  // ko thay doi dc proId + status
     @PostMapping("updateProduct")
     ResponseEntity<ResponseObject> updateProduct(@RequestParam("proId") String proId,@RequestParam("proName") String proName, @RequestParam("description")String description,@RequestParam("price") Long price, @RequestParam("cateId") String cateId,@RequestParam("color") String color,@RequestParam("quantity") int quantity,@RequestParam("warrantyMonth") int warrantyMonth){
@@ -266,8 +276,7 @@ public class ProductController {
         }
         Pageable paging = PageRequest.of(page,size);
         Page<ProductModel> check ;
-        Map<String,String> object = new HashMap<String,String>();
-        Map<String,Object> kq = new HashMap<String,Object>();
+        List<Object> kq = new ArrayList<Object>();
         if(type == 1){
             check = productService.searchProductUser(paging,text);
         }
@@ -276,11 +285,22 @@ public class ProductController {
         }
         List<ProductModel> a =check.getContent();
         for(int i=0;i<a.size();i++) {
+            HashMap<String,String> object = new HashMap<String,String>();
+            object.put("_id",String.valueOf(a.get(i).get_id()));
+            object.put("proId",String.valueOf(a.get(i).getproId()));
+            object.put("proName",String.valueOf(a.get(i).getProName()));
+            object.put("description",String.valueOf(a.get(i).getDescription()));
+            object.put("price",String.valueOf(a.get(i).getPrice()));
+            object.put("cateId",String.valueOf(a.get(i).getCateId()));
+            object.put("color",String.valueOf(a.get(i).getColor()));
+            object.put("quantity",String.valueOf(a.get(i).getQuantity()));
+            object.put("warrantyMonth",String.valueOf(a.get(i).getWarrantyMonth()));
+            object.put("status",String.valueOf(a.get(i).getStatus()));
             if(imageController.getPathImageByID(a.get(i).getproId()) != null){
-                object.put(a.get(i).getproId(),imageController.getPathImageByID(a.get(i).getproId()).getImgPath());
-            }}
-        kq.put("Product",a);
-        kq.put("Image",object);
+                object.put("image",imageController.getPathImageByID(a.get(i).getproId()).getImgPath());
+            }
+            kq.add(object);
+        }
         if(check.isEmpty() == true){
             return ResponseEntity.status(Error.LIST_EMPTY).body(
                     new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,""));
@@ -289,5 +309,4 @@ public class ProductController {
             return ResponseEntity.status(Error.OK).body(
                     new ResponseObject(true,Error.OK_MESSAGE, kq)); }
     }
-    // GET : localhost:8080/api/v1/product/searchUser?proName=abc
 }

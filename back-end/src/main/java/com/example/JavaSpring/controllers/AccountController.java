@@ -1,7 +1,6 @@
 package com.example.JavaSpring.controllers;
 
 import com.example.JavaSpring.models.AccountModel;
-import com.example.JavaSpring.models.ProductModel;
 import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.models.UserModel;
 import com.example.JavaSpring.service.AccountService;

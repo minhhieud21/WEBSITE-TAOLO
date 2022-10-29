@@ -5,6 +5,7 @@ import com.example.JavaSpring.models.CartModel;
 import com.example.JavaSpring.models.ProductModel;
 import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.service.CartService;
+import com.example.JavaSpring.service.ProductService;
 import com.example.JavaSpring.util.Error;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class CartController {
     @Autowired
     CartDetailController cartDetailController = new CartDetailController();
     @Autowired
-    ProductController productController = new ProductController();
+//    ProductService productService = new Pro();
 
 
 
@@ -74,55 +75,55 @@ public class CartController {
     }
 
     // POST localhost:8080/api/v1/cart/addCart
-    @PostMapping("/addCart")
+//    @PostMapping("/addCart")
 //    ProductModel test(@RequestParam("accID") String accID, @RequestParam("quantity") int quantity, @RequestParam("proID") String proID){
 //        return productController.getProductByProID(proID);
 //    }
-    ResponseEntity<ResponseObject> addnewCart(@RequestParam("accID") String accID, @RequestParam("quantity") int quantity, @RequestParam("proID") String proID) {
-        int ck = 0;
-        String cartID = autoIDCart();
-        String cartDID = cartDetailController.autoIDCartDetail();
-        ProductModel CurPro = productController.getProductByProID(proID);
-        Optional<CartModel> check = Optional.ofNullable(cartService.getCartByAccID(accID));
-        long PriceNew = CurPro.getPrice() * quantity;
-        if(check.isEmpty()){
-            CartModel cartModelNew = new CartModel(null,cartID,accID,quantity,PriceNew);
-            CartDetailModel cartDetailModelNew = new CartDetailModel(null,cartDID,cartID,proID,quantity,PriceNew);
-            cartService.saveCart(cartModelNew);
-            cartDetailController.addnewCartDetail(cartDetailModelNew);
-            Optional<CartModel> check1 = Optional.ofNullable(cartService.getCartByID(cartID));
-            Optional<CartDetailModel> check2 = Optional.ofNullable(cartDetailController.getCartDetailById(cartDID));
-            if (check1.isPresent() == true && check2.isPresent() == true) {
-                ck = 1;
-            }
-        }else{
-            CartModel CurCart = cartService.getCartByAccID(accID);
-            Optional<CartDetailModel> check1 = Optional.ofNullable(cartDetailController.getCartDetailByProID(CurCart.getCartID(),proID));
-            if(check1.isPresent()){
-                CartDetailModel CurCartDetail = cartDetailController.getCartDetailByProID(CurCart.getCartID(),proID);
-                int QuantityNew = CurCartDetail.getQuantity() + quantity;
-                long CostNew = CurPro.getPrice() * QuantityNew;
-                ck = cartDetailController.updateCart(CurCartDetail.getCartDID(),QuantityNew,CostNew);
-            }else{
-                CartDetailModel CartDetailNew = new CartDetailModel(null,cartDID,CurCart.getCartID(),proID,quantity,PriceNew);
-                cartDetailController.addnewCartDetail(CartDetailNew);
-                Optional<CartDetailModel> check2 = Optional.ofNullable(cartDetailController.getCartDetailById(CartDetailNew.getCartDID()));
-                if(check2.isPresent()){
-                    ck = 1;
-                }
-            }
-            updateCart(CurCart.getCartID(),cartDetailController.autoLoadQuantity(CurCart.getCartID()),cartDetailController.autoLoadQCost(CurCart.getCartID()));
-        }
-        if (ck == 1) {
-            return ResponseEntity.status(Error.OK).body(
-                    new ResponseObject(true, Error.OK_MESSAGE, "")
-            );
-        } else {
-            return ResponseEntity.status(Error.FAIL).body(
-                    new ResponseObject(false, Error.FAIL_MESSAGE,"")
-            );
-        }
-    }
+//    ResponseEntity<ResponseObject> addnewCart(@RequestParam("accID") String accID, @RequestParam("quantity") int quantity, @RequestParam("proID") String proID) {
+//        int ck = 0;
+//        String cartID = autoIDCart();
+//        String cartDID = cartDetailController.autoIDCartDetail();
+//        ProductModel CurPro = .getProductById(proID);
+//        Optional<CartModel> check = Optional.ofNullable(cartService.getCartByAccID(accID));
+//        long PriceNew = CurPro.getPrice() * quantity;productController
+//        if(check.isEmpty()){
+//            CartModel cartModelNew = new CartModel(null,cartID,accID,quantity,PriceNew);
+//            CartDetailModel cartDetailModelNew = new CartDetailModel(null,cartDID,cartID,proID,quantity,PriceNew);
+//            cartService.saveCart(cartModelNew);
+//            cartDetailController.addnewCartDetail(cartDetailModelNew);
+//            Optional<CartModel> check1 = Optional.ofNullable(cartService.getCartByID(cartID));
+//            Optional<CartDetailModel> check2 = Optional.ofNullable(cartDetailController.getCartDetailById(cartDID));
+//            if (check1.isPresent() == true && check2.isPresent() == true) {
+//                ck = 1;
+//            }
+//        }else{
+//            CartModel CurCart = cartService.getCartByAccID(accID);
+//            Optional<CartDetailModel> check1 = Optional.ofNullable(cartDetailController.getCartDetailByProID(CurCart.getCartID(),proID));
+//            if(check1.isPresent()){
+//                CartDetailModel CurCartDetail = cartDetailController.getCartDetailByProID(CurCart.getCartID(),proID);
+//                int QuantityNew = CurCartDetail.getQuantity() + quantity;
+//                long CostNew = CurPro.getPrice() * QuantityNew;
+//                ck = cartDetailController.updateCart(CurCartDetail.getCartDID(),QuantityNew,CostNew);
+//            }else{
+//                CartDetailModel CartDetailNew = new CartDetailModel(null,cartDID,CurCart.getCartID(),proID,quantity,PriceNew);
+//                cartDetailController.addnewCartDetail(CartDetailNew);
+//                Optional<CartDetailModel> check2 = Optional.ofNullable(cartDetailController.getCartDetailById(CartDetailNew.getCartDID()));
+//                if(check2.isPresent()){
+//                    ck = 1;
+//                }
+//            }
+//            updateCart(CurCart.getCartID(),cartDetailController.autoLoadQuantity(CurCart.getCartID()),cartDetailController.autoLoadQCost(CurCart.getCartID()));
+//        }
+//        if (ck == 1) {
+//            return ResponseEntity.status(Error.OK).body(
+//                    new ResponseObject(true, Error.OK_MESSAGE, "")
+//            );
+//        } else {
+//            return ResponseEntity.status(Error.FAIL).body(
+//                    new ResponseObject(false, Error.FAIL_MESSAGE,"")
+//            );
+//        }
+//    }
 
 
     String autoIDCart(){

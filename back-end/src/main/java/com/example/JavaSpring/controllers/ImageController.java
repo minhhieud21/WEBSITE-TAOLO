@@ -56,15 +56,6 @@ public class ImageController {
         return  imageModels;
     }
 
-//    @PostMapping("/changestatus")
-//    ResponseEntity<ResponseObject> changestatus(@RequestParam int status){
-//        List<ImageModel> imageModels = imageService.getAllImage();
-//        for (int i =0 ;i<imageModels.size();i++){
-//            imageService.statusHide(imageModels.get(i).getProID());}
-//            return ResponseEntity.status(Error.OK).body(
-//                    new ResponseObject(true,Error.OK_MESSAGE,"")
-//            );
-//        }
     @PostMapping("/add")
     ResponseEntity<ResponseObject> addImage(@RequestParam("image") MultipartFile[] image,@RequestParam("proID") String proID) throws IOException {
         if(image.length == 1 && image[0].getOriginalFilename().equals("") == true ) {
