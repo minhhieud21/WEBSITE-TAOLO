@@ -10,8 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class ImageModel {
     @Id
     private String _id;
-    @Field("imgID")
-    String imgID;
     @Field("proID")
     String proID;
     @Field("imgPath")
@@ -21,9 +19,8 @@ public class ImageModel {
 
     public ImageModel(){}
 
-    public ImageModel(String _id, String imgID, String proID, String imgPath, int status) {
+    public ImageModel(String _id,String proID, String imgPath, int status) {
         this._id = _id;
-        this.imgID = imgID;
         this.proID = proID;
         this.imgPath = imgPath;
         this.status = status;
@@ -33,7 +30,6 @@ public class ImageModel {
     public String toString() {
         return "ImageModel{" +
                 "_id='" + _id + '\'' +
-                ", imgID='" + imgID + '\'' +
                 ", proID='" + proID + '\'' +
                 ", imgPath='" + imgPath + '\'' +
                 ", status=" + status +
@@ -48,13 +44,7 @@ public class ImageModel {
         this._id = _id;
     }
 
-    public String getImgID() {
-        return imgID;
-    }
 
-    public void setImgID(String imgID) {
-        this.imgID = imgID;
-    }
 
     public String getProID() {
         return proID;

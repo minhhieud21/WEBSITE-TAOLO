@@ -12,13 +12,14 @@ public interface CartDetailService {
 
     List<CartDetailModel> getCartDetailByCartID(String cartID);
 
-    List<CartDetailModel> getCartDetailByProID(String proID);
+    CartDetailModel getCartDetailByProID(String cartID,String proID);
 
     void saveCartDetail(CartDetailModel cartDetailModel);
 
-    void updateQuantity(String cartDID, int quantity);
+    void updateCartDetail(String cartDID, int quantity, long cost);
 
     void deleteCartDetail(String cartDID);
 
+    void deleteAllCartDetail(String cartID);
 
 }

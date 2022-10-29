@@ -1,6 +1,7 @@
+
 const initState = {
   product: [],
-
+  users: []
 }
 
 const rootReducer = (state = initState, action) => {
@@ -10,6 +11,14 @@ const rootReducer = (state = initState, action) => {
         ...state,
         product: [
           ...state.product,
+          action.payload
+        ]
+      }
+    case 'user/addUser':
+      return {
+        ...state,
+        users: [
+          ...state.users,
           action.payload
         ]
       }

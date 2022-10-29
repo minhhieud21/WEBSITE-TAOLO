@@ -5,6 +5,9 @@ public class Error {
     public static final int OK = 200;
     public static final String OK_MESSAGE = "Success";
 
+    public static final int FAIL = 201;
+    public static final String FAIL_MESSAGE = "Fail";
+
     public static final int DUPLICATE_ID = 401;
     public static final String DUPLICATE_ID_MESSAGE = "Trung id!";
 
@@ -31,4 +34,6 @@ public class Error {
     public static final String WRONG_STATUS_MESSAGE = "Dang o trang thai bi khoa";
     public static final int WRONG_ACCESS_RIGHTS = 410;
     public static final String WRONG_ACCESS_RIGHTS_MESSAGE = "Loi quyen truy cap";
+    public static final int NOT_IMAGE = 411;
+    public static final String NOT_IMAGE_MESSAGE = "Day khong phai la file anh";
 }

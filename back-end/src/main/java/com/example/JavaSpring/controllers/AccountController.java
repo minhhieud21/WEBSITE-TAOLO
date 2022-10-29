@@ -1,6 +1,7 @@
 package com.example.JavaSpring.controllers;
 
 import com.example.JavaSpring.models.AccountModel;
+import com.example.JavaSpring.models.ProductModel;
 import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.models.UserModel;
 import com.example.JavaSpring.service.AccountService;
@@ -72,6 +73,7 @@ public class AccountController {
         }
         return ketqua;
     }
+
     public int Number(String text) {
         char kt1 = text.charAt(2);
         char kt2 = text.charAt(3);
@@ -153,8 +155,13 @@ public class AccountController {
     }
 
     @PostMapping("/addUser")
-    ResponseEntity<ResponseObject> addnewUser(@RequestBody Map<String,Object> object,@RequestParam(defaultValue = "1") int type) throws NoSuchAlgorithmException {
-        AccountModel check = accountService.getUserByUsername(String.valueOf(object.get("username")));
+    ResponseEntity<ResponseObject> adduserModel(@RequestParam("username") String username,@RequestParam("password") String password, @RequestParam("name")String name,@RequestParam("phone") String phone,@RequestParam("address") String address, @RequestParam("gmail")String gmail,@RequestParam("sex") int sex, @RequestParam("age")int age,@RequestParam(defaultValue = "1") int type) throws NoSuchAlgorithmException {
+        if(username.length() == 0||password.length()==0||name.length()==0||phone.length()==0||address.length()==0||gmail.length()==0||phone.length()<10||password.length()<8||gmail.length()<=9){
+            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
+            );
+        }
+        AccountModel check = accountService.getUserByUsername(username);
         if (check != null) {
             return ResponseEntity.status(Error.DUPLICATE_ID).body(
                     new ResponseObject(false, Error.DUPLICATE_ID_MESSAGE, "")
@@ -183,19 +190,20 @@ public class AccountController {
             else if(type == 0){
                 accountModel.setAccID(createAdminID(dsAccount.get(vt).getAccID()));
             }
-            accountModel.setUsername(String.valueOf(object.get("username")));
-            String password = convertHashToString(String.valueOf(object.get("password")));
-            accountModel.setPassword(password);
+            accountModel.setUsername(username);
+            String password1 = convertHashToString(password);
+            accountModel.setPassword(password1);
             accountModel.setStatus(1);
             accountModel.setGoogle_login(false);
             accountModel.setUrlID("nothave");
             accountService.saveAccount(accountModel);
-            userModel.setName(String.valueOf(object.get("name")));
-            userModel.setPhone(String.valueOf(object.get("phone")));
-            userModel.setAddress(String.valueOf(object.get("address")));
-            userModel.setGmail(String.valueOf(object.get("gmail")));
-            userModel.setSex(Integer.parseInt(String.valueOf(object.get("sex"))));
-            userModel.setAge(Integer.parseInt(String.valueOf(object.get("age"))));
+            userModel.setUserID(accountModel.getAccID());
+            userModel.setName(name);
+            userModel.setPhone(phone);
+            userModel.setAddress(address);
+            userModel.setGmail(gmail);
+            userModel.setSex(sex);
+            userModel.setAge(age);
             userService.saveUser(userModel);
             return ResponseEntity.status(Error.OK).body(
                     new ResponseObject(true, Error.OK_MESSAGE, "")
@@ -203,4 +211,76 @@ public class AccountController {
         }
     }
 
+    @PostMapping("/setPassword")
+    ResponseEntity<ResponseObject> setPassword(@RequestParam("accID") String accID,@RequestParam("oldpassword") String oldpassword, @RequestParam("newpassword")String newpassword,@RequestParam("newpassword1") String newpassword1) throws NoSuchAlgorithmException {
+        AccountModel check = accountService.getUserByAccID(accID);
+        if(accID.length()==0||oldpassword.length()==0||newpassword.length()==0||newpassword1.length()==0){
+            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
+            );
+        }
+        if (check == null) {
+            return ResponseEntity.status(Error.DUPLICATE_ID).body(
+                    new ResponseObject(false, "Ko co Account nay", "")
+            );}
+        String passwordold = convertHashToString(oldpassword);
+        if(passwordold.equals(check.getPassword()) == false){
+            return ResponseEntity.status(Error.WRONG_PASSWORD).body(
+                    new ResponseObject(false, Error.WRONG_PASSWORD_MESSAGE, "")
+            );
+        }
+        for(int i=0;i<newpassword.length();i++){
+            if(String.valueOf(newpassword.charAt(i)).equals(" ") == true){
+                return ResponseEntity.status(Error.WRONG_PASSWORD).body(
+                    new ResponseObject(false, "Password khong dc co khoang chan", "")
+            );}
+        }
+        if(newpassword.length()<= 7){
+            return ResponseEntity.status(Error.WRONG_PASSWORD).body(
+                    new ResponseObject(false, "Password qua ngan", "")
+            );
+        }
+        if(newpassword.equals(newpassword1) != true){
+            return ResponseEntity.status(Error.WRONG_PASSWORD).body(
+                    new ResponseObject(false, "Password nhap lai ko giong", "")
+            );
+        }
+            String password1 = convertHashToString(newpassword);
+            check.setPassword(password1);
+            accountService.updatePassword(check);
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(true, Error.OK_MESSAGE, "")
+            );
+        }
+    @PostMapping("/changestatus")
+    ResponseEntity<ResponseObject> changestatus(@RequestParam String accID,@RequestParam int status){
+        AccountModel check = accountService.getUserByAccID(accID);
+        if((status > 1 && status < 0)||accID.length()==0){
+            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
+            );
+        }
+        if(check == null ){
+            return ResponseEntity.status(Error.NO_VALUE_BY_ID).body(
+                    new ResponseObject(false,Error.NO_VALUE_BY_ID_MESSAGE, "")
+            );}
+        else if(check.getStatus() == status) {
+            return ResponseEntity.status(Error.FAIL_STATUS_CHANGE).body(
+                    new ResponseObject(false, Error.FAIL_STATUS_CHANGE_MESSAGE,"")
+            );}
+        else if(status == 0) {
+            check.setStatus(0);
+            accountService.changestatus(check);
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(true,Error.OK_MESSAGE,"")
+            );
+        }
+        else {
+            check.setStatus(1);
+            accountService.changestatus(check);
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(true,Error.OK_MESSAGE,"")
+            );
+        }
+    }
 }
