@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import {
   Button,
   Modal,
@@ -11,17 +11,17 @@ import {
   FormGroup,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
+import Product from 'views/Product';
 
 function Confirm(props) {
   const { className, isOpen, productName } = props;
-  const [modal,setModal] = useState(isOpen);
-  const toggle = () => setModal(!modal);
-  console.log('c',isOpen)
-
+  const {del, setDel} = useContext();
+  const toggle = () => setDel(!del)
+  console.log(del)
   return (
     <div>
       <Modal
-        isOpen={modal}
+        isOpen={del}
         className={className}
         backdrop={true}
       >

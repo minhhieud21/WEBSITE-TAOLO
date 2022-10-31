@@ -13,8 +13,8 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import AdminLayout from "layouts/Admin.js";
 import Login from "components/Login/Login";
 import UserEdit from "views/UserEdit";
-
-import store  from "./redux/store"
+import ProductEdit from "views/ProductEdit";
+import ProductAdd from "views/ProductAdd";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -23,6 +23,8 @@ root.render(
     <Switch>
       <Route path="/admin/login" component={Login} />
       <Route path="/admin/user/:userId" component={UserEdit} />
+      <Route path="/admin/product/add" component={ProductAdd} />
+      <Route path="/admin/product/:productId" component={ProductEdit} />
       <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
       <Redirect from="/" to="/admin/dashboard" />
     </Switch>
