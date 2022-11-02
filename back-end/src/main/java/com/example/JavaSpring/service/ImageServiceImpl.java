@@ -1,7 +1,6 @@
 package com.example.JavaSpring.service;
 
 import com.example.JavaSpring.models.ImageModel;
-import com.example.JavaSpring.models.ProductModel;
 import com.example.JavaSpring.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,6 +49,7 @@ public class ImageServiceImpl implements ImageService{
             throw new IOException("Could not save image file: " + fileName, ioe);
         }
     }
+
     @Override
     public void saveImage(String imgPath, String proID){
         ImageModel imageModel = new ImageModel();

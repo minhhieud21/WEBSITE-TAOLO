@@ -7,6 +7,8 @@ import java.util.List;
 public interface UserService {
     UserModel getUserByUserID(String username);
 
+    UserModel getUserByEmail(String email);
+
     void saveUser(UserModel accountModel);
 
     List<UserModel> getAllUser();

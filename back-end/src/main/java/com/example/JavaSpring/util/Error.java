@@ -5,7 +5,7 @@ public class Error {
     public static final int OK = 200;
     public static final String OK_MESSAGE = "Success";
 
-    public static final int FAIL = 201;
+    public static final int FAIL = 301;
     public static final String FAIL_MESSAGE = "Fail";
 
     public static final int DUPLICATE_ID = 401;

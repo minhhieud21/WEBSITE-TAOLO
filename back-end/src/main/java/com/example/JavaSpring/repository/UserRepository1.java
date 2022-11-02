@@ -10,4 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository1 extends MongoRepository<UserModel,String> {
     @Query("{userID: ?0}") //SELECT * FROM Product WHERE title like ?
     UserModel getUserByUserID(String userID) ;
+
+    @Query("{'gmail': ?0}") //SELECT * FROM Product WHERE title like ?
+    UserModel getUserByEmail(String gmail) ;
 }

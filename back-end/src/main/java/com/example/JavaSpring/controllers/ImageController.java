@@ -53,6 +53,7 @@ public class ImageController {
     @GetMapping("/getAllImage")
     List<ImageModel> getAllImage (){
         List<ImageModel> imageModels = imageService.getAllImage();
+        System.out.println(imageModels);
         return  imageModels;
     }
 
@@ -111,7 +112,6 @@ public class ImageController {
             );
         }
     }
-
 
     @PostMapping("/mainImage")
     ResponseEntity<ResponseObject> mainImage(@RequestParam("nameImage") String nameImage,@RequestParam("proID") String proID){

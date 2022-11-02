@@ -1,13 +1,13 @@
 package com.example.JavaSpring.controllers;
 
-import com.example.JavaSpring.models.UserModel;
 import com.example.JavaSpring.models.ResponseObject;
+import com.example.JavaSpring.models.UserModel;
 import com.example.JavaSpring.service.UserService;
 import com.example.JavaSpring.util.Error;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 
@@ -53,12 +53,18 @@ public class UserController {
                     new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
             );
         }
+        UserModel userModeltemp = userService.getUserByEmail(gmail.toLowerCase());
+        if (userModeltemp != null) {
+            return ResponseEntity.status(Error.DUPLICATE_ID).body(
+                    new ResponseObject(false, "Gmail nay da dc dang ky roi", "")
+            );
+        }
         UserModel newUser = new UserModel();
         newUser.setUserID(userID);
         newUser.setName(name);
         newUser.setPhone(phone);
         newUser.setAddress(address);
-        newUser.setGmail(gmail);
+        newUser.setGmail(gmail.toLowerCase());
         newUser.setAge(age);
         newUser.setSex(sex);
         UserModel userModel1 = userService.getUserByUserID(newUser.getUserID());

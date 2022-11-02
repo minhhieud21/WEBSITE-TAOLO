@@ -4,17 +4,22 @@ import com.example.JavaSpring.models.AccountModel;
 import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.models.UserModel;
 import com.example.JavaSpring.service.AccountService;
+import com.example.JavaSpring.service.EmailService;
 import com.example.JavaSpring.service.UserService;
 import com.example.JavaSpring.util.Error;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 
 @RestController
@@ -26,6 +31,8 @@ public class AccountController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    EmailService emailService;
     public String convertHashToString(String text) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("MD5");
         byte[] hashInBytes = md.digest(text.getBytes(StandardCharsets.UTF_8));
@@ -161,6 +168,12 @@ public class AccountController {
             );
         }
         AccountModel check = accountService.getUserByUsername(username);
+        UserModel userModeltemp = userService.getUserByEmail(gmail.toLowerCase());
+        if (userModeltemp != null) {
+            return ResponseEntity.status(Error.DUPLICATE_ID).body(
+                    new ResponseObject(false, "Gmail nay da dc dang ky roi", "")
+            );
+        }
         if (check != null) {
             return ResponseEntity.status(Error.DUPLICATE_ID).body(
                     new ResponseObject(false, Error.DUPLICATE_ID_MESSAGE, "")
@@ -191,6 +204,12 @@ public class AccountController {
             }
             accountModel.setUsername(username);
             String password1 = convertHashToString(password);
+            for(int o=0;o<password1.length();o++){
+                if(String.valueOf(password1.charAt(o)).equals(" ") == true){
+                    return ResponseEntity.status(Error.WRONG_PASSWORD).body(
+                            new ResponseObject(false, "Password khong dc co khoang chan", "")
+                    );}
+            }
             accountModel.setPassword(password1);
             accountModel.setStatus(1);
             accountModel.setGoogle_login(false);
@@ -200,7 +219,7 @@ public class AccountController {
             userModel.setName(name);
             userModel.setPhone(phone);
             userModel.setAddress(address);
-            userModel.setGmail(gmail);
+            userModel.setGmail(gmail.toLowerCase());
             userModel.setSex(sex);
             userModel.setAge(age);
             userService.saveUser(userModel);
@@ -282,4 +301,119 @@ public class AccountController {
             );
         }
     }
+
+    String generatePassword() {
+        String capitalCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz";
+        String specialCharacters = "!@#$";
+        String numbers = "1234567890";
+        String combinedChars = capitalCaseLetters + lowerCaseLetters + specialCharacters + numbers;
+        Random random = new Random();
+        char[] password = new char[8];
+        password[0] = lowerCaseLetters.charAt(random.nextInt(lowerCaseLetters.length()));
+        password[1] = capitalCaseLetters.charAt(random.nextInt(capitalCaseLetters.length()));
+        password[2] = specialCharacters.charAt(random.nextInt(specialCharacters.length()));
+        password[3] = numbers.charAt(random.nextInt(numbers.length()));
+        for(int i = 4; i< 8 ; i++) {
+            password[i] = combinedChars.charAt(random.nextInt(combinedChars.length()));
+        }
+        return String.valueOf(password);
+    }
+
+    @PostMapping("/resetpassword")
+    ResponseEntity<ResponseObject> resetPassword(@RequestBody Map<String,Object> object,HttpServletResponse response) throws NoSuchAlgorithmException {
+        if(String.valueOf(object.get("gmail")).length()==0){
+            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
+            );
+        }
+        UserModel userModeltemp = userService.getUserByEmail(String.valueOf(object.get("gmail")).toLowerCase());
+        if (userModeltemp == null) {
+            return ResponseEntity.status(Error.NO_VALUE_BY_ID).body(
+                    new ResponseObject(false, "Gmail nay khong ton tai trong he thong", "")
+            );
+        }
+        Cookie UserID = new Cookie("Verified_account",userModeltemp.getUserID()); //bake cookie
+        UserID.setMaxAge(200);
+        String mst =generatePassword();
+        String mstnew = convertHashToString(mst);
+        Cookie Msttaolo = new Cookie("Verification_code",mstnew); //bake cookie
+        Msttaolo.setMaxAge(200);
+        boolean kt = emailService.sendSimpleMail(String.valueOf(object.get("gmail")),mst,String.valueOf(object.get("link_website")));
+        if(kt == true){
+            response.addCookie(Msttaolo);
+            response.addCookie(UserID);
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(true,Error.OK_MESSAGE,"")
+            );
+        }
+        else {
+            return ResponseEntity.status(Error.FAIL).body(
+                    new ResponseObject(true,Error.FAIL_MESSAGE+" sent mail","")
+            );
+        }
+    }
+
+    @PostMapping("/getnewpassword")
+    ResponseEntity<ResponseObject> getNewpassword(HttpServletRequest request,@RequestBody Map<String,Object> object) throws NoSuchAlgorithmException {
+        if(String.valueOf(object.get("Verification_code")).length()==0 || String.valueOf(object.get("password_new")).length()==0 || String.valueOf(object.get("password_confirm")).length()==0){
+            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
+            );
+        }
+        if(String.valueOf(object.get("password_new")).equals(String.valueOf(object.get("password_confirm"))) == false){
+            return ResponseEntity.status(Error.WRONG_PASSWORD).body(
+                    new ResponseObject(false, "Hai pass word khong giong nhau", "")
+            );
+        }
+        for(int i=0;i<String.valueOf(object.get("password_new")).length();i++){
+            if(String.valueOf(String.valueOf(object.get("password_new")).charAt(i)).equals(" ") == true){
+                return ResponseEntity.status(Error.WRONG_PASSWORD).body(
+                        new ResponseObject(false, "Password khong dc co khoang chan", "")
+                );}
+        }
+        if(String.valueOf(object.get("password_new")).length()<= 7){
+            return ResponseEntity.status(Error.WRONG_PASSWORD).body(
+                    new ResponseObject(false, "Password qua ngan", "")
+            );
+        }
+        Cookie[] cookies = null;
+        cookies = request.getCookies();
+        Cookie cookie = null;
+        if(cookies!= null){
+            for(int i =0 ; i < cookies.length ; i++){
+                if("Verification_code".equals(cookies[i].getName())){
+                    if(convertHashToString(String.valueOf(object.get("Verification_code"))).equals(cookies[i].getValue())){
+                        for(int j = 0;j<cookies.length ;j++){
+                            if("Verified_account".equals(cookies[j].getName())){
+                                AccountModel check = accountService.getUserByAccID(cookies[j].getValue());
+                                String password = convertHashToString(String.valueOf(object.get("password_new")));
+                                if(check.getPassword().equals(password) == true){
+                                    return ResponseEntity.status(Error.WRONG_PASSWORD).body(
+                                            new ResponseObject(false, "Mat khau moi trung voi mat khau cu", "")
+                                    );
+                                }
+                                check.setPassword(password);
+                                accountService.updatePassword(check);
+                                return ResponseEntity.status(Error.OK).body(
+                                        new ResponseObject(true, Error.OK_MESSAGE, "")
+                                );
+                            }
+                        }
+                    }
+                    else {
+                        return ResponseEntity.status(Error.FAIL).body(
+                                new ResponseObject(false, "Ma xac minh sai", "")
+                        );
+                    }
+                }
+            }}
+        else {
+            return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
+                    new ResponseObject(false, Error.WRONG_ACCESS_RIGHTS_MESSAGE, "")
+            );
+        }
+        return null;
+    }
+
 }

@@ -9,6 +9,5 @@ import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConf
 public class JavaSpringApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(JavaSpringApplication.class, args);
-
 	}
 }
