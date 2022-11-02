@@ -76,12 +76,23 @@ public class ImageController {
         String uploadDir = "src/Image/"+proID+"/";
         for(int i = 0;i<image.length;i++){
             String fileName = StringUtils.cleanPath(image[i].getOriginalFilename());
-            imageService.saveImage("/Image/"+proID+"/"+fileName,proID);
+            imageService.saveImage(fileName,proID);
             imageService.FileUpload(uploadDir,fileName,image[i]);
         }
         return ResponseEntity.status(Error.OK).body(
                 new ResponseObject(true,Error.OK_MESSAGE,"")
         );
+    }
+
+    @PostMapping("/update")
+    void update(){
+        List<ImageModel> check = this.getAllImage();
+        for (int i = 0 ; i < check.size();i++){
+            ImageModel a = check.get(i);
+            String x = a.getImgPath().replace(a.getProID()+"/","");
+            a.setImgPath(x);
+            imageService.update(a);
+        }
     }
 
     @PostMapping("/changestatus")

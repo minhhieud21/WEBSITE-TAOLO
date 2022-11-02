@@ -51,6 +51,11 @@ public class ImageServiceImpl implements ImageService{
     }
 
     @Override
+    public void update(ImageModel imageModel){
+        imageRepository.save(imageModel);
+    }
+
+    @Override
     public void saveImage(String imgPath, String proID){
         ImageModel imageModel = new ImageModel();
         imageModel.setImgPath(imgPath);
