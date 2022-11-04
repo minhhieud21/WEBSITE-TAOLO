@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class BillDetailModel {
 
     @Id
-    private Long _id;
+    private String _id;
     @Field("billDID")
     String billDID;
     @Field("billID")
@@ -27,7 +27,7 @@ public class BillDetailModel {
     @Field("warrantyEnd")
     String warrantyEnd;
 
-    public BillDetailModel(Long _id, String billDID, String billID, String proID, long cost, int quantity, String imeiCode, String warrantyStart, String warrantyEnd) {
+    public BillDetailModel(String _id, String billDID, String billID, String proID, long cost, int quantity, String imeiCode, String warrantyStart, String warrantyEnd) {
         this._id = _id;
         this.billDID = billDID;
         this.billID = billID;
@@ -42,7 +42,7 @@ public class BillDetailModel {
     @Override
     public String toString() {
         return "BillDetailModel{" +
-                "_id=" + _id +
+                "_id='" + _id + '\'' +
                 ", billDID='" + billDID + '\'' +
                 ", billID='" + billID + '\'' +
                 ", proID='" + proID + '\'' +
@@ -54,11 +54,11 @@ public class BillDetailModel {
                 '}';
     }
 
-    public Long get_id() {
+    public String get_id() {
         return _id;
     }
 
-    public void set_id(Long _id) {
+    public void set_id(String _id) {
         this._id = _id;
     }
 

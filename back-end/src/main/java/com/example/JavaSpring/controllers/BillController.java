@@ -2,6 +2,7 @@ package com.example.JavaSpring.controllers;
 
 import com.example.JavaSpring.models.BillModel;
 import com.example.JavaSpring.models.CartDetailModel;
+import com.example.JavaSpring.models.CartModel;
 import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.service.BillService;
 import com.example.JavaSpring.util.Error;
@@ -49,9 +50,9 @@ public class BillController {
     }
 
     // POST localhost:8080/api/v1/bill/getBillByCusID
-    @GetMapping("getBillByCusID")
-    ResponseEntity<ResponseObject> getBillByCusID(String cusID){
-        List<BillModel> check = billService.getBillByCusID(cusID);
+    @GetMapping("getBillByAccID")
+    ResponseEntity<ResponseObject> getBillByCusID(String accID){
+        List<BillModel> check = billService.getBillByAccID(accID);
         return check.isEmpty() ?
                 ResponseEntity.status(Error.LIST_EMPTY).body(
                         new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
@@ -61,20 +62,49 @@ public class BillController {
                 );
 
     }
+    String autoIDBill(){
+        List<BillModel> billModelList = billService.getAllBill();
+        int nb = 0;
+        for(int i = 0; i < billModelList.size(); i++){
+            String CurID = billModelList.get(i).getBillID();
+            String[] ASCurID =  CurID.split("B");
+            int NCurID = Integer.parseInt(ASCurID[1]);
+            if(NCurID > nb){
+                nb = NCurID;
+            }
+        }
+        String ck = "";
+        int nbck = nb + 1;
+        if(String.valueOf(nbck).length() == 1){
+            ck = "B00"+nbck;
+        }else if(String.valueOf(nbck).length() == 2){
+            ck = "B0"+nbck;
+        }else if(String.valueOf(nbck).length() == 3){
+            ck = "B" + nbck;
+        }
+        return ck;
+    }
 
-    // POST localhost:8080/api/v1/bill/addBill
-//    @PostMapping("/addCartDetail")
-//    ResponseEntity<ResponseObject> addnewBill(@RequestBody BillModel billModel) {
-//        Optional<BillModel> check = Optional.ofNullable(billService.getBillByBillID(billModel.getBillID()));
-//        if (check.isPresent() == true) {
-//            return ResponseEntity.status(Error.LIST_EMPTY).body(
-//                    new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,"")
-//            );
-//        } else {
-//            cartDetailService.saveCartDetail(cartDetailModel);
-//            return ResponseEntity.status(Error.OK).body(
-//                    new ResponseObject(true,Error.OK_MESSAGE, "")
-//            );
-//        }
-//    }
+    // POST localhost:8080/api/v1/bill/addBillDetail
+    @PostMapping("/addBill")
+    ResponseEntity<ResponseObject> addBill(@RequestBody BillModel billModel) {
+        Optional<BillModel> check = Optional.ofNullable(billService.getBillByBillID(billModel.getBillID()));
+        if(check.isPresent()){
+            return ResponseEntity.status(Error.FAIL).body(
+                    new ResponseObject(false,Error.FAIL_MESSAGE, "")
+            );
+        }else{
+            billService.addBill(billModel);
+            Optional<BillModel> check1 = Optional.ofNullable(billService.getBillByBillID(billModel.getBillID()));
+            if(check1.isPresent()){
+                return ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true,Error.OK_MESSAGE, "")
+                );
+            }else{
+                return ResponseEntity.status(Error.FAIL).body(
+                        new ResponseObject(false,Error.FAIL_MESSAGE, "")
+                );
+            }
+        }
+    }
 }

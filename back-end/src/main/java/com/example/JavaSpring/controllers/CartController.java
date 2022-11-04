@@ -4,7 +4,10 @@ import com.example.JavaSpring.models.CartDetailModel;
 import com.example.JavaSpring.models.CartModel;
 import com.example.JavaSpring.models.ProductModel;
 import com.example.JavaSpring.models.ResponseObject;
+import com.example.JavaSpring.service.CartDetailServicelmpl;
 import com.example.JavaSpring.service.CartService;
+import com.example.JavaSpring.service.CartServicelmpl;
+import com.example.JavaSpring.service.ProductServiceImpl;
 import com.example.JavaSpring.util.Error;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +30,7 @@ public class CartController {
     @Autowired
     CartDetailController cartDetailController = new CartDetailController();
     @Autowired
-    ProductController productController = new ProductController();
+    ProductServiceImpl productService = new ProductServiceImpl();
 
 
 
@@ -37,7 +40,7 @@ public class CartController {
         List<CartModel> check = cartService.getAllCart();
         return check.isEmpty() ?
                 ResponseEntity.status(Error.LIST_EMPTY).body(
-                        new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
+                        new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, check)
                 ) :
                 ResponseEntity.status(Error.OK).body(
                         new ResponseObject(true,Error.OK_MESSAGE, check)
@@ -82,11 +85,11 @@ public class CartController {
         int ck = 0;
         String cartID = autoIDCart();
         String cartDID = cartDetailController.autoIDCartDetail();
-        ProductModel CurPro = productController.getProductByProID(proID);
+        ProductModel CurPro = productService.getProductById(proID);
         Optional<CartModel> check = Optional.ofNullable(cartService.getCartByAccID(accID));
         long PriceNew = CurPro.getPrice() * quantity;
         if(check.isEmpty()){
-            CartModel cartModelNew = new CartModel(null,cartID,accID,quantity,PriceNew);
+            CartModel cartModelNew = new CartModel(null,cartID,accID,quantity,PriceNew,0,"","");
             CartDetailModel cartDetailModelNew = new CartDetailModel(null,cartDID,cartID,proID,quantity,PriceNew);
             cartService.saveCart(cartModelNew);
             cartDetailController.addnewCartDetail(cartDetailModelNew);
@@ -130,7 +133,7 @@ public class CartController {
         int nb = 0;
         for(int i = 0; i < cartModelList.size(); i++){
             String CurID = cartModelList.get(i).getCartID();
-            String[] ASCurID =  CurID.split("00");
+            String[] ASCurID =  CurID.split("C");
             int NCurID = Integer.parseInt(ASCurID[1]);
             if(NCurID > nb){
                 nb = NCurID;
@@ -223,26 +226,13 @@ public class CartController {
                     new ResponseObject(false,Error.OK_MESSAGE,"")
             );
         }
-
-
     }
 
-
-//    int deleteAllCartDetail(String cartID) {
-//        List<CartDetailModel> check = cartDetailService.getCartDetailByCartID(cartID);
-//        if(!check.isEmpty()){
-//            List<CartDetailModel> cartDetailModelList = cartDetailService.getCartDetailByCartID(cartID);
-//            for(int i = 0;i < cartDetailModelList.size();i++){
-//                cartDetailService.deleteCartDetail(cartDetailModelList.get(i).getCartDID());
-//            }
-//            List<CartDetailModel> check1 = cartDetailService.getCartDetailByCartID(cartID);
-//            if(check1.isEmpty()){
-//                return 1;
-//            }else{
-//                return 0;
-//            }
-//        }else{
-//            return 0;
+    //methodPay: cash or momo
+//    @PostMapping("/readyCheckout")
+//    ResponseEntity<ResponseObject> readyCheckout(String address, String methodPay){
+//        if(address != "" && methodPay != ""){
+//
 //        }
 //    }
 

@@ -23,8 +23,8 @@ public class BillServicelmpl implements BillService{
     }
 
     @Override
-    public List<BillModel> getBillByCusID(String cusID){
-        return  billRepository.getBillByCusID(cusID);
+    public List<BillModel> getBillByAccID(String accID){
+        return  billRepository.getBillByAccID(accID);
     }
 
     @Override

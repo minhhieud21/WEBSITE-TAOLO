@@ -8,11 +8,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface BillRepository  extends MongoRepository<BillModel,String> {
+public interface  BillRepository  extends MongoRepository<BillModel,String> {
 
     @Query("{billID:?0}")
     BillModel getBillByBillID(String billID);
 
-    @Query("{cusID:?0}")
-    List<BillModel> getBillByCusID(String billID);
+    @Query("{accID:?0}")
+    List<BillModel> getBillByAccID(String accID);
 }

@@ -15,29 +15,37 @@ public class BillModel {
     Long totalCost;
     @Field("totalQuantity")
     int toTalQuantity;
-    @Field("cusID")
-    String cusID;
+    @Field("accID")
+    String accID;
     @Field("status")
     int status;
+    @Field("address")
+    String address;
+    @Field("methodPay")
+    String methodPay;
 
-    public BillModel(String _id, String billID, Long totalCost, int toTalQuantity, String cusID, int status) {
+    public BillModel(String _id, String billID, Long totalCost, int toTalQuantity, String accID, int status, String address, String methodPay) {
         this._id = _id;
         this.billID = billID;
         this.totalCost = totalCost;
         this.toTalQuantity = toTalQuantity;
-        this.cusID = cusID;
+        this.accID = accID;
         this.status = status;
+        this.address = address;
+        this.methodPay = methodPay;
     }
 
     @Override
     public String toString() {
         return "BillModel{" +
-                "_id=" + _id +
+                "_id='" + _id + '\'' +
                 ", billID='" + billID + '\'' +
                 ", totalCost=" + totalCost +
                 ", toTalQuantity=" + toTalQuantity +
-                ", cusID='" + cusID + '\'' +
+                ", accID='" + accID + '\'' +
                 ", status=" + status +
+                ", address='" + address + '\'' +
+                ", methodPay='" + methodPay + '\'' +
                 '}';
     }
 
@@ -73,12 +81,12 @@ public class BillModel {
         this.toTalQuantity = toTalQuantity;
     }
 
-    public String getCusID() {
-        return cusID;
+    public String getAccID() {
+        return accID;
     }
 
-    public void setCusID(String cusID) {
-        this.cusID = cusID;
+    public void setAccID(String accID) {
+        this.accID = accID;
     }
 
     public int getStatus() {
@@ -87,5 +95,21 @@ public class BillModel {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getMethodPay() {
+        return methodPay;
+    }
+
+    public void setMethodPay(String methodPay) {
+        this.methodPay = methodPay;
     }
 }

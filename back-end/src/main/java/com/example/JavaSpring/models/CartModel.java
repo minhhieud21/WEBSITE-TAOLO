@@ -16,13 +16,22 @@ public class CartModel {
     int totalQuantity;
     @Field("totalCost")
     Long totalCost;
+    @Field("status")
+    int status;
+    @Field("address")
+    String address;
+    @Field("methodPay")
+    String methodPay;
 
-    public CartModel(String _id, String cartID, String accID, int totalQuantity, Long totalCost){
+    public CartModel(String _id, String cartID, String accID, int totalQuantity, Long totalCost, int status, String address, String methodPay) {
         this._id = _id;
         this.cartID = cartID;
         this.accID = accID;
         this.totalQuantity = totalQuantity;
         this.totalCost = totalCost;
+        this.status = status;
+        this.address = address;
+        this.methodPay = methodPay;
     }
 
     @Override
@@ -33,6 +42,9 @@ public class CartModel {
                 ", accID='" + accID + '\'' +
                 ", totalQuantity=" + totalQuantity +
                 ", totalCost=" + totalCost +
+                ", status=" + status +
+                ", address='" + address + '\'' +
+                ", methodPay='" + methodPay + '\'' +
                 '}';
     }
 
@@ -51,6 +63,15 @@ public class CartModel {
     public void setCartID(String cartID) {
         this.cartID = cartID;
     }
+
+    public String getAccID() {
+        return accID;
+    }
+
+    public void setAccID(String accID) {
+        this.accID = accID;
+    }
+
     public int getTotalQuantity() {
         return totalQuantity;
     }
@@ -67,11 +88,27 @@ public class CartModel {
         this.totalCost = totalCost;
     }
 
-    public String getAccID() {
-        return accID;
+    public int getStatus() {
+        return status;
     }
 
-    public void setAccID(String accID) {
-        this.accID = accID;
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getMethodPay() {
+        return methodPay;
+    }
+
+    public void setMethodPay(String methodPay) {
+        this.methodPay = methodPay;
     }
 }

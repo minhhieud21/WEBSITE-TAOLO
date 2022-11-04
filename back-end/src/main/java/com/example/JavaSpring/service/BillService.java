@@ -11,7 +11,7 @@ public interface BillService {
 
     BillModel getBillByBillID(String billID);
 
-    List<BillModel> getBillByCusID(String billID);
+    List<BillModel> getBillByAccID(String accID);
 
     void addBill(BillModel billModel);
 

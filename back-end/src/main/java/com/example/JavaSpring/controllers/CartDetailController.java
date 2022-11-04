@@ -161,7 +161,7 @@ public class CartDetailController {
         int nb = 0;
         for(int i = 0; i < cartDetailModelList.size(); i++){
             String CurID = cartDetailModelList.get(i).getCartDID();
-            String[] ASCurID =  CurID.split("00");
+            String[] ASCurID =  CurID.split("CD");
             int NCurID = Integer.parseInt(ASCurID[1]);
             if(NCurID > nb){
                 nb = NCurID;
