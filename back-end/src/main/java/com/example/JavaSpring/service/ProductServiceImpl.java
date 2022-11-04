@@ -8,9 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -52,6 +50,24 @@ public class ProductServiceImpl implements ProductService {
         }
         else {
             return productRepository.getProductByCateID(cateId,Sort.by(Sort.Direction.DESC,"price"));
+        }
+    }
+
+    @Override
+    public List<ProductModel> getProductByCateIDUser(String cateId, int Type) {
+        if(Type == 0 ){
+            return productRepository.getProductByCateIDUser(cateId,null,1);}
+        else if( Type == 1 ){
+            return productRepository.getProductByCateIDUser(cateId,Sort.by(Sort.Direction.ASC,"proName"),1);
+        }
+        else if( Type == 2 ){
+            return productRepository.getProductByCateIDUser(cateId,Sort.by(Sort.Direction.DESC,"proName"),1);
+        }
+        else if( Type == 3 ){
+            return productRepository.getProductByCateIDUser(cateId,Sort.by(Sort.Direction.ASC,"price"),1);
+        }
+        else {
+            return productRepository.getProductByCateIDUser(cateId,Sort.by(Sort.Direction.DESC,"price"),1);
         }
     }
 

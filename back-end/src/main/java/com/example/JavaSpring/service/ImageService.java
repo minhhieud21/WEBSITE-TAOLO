@@ -17,6 +17,9 @@ public interface ImageService {
 
     void FileUpload(String dir, String name, MultipartFile multipartFile) throws IOException;
 
+
+    void update(ImageModel imageModel);
+
     void saveImage(String imgPath, String proID);
 
     ImageModel getImagebyName(String imgPath,String proID);

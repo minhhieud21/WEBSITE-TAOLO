@@ -1,6 +1,5 @@
 package com.example.JavaSpring.service;
 
-import com.example.JavaSpring.models.ProductModel;
 import com.example.JavaSpring.models.UserModel;
 import com.example.JavaSpring.repository.UserRepository1;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserModel getUserByUserID(String username) {
         return userRepository1.getUserByUserID(username);
+    }
+
+    @Override
+    public UserModel getUserByEmail(String email) {
+        return userRepository1.getUserByEmail(email);
     }
 
     @Override

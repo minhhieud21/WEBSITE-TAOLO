@@ -20,6 +20,8 @@ public interface ProductService {
 
     List<ProductModel> getProductByCateID(String cateId,int Type);
 
+    List<ProductModel> getProductByCateIDUser(String cateId, int Type);
+
     void deleteProduct(String proId);
 
     void statusHide(String proId);

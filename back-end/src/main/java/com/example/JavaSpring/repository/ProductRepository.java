@@ -20,6 +20,10 @@ public interface ProductRepository extends MongoRepository<ProductModel,String> 
 
     @Query("{cateId:/?0/}") //SELECT * FROM Product WHERE title like ?
     List<ProductModel> getProductByCateID(String cateId, Sort sort) ;
+
+    @Query("{cateId:/?0/,status: ?1}") //SELECT * FROM Product WHERE title like ?
+    List<ProductModel> getProductByCateIDUser(String cateId, Sort sort,int status) ;
+
     @Query("{'proName': { '$regex' : ?0 , $options: 'i'}}")
     Page<ProductModel> getProductAdmin(Pageable paging,String text) ;
 
