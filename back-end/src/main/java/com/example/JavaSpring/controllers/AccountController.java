@@ -349,13 +349,13 @@ public class AccountController {
         }
         else {
             return ResponseEntity.status(Error.FAIL).body(
-                    new ResponseObject(true,Error.FAIL_MESSAGE+" sent mail","")
+                    new ResponseObject(false,Error.FAIL_MESSAGE+" sent mail","")
             );
         }
     }
 
-    @PostMapping("/getnewpassword")
-    ResponseEntity<ResponseObject> getNewpassword(HttpServletRequest request,@RequestBody Map<String,Object> object) throws NoSuchAlgorithmException {
+    @PostMapping("/createnewpassword")
+    ResponseEntity<ResponseObject> createnewpassword(HttpServletRequest request,@RequestBody Map<String,Object> object) throws NoSuchAlgorithmException {
         if(String.valueOf(object.get("Verification_code")).length()==0 || String.valueOf(object.get("password_new")).length()==0 || String.valueOf(object.get("password_confirm")).length()==0){
             return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
                     new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
@@ -410,7 +410,7 @@ public class AccountController {
             }}
         else {
             return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
-                    new ResponseObject(false, Error.WRONG_ACCESS_RIGHTS_MESSAGE, "")
+                    new ResponseObject(false, "Ma xac minh khong hoat dong", "")
             );
         }
         return null;

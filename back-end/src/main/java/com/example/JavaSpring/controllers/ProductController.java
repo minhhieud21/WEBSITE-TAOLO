@@ -1,20 +1,22 @@
 package com.example.JavaSpring.controllers;
 
 import com.example.JavaSpring.models.ProductModel;
-import com.example.JavaSpring.util.Error;
 import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.service.ProductService;
+import com.example.JavaSpring.util.Error;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -172,13 +174,13 @@ public class ProductController {
                 }
             }
             productModel.set_id(max+1);
+            productService.saveProduct(productModel);
             if(image.length == 1 && !image[0].getOriginalFilename().equals("") || image.length > 1) {
                 ResponseEntity<ResponseObject> aa = imageController.addImage(image, proId);
                 if(aa.getStatusCodeValue()!=200){
                     return aa;
                 }
             }
-            productService.saveProduct(productModel);
             return ResponseEntity.status(Error.OK).body(
                     new ResponseObject(true,Error.OK_MESSAGE, "")
             );

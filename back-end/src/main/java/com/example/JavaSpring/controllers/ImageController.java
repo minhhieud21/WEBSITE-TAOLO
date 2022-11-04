@@ -1,8 +1,10 @@
 package com.example.JavaSpring.controllers;
 
 import com.example.JavaSpring.models.ImageModel;
+import com.example.JavaSpring.models.ProductModel;
 import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.service.ImageService;
+import com.example.JavaSpring.service.ProductService;
 import com.example.JavaSpring.util.Error;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,39 +24,45 @@ import java.util.List;
 public class ImageController {
     @Autowired
     ImageService imageService;
+    @Autowired
+    ProductService productService;
+
     public ImageController(){};
     @GetMapping("/{id}")
     ImageModel getPathImageByID(@PathVariable("id")String id) {
         ImageModel check = imageService.getPathImageByID(id);
-        if (check == null ){
-            return null;
+        ImageModel a = new ImageModel();
+        if (check == null){
+            a.set_id("default");
+            a.setImgPath("default_1.png");
+            a.setStatus(1);
+            a.setProID("default");
+            return a;
         }
-        else
-            return check;
+        else{
+            return check;}
     }
 
     List<String> getPathImage(String id) {
         List<String> check = new ArrayList<>();
-        ImageModel a = imageService.getPathImageByID(id);
-        if(a != null){
-            check.add(imageService.getPathImageByID(id).getImgPath());}
+        ImageModel a = this.getPathImageByID(id);
+        check.add(a.getImgPath());
         List<ImageModel> temp = imageService.getPathImage(id);
         if(temp.isEmpty() == false){
             for(int i = 0;i<temp.size();i++){
                 check.add(temp.get(i).getImgPath());
             }}
-        if (check == null ){
-            return null;
-        }
-        else
-            return check;
+        else check.add("default_2.png");
+        return check;
     }
-
+    
     @GetMapping("/getAllImage")
     List<ImageModel> getAllImage (){
-        List<ImageModel> imageModels = imageService.getAllImage();
-        System.out.println(imageModels);
-        return  imageModels;
+        return imageService.getAllImage();
+    }
+
+    String dau (){
+        return String.valueOf("\\");
     }
 
     @PostMapping("/add")
@@ -64,6 +72,12 @@ public class ImageController {
                     new ResponseObject(false,Error.LIST_EMPTY_MESSAGE,"")
             );
           }
+        ProductModel a = productService.getProductById(proID);
+        if (a == null){
+            return ResponseEntity.status(Error.LIST_EMPTY).body(
+                    new ResponseObject(false,"Ma san pham khong ton tai","")
+            );
+        }
         for(int i = 0;i<image.length;i++){
                     if (StringUtils.cleanPath(image[i].getContentType()).equals("image/jpeg") || StringUtils.cleanPath(image[i].getContentType()).equals("image/png")){
                     }
@@ -84,45 +98,45 @@ public class ImageController {
         );
     }
 
-    @PostMapping("/update")
-    void update(){
-        List<ImageModel> check = this.getAllImage();
-        for (int i = 0 ; i < check.size();i++){
-            ImageModel a = check.get(i);
-            String x = a.getImgPath().replace(a.getProID()+"/","");
-            a.setImgPath(x);
-            imageService.update(a);
-        }
-    }
-
-    @PostMapping("/changestatus")
-        ResponseEntity<ResponseObject> changestatus(@RequestParam("nameImage") String nameImage,@RequestParam("proID") String proID,@RequestParam("status") int status){
-        if((status > 1 || status < -1) || nameImage.length()==0||proID.length()==0){
-            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
-                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
-            );
-        }
-        if(status == 1){
-            return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
-                    new ResponseObject(false,Error.WRONG_ACCESS_RIGHTS_MESSAGE, "")
-            );
-        }
-        ImageModel imageModel = imageService.getImagebyName(nameImage,proID);
-        if( imageModel == null ){
-            return ResponseEntity.status(Error.NO_VALUE_BY_ID).body(
-                    new ResponseObject(false,Error.NO_VALUE_BY_ID_MESSAGE, "")
-            );}
-        else if(imageModel.getStatus() == status) {
-            return ResponseEntity.status(Error.FAIL_STATUS_CHANGE).body(
-                    new ResponseObject(false, Error.FAIL_STATUS_CHANGE_MESSAGE,"")
-            );}
-        else {
-            imageService.changestatus(imageModel,status);
-            return ResponseEntity.status(Error.OK).body(
-                    new ResponseObject(true,Error.OK_MESSAGE,"")
-            );
-        }
-    }
+//    @PostMapping("/update")
+//    void update(){
+//        List<ImageModel> check = this.getAllImage();
+//        for (int i = 0 ; i < check.size();i++){
+//            ImageModel a = check.get(i);
+//            String x = a.getImgPath().replace(a.getProID()+"/","");
+//            a.setImgPath(x);
+//            imageService.update(a);
+//        }
+//    }
+//
+//    @PostMapping("/changestatus")
+//        ResponseEntity<ResponseObject> changestatus(@RequestParam("nameImage") String nameImage,@RequestParam("proID") String proID,@RequestParam("status") int status){
+//        if((status > 1 || status < -1) || nameImage.length()==0||proID.length()==0){
+//            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+//                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
+//            );
+//        }
+//        if(status == 1){
+//            return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
+//                    new ResponseObject(false,Error.WRONG_ACCESS_RIGHTS_MESSAGE, "")
+//            );
+//        }
+//        ImageModel imageModel = imageService.getImagebyName(nameImage,proID);
+//        if( imageModel == null ){
+//            return ResponseEntity.status(Error.NO_VALUE_BY_ID).body(
+//                    new ResponseObject(false,Error.NO_VALUE_BY_ID_MESSAGE, "")
+//            );}
+//        else if(imageModel.getStatus() == status) {
+//            return ResponseEntity.status(Error.FAIL_STATUS_CHANGE).body(
+//                    new ResponseObject(false, Error.FAIL_STATUS_CHANGE_MESSAGE,"")
+//            );}
+//        else {
+//            imageService.changestatus(imageModel,status);
+//            return ResponseEntity.status(Error.OK).body(
+//                    new ResponseObject(true,Error.OK_MESSAGE,"")
+//            );
+//        }
+//    }
 
     @PostMapping("/mainImage")
     ResponseEntity<ResponseObject> mainImage(@RequestParam("nameImage") String nameImage,@RequestParam("proID") String proID){
