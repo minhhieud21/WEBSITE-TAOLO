@@ -47,11 +47,29 @@ public class CartServicelmpl implements CartService{
         cartRepository.save(cartModel);
     }
 
+
+
     @Override
-    public void updateCart(String cartID, int quantity, long cost){
+    public void updateCart(String cartID, int quantity, long cost, int status){
         CartModel cartModel = cartRepository.getCartByID(cartID);
-        cartModel.setTotalQuantity(quantity);
-        cartModel.setTotalCost(cost);
+        if(cartModel.getStatus() != status){
+            cartModel.setStatus(status);
+        }
+        if(cartModel.getTotalCost() != cost){
+            cartModel.setTotalCost(cost);
+        }
+        if(cartModel.getTotalQuantity() != quantity){
+            cartModel.setTotalQuantity(quantity);
+        }
+        cartRepository.save(cartModel);
+    }
+
+    @Override
+    public void chageStatusCart(String cartID,int stt, String address, String methodPay){
+        CartModel cartModel = cartRepository.getCartByID(cartID);
+        cartModel.setStatus(stt);
+        cartModel.setAddress(address);
+        cartModel.setMethodPay(methodPay);
         cartRepository.save(cartModel);
     }
 

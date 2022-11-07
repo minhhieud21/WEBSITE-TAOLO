@@ -186,7 +186,7 @@ public class CartDetailController {
         ProductModel productModelCur = productService.getProductById(cartDetailModelCur.getProID());
         long CostNew = productModelCur.getPrice() * quantity;
         cartDetailService.updateCartDetail(cartDID,quantity,CostNew);
-        cartServicelmpl.updateCart(cartDetailModelCur.getCartID(),autoLoadQuantity(cartDetailModelCur.getCartID()),autoLoadQCost(cartDetailModelCur.getCartID()));
+        cartServicelmpl.updateCart(cartDetailModelCur.getCartID(),autoLoadQuantity(cartDetailModelCur.getCartID()),autoLoadQCost(cartDetailModelCur.getCartID()),0);
         CartDetailModel cartDetailModelNew = cartDetailService.getCartDetailByID(cartDID);
         Optional<CartDetailModel> check = Optional.ofNullable(cartDetailModelNew);
         if (check.isPresent() && cartDetailModelNew.getQuantity() == quantity && cartDetailModelNew.getCost() == CostNew){
@@ -218,7 +218,7 @@ public class CartDetailController {
             cartDetailService.deleteCartDetail(cartDID);
             int quantityNew = autoLoadQuantity(cartDetailModel.getCartID());
             long costNew = autoLoadQCost(cartDetailModel.getCartID());
-            cartServicelmpl.updateCart(cartDetailModel.getCartID(),quantityNew,costNew);
+            cartServicelmpl.updateCart(cartDetailModel.getCartID(),quantityNew,costNew,0);
             CartModel cartModel = cartServicelmpl.getCartByID(cartDetailModel.getCartID());
             CartDetailModel cartDetailModel1 = cartDetailService.getCartDetailByID(cartDID);
             Optional<CartDetailModel> check1 = Optional.ofNullable(cartDetailModel1);

@@ -1,10 +1,7 @@
 package com.example.JavaSpring.controllers;
 
-import com.example.JavaSpring.models.BillModel;
-import com.example.JavaSpring.models.CartDetailModel;
-import com.example.JavaSpring.models.CartModel;
-import com.example.JavaSpring.models.ResponseObject;
-import com.example.JavaSpring.service.BillService;
+import com.example.JavaSpring.models.*;
+import com.example.JavaSpring.service.*;
 import com.example.JavaSpring.util.Error;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +16,21 @@ import java.util.Optional;
 public class BillController {
     @Autowired
     BillService billService;
+
+    @Autowired
+    BillDetailController billDetailController;
+
+    @Autowired
+    BillDetailServicelmpl billDetailServicel;
+
+    @Autowired
+    CartServicelmpl cartService;
+
+    @Autowired
+    CartDetailServicelmpl cartDetailServicel;
+
+    @Autowired
+    ProductServiceImpl productService;
 
     // GET all : localhost:8080/api/v1/bill/
     @GetMapping("")
@@ -85,26 +97,109 @@ public class BillController {
         return ck;
     }
 
+    String autoIMEICode(@RequestParam("test") String proID){
+        String[] splitID = proID.split("");
+        splitID[8] = "_I";
+        splitID[13] = "C_";
+        splitID[18] = "_F";
+        splitID[23] = "M_";
+        String kq = "";
+        for(int i = 0; i < splitID.length;i++){
+            kq += splitID[i];
+        }
+        return kq;
+    }
+
     // POST localhost:8080/api/v1/bill/addBillDetail
+//    @PostMapping("/addBill")
+//    ResponseEntity<ResponseObject> addBill(@RequestBody BillModel billModel) {
+//        Optional<BillModel> check = Optional.ofNullable(billService.getBillByBillID(billModel.getBillID()));
+//        if(check.isPresent()){
+//            return ResponseEntity.status(Error.FAIL).body(
+//                    new ResponseObject(false,Error.FAIL_MESSAGE, "")
+//            );
+//        }else{
+//            billService.addBill(billModel);
+//            Optional<BillModel> check1 = Optional.ofNullable(billService.getBillByBillID(billModel.getBillID()));
+//            if(check1.isPresent()){
+//                return ResponseEntity.status(Error.OK).body(
+//                        new ResponseObject(true,Error.OK_MESSAGE, "")
+//                );
+//            }else{
+//                return ResponseEntity.status(Error.FAIL).body(
+//                        new ResponseObject(false,Error.FAIL_MESSAGE, "")
+//                );
+//            }
+//        }
+//    }
     @PostMapping("/addBill")
-    ResponseEntity<ResponseObject> addBill(@RequestBody BillModel billModel) {
-        Optional<BillModel> check = Optional.ofNullable(billService.getBillByBillID(billModel.getBillID()));
-        if(check.isPresent()){
-            return ResponseEntity.status(Error.FAIL).body(
-                    new ResponseObject(false,Error.FAIL_MESSAGE, "")
-            );
-        }else{
+    ResponseEntity<ResponseObject> addBill(@RequestParam("cartID") String cartID) {
+        CartModel CurCartModel = cartService.getCartByID(cartID);
+        if(CurCartModel.getStatus() == 1){
+            String billID = autoIDBill();
+            BillModel billModel = new BillModel(null,billID,CurCartModel.getTotalCost(),CurCartModel.getTotalQuantity(),CurCartModel.getAccID(),CurCartModel.getStatus(), CurCartModel.getAddress(), CurCartModel.getMethodPay());
             billService.addBill(billModel);
-            Optional<BillModel> check1 = Optional.ofNullable(billService.getBillByBillID(billModel.getBillID()));
-            if(check1.isPresent()){
-                return ResponseEntity.status(Error.OK).body(
-                        new ResponseObject(true,Error.OK_MESSAGE, "")
-                );
+            Optional<BillModel> check = Optional.ofNullable(billService.getBillByBillID(billID));
+            if(check.isPresent()) {
+                cartService.updateCart(cartID,CurCartModel.getTotalQuantity(),CurCartModel.getTotalCost(),2);
+                List<CartDetailModel> cartDetailModelList = cartDetailServicel.getCartDetailByCartID(cartID);
+                for (int i = 0; i < cartDetailModelList.size(); i++) {
+                    String billDID = billDetailController.autoIDBillDetail();
+                    String proID = cartDetailModelList.get(i).getProID();
+                    long cost = cartDetailModelList.get(i).getCost();
+                    int quantity = cartDetailModelList.get(i).getQuantity();
+                    String imeiCode = autoIMEICode(cartDetailModelList.get(i).getProID());
+                    ProductModel productModel = productService.getProductById(cartDetailModelList.get(i).getProID());
+                    String date = date();
+                    int wmonth = productModel.getWarrantyMonth();
+                    BillDetailModel billDetailModel = new BillDetailModel(null,billDID,billID,proID,cost,quantity,imeiCode,date,warrantyDate(date,wmonth));
+                    billDetailServicel.addBillDetail(billDetailModel);
+                }
+                Optional<List<BillDetailModel>> check1 = Optional.ofNullable(billDetailServicel.getBillDetailByBillID(billID));
+                if(check1.isPresent()){
+                    return ResponseEntity.status(Error.OK).body(
+                            new ResponseObject(true,Error.OK_MESSAGE, "Complete")
+                    );
+                }else{
+                    return ResponseEntity.status(Error.FAIL).body(
+                            new ResponseObject(false,Error.FAIL_MESSAGE, "Error Bill Detail")
+                    );
+                }
             }else{
                 return ResponseEntity.status(Error.FAIL).body(
-                        new ResponseObject(false,Error.FAIL_MESSAGE, "")
+                        new ResponseObject(false,Error.FAIL_MESSAGE, "Error Bill")
                 );
             }
+        }else{
+            return ResponseEntity.status(Error.FAIL).body(
+                    new ResponseObject(false,Error.FAIL_MESSAGE, "FAIL ")
+            );
         }
+    }
+
+    String date(){
+        long millis=System.currentTimeMillis();
+        java.sql.Date date = new java.sql.Date(millis);
+        return date.toString();
+    }
+
+    String warrantyDate(String date, int warrantyMonth){
+        String[] dateSplit = date.split("-");
+        int day = Integer.parseInt(dateSplit[2]);
+        int month = Integer.parseInt(dateSplit[1]) + warrantyMonth;
+        int months =  month / 12;
+        int year = Integer.parseInt(dateSplit[0]);
+        if(day == 29 && Integer.parseInt(dateSplit[1]) == 2){
+            day = 1;
+            month = 3 + warrantyMonth;
+        }
+        if(months != 0){
+            year =  year + months;
+            month = -((12*months) - month);
+        }else if(months == 0){
+            year =  year + months;
+        }
+
+        return String.valueOf(year) + "-" + String.valueOf(month) + "-" + String.valueOf(day);
     }
 }
