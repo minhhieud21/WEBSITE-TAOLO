@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -133,7 +134,8 @@ public class BillController {
 //        }
 //    }
     @PostMapping("/addBill")
-    ResponseEntity<ResponseObject> addBill(@RequestParam("cartID") String cartID) {
+    ResponseEntity<ResponseObject> addBill(@RequestBody Map<String,String> value) {
+        String cartID = value.get("cartID");
         CartModel CurCartModel = cartService.getCartByID(cartID);
         if(CurCartModel.getStatus() == 1){
             String billID = autoIDBill();

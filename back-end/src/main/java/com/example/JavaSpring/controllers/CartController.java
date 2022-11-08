@@ -121,7 +121,6 @@ public class CartController {
             }else{
                 ck = 0;
             }
-
         }
         if (ck == 1) {
             return ResponseEntity.status(Error.OK).body(
@@ -236,7 +235,10 @@ public class CartController {
 
     //methodPay: cash or momo
     @PostMapping("/readyCheckout")
-    ResponseEntity<ResponseObject> readyCheckout(@RequestParam("cartID") String cartID ,@RequestParam("address") String address,@RequestParam("methodPay") String methodPay){
+    ResponseEntity<ResponseObject> readyCheckout(@RequestBody Map<String,String> value){
+        String cartID = value.get("cartID");
+        String address = value.get("address");
+        String methodPay = value.get("methodPay");
         Optional<CartModel> check = Optional.ofNullable(cartService.getCartByID(cartID));
         if(check.isPresent()){
             if(address != "" && methodPay != ""){
@@ -253,12 +255,12 @@ public class CartController {
                 }
             }else{
                 return ResponseEntity.status(Error.FAIL).body(
-                        new ResponseObject(false,Error.FAIL_MESSAGE,"")
+                        new ResponseObject(false,Error.FAIL_MESSAGE,"Missing Data !!!")
                 );
             }
         }else{
             return ResponseEntity.status(Error.FAIL).body(
-                    new ResponseObject(false,Error.FAIL_MESSAGE,"")
+                    new ResponseObject(false,Error.FAIL_MESSAGE,"Cart Not Exist !!!")
             );
         }
     }
