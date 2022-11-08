@@ -4,17 +4,17 @@ import com.example.JavaSpring.models.CartDetailModel;
 import com.example.JavaSpring.models.CartModel;
 import com.example.JavaSpring.models.ProductModel;
 import com.example.JavaSpring.models.ResponseObject;
-import com.example.JavaSpring.service.CartDetailServicelmpl;
 import com.example.JavaSpring.service.CartService;
-import com.example.JavaSpring.service.CartServicelmpl;
 import com.example.JavaSpring.service.ProductServiceImpl;
 import com.example.JavaSpring.util.Error;
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -79,8 +79,11 @@ public class CartController {
 
     // POST localhost:8080/api/v1/cart/addCart
     @PostMapping("/addCart")
-    ResponseEntity<ResponseObject> addnewCart(@RequestParam("accID") String accID, @RequestParam("quantity") int quantity, @RequestParam("proID") String proID) {
+    ResponseEntity<ResponseObject> addnewCart(@RequestBody Map<String,String> value) {
         int ck = 0;
+        String accID = value.get("accID");
+        String proID = value.get("proID");
+        int quantity = Integer.parseInt(value.get("quantity"));
         String cartID = autoIDCart();
         String cartDID = cartDetailController.autoIDCartDetail();
         ProductModel CurPro = productService.getProductById(proID);
@@ -98,14 +101,14 @@ public class CartController {
             }
         }else{
             CartModel CurCart = cartService.getCartByAccID(accID);
-            if( CurCart.getStatus() == 1) {
-                cartService.chageStatusCart(CurCart.getCartID(),0,"","");
+            if(CurCart.getStatus() != 2){
                 Optional<CartDetailModel> check1 = Optional.ofNullable(cartDetailController.getCartDetailByProID(CurCart.getCartID(), proID));
                 if (check1.isPresent()) {
                     CartDetailModel CurCartDetail = cartDetailController.getCartDetailByProID(CurCart.getCartID(), proID);
                     int QuantityNew = CurCartDetail.getQuantity() + quantity;
                     long CostNew = CurPro.getPrice() * QuantityNew;
                     ck = cartDetailController.updateCart(CurCartDetail.getCartDID(), QuantityNew, CostNew);
+
                 } else {
                     CartDetailModel CartDetailNew = new CartDetailModel(null, cartDID, CurCart.getCartID(), proID, quantity, PriceNew);
                     cartDetailController.addnewCartDetail(CartDetailNew);
@@ -115,7 +118,10 @@ public class CartController {
                     }
                 }
                 updateCart(CurCart.getCartID(), cartDetailController.autoLoadQuantity(CurCart.getCartID()), cartDetailController.autoLoadQCost(CurCart.getCartID()),0);
+            }else{
+                ck = 0;
             }
+
         }
         if (ck == 1) {
             return ResponseEntity.status(Error.OK).body(

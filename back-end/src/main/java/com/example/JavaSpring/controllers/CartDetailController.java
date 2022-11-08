@@ -198,6 +198,7 @@ public class CartDetailController {
                     new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,"")
             );}
     }
+
     int updateCart(String cartDID, int quantity, long cost) {
         cartDetailService.updateCartDetail(cartDID,quantity,cost);
         CartDetailModel cartDetailModel = cartDetailService.getCartDetailByID(cartDID);
