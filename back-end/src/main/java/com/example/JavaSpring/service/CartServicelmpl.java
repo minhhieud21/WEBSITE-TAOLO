@@ -29,6 +29,11 @@ public class CartServicelmpl implements CartService{
     }
 
     @Override
+    public List<CartModel> getCartCheckOut(String accID){
+        return cartRepository.getCartCheckOut(accID);
+    }
+
+    @Override
     public void saveCart(CartModel cartModel){
         cartRepository.save(cartModel);
     }

@@ -77,6 +77,19 @@ public class CartController {
                 );
     }
 
+    // GET by id: localhost:8080/api/v1/cart/getCartCheckOut?
+    @GetMapping("/getCartCheckOut")
+    ResponseEntity<ResponseObject> getCartCheckOut( String accID) {
+        List<CartModel> check1 = cartService.getCartCheckOut(accID);
+        return check1.isEmpty() ?
+                ResponseEntity.status(Error.LIST_EMPTY).body(
+                        new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
+                ) :
+                ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true,Error.OK_MESSAGE, check1)
+                );
+    }
+
     // POST localhost:8080/api/v1/cart/addCart
     @PostMapping("/addCart")
     ResponseEntity<ResponseObject> addnewCart(@RequestBody Map<String,String> value) {
@@ -90,14 +103,20 @@ public class CartController {
         Optional<CartModel> check = Optional.ofNullable(cartService.getCartByAccID(accID));
         long PriceNew = CurPro.getPrice() * quantity;
         if(check.isEmpty()){
-            CartModel cartModelNew = new CartModel(null,cartID,accID,quantity,PriceNew,0,"","");
-            CartDetailModel cartDetailModelNew = new CartDetailModel(null,cartDID,cartID,proID,quantity,PriceNew);
-            cartService.saveCart(cartModelNew);
-            cartDetailController.addnewCartDetail(cartDetailModelNew);
-            Optional<CartModel> check1 = Optional.ofNullable(cartService.getCartByID(cartID));
-            Optional<CartDetailModel> check2 = Optional.ofNullable(cartDetailController.getCartDetailById(cartDID));
-            if (check1.isPresent() == true && check2.isPresent() == true) {
-                ck = 1;
+            if(quantity <= CurPro.getQuantity()){
+                CartModel cartModelNew = new CartModel(null,cartID,accID,quantity,PriceNew,0,"","");
+                CartDetailModel cartDetailModelNew = new CartDetailModel(null,cartDID,cartID,proID,quantity,PriceNew);
+                cartService.saveCart(cartModelNew);
+                cartDetailController.addnewCartDetail(cartDetailModelNew);
+                Optional<CartModel> check1 = Optional.ofNullable(cartService.getCartByID(cartID));
+                Optional<CartDetailModel> check2 = Optional.ofNullable(cartDetailController.getCartDetailById(cartDID));
+                if (check1.isPresent() == true && check2.isPresent() == true) {
+                    ck = 1;
+                }
+            }else{
+                return ResponseEntity.status(Error.FAIL).body(
+                        new ResponseObject(false, Error.FAIL_MESSAGE,"Product Quantity Error !!!")
+                );
             }
         }else{
             CartModel CurCart = cartService.getCartByAccID(accID);
@@ -107,14 +126,25 @@ public class CartController {
                     CartDetailModel CurCartDetail = cartDetailController.getCartDetailByProID(CurCart.getCartID(), proID);
                     int QuantityNew = CurCartDetail.getQuantity() + quantity;
                     long CostNew = CurPro.getPrice() * QuantityNew;
-                    ck = cartDetailController.updateCart(CurCartDetail.getCartDID(), QuantityNew, CostNew);
-
+                    if(QuantityNew <= CurPro.getQuantity()){
+                        ck = cartDetailController.updateCart(CurCartDetail.getCartDID(), QuantityNew, CostNew);
+                    }else{
+                        return ResponseEntity.status(Error.FAIL).body(
+                                new ResponseObject(false, Error.FAIL_MESSAGE,"Product Quantity Error !!!")
+                        );
+                    }
                 } else {
-                    CartDetailModel CartDetailNew = new CartDetailModel(null, cartDID, CurCart.getCartID(), proID, quantity, PriceNew);
-                    cartDetailController.addnewCartDetail(CartDetailNew);
-                    Optional<CartDetailModel> check2 = Optional.ofNullable(cartDetailController.getCartDetailById(CartDetailNew.getCartDID()));
-                    if (check2.isPresent()) {
-                        ck = 1;
+                    if(quantity <= CurPro.getQuantity()){
+                        CartDetailModel CartDetailNew = new CartDetailModel(null, cartDID, CurCart.getCartID(), proID, quantity, PriceNew);
+                        cartDetailController.addnewCartDetail(CartDetailNew);
+                        Optional<CartDetailModel> check2 = Optional.ofNullable(cartDetailController.getCartDetailById(CartDetailNew.getCartDID()));
+                        if (check2.isPresent()) {
+                            ck = 1;
+                        }
+                    }else{
+                        return ResponseEntity.status(Error.FAIL).body(
+                                new ResponseObject(false, Error.FAIL_MESSAGE,"Product Quantity Error !!!")
+                        );
                     }
                 }
                 updateCart(CurCart.getCartID(), cartDetailController.autoLoadQuantity(CurCart.getCartID()), cartDetailController.autoLoadQCost(CurCart.getCartID()),0);
@@ -239,24 +269,45 @@ public class CartController {
         String cartID = value.get("cartID");
         String address = value.get("address");
         String methodPay = value.get("methodPay");
-        Optional<CartModel> check = Optional.ofNullable(cartService.getCartByID(cartID));
+        CartModel cartModel = cartService.getCartByID(cartID);
+        Optional<CartModel> check = Optional.ofNullable(cartModel);
         if(check.isPresent()){
-            if(address != "" && methodPay != ""){
-                cartService.chageStatusCart(cartID,1,address,methodPay);
-                CartModel check1 = cartService.getCartByID(cartID);
-                if(check1.getStatus() == 1){
-                    return ResponseEntity.status(Error.OK).body(
-                            new ResponseObject(true,Error.OK_MESSAGE,"")
-                    );
+            if(address != null  && methodPay != null){
+                if(address != ""  && methodPay != ""){
+                    cartService.chageStatusCart(cartID,1,address,methodPay);
+                    CartModel check1 = cartService.getCartByID(cartID);
+                    if(check1.getStatus() == 1){
+                        return ResponseEntity.status(Error.OK).body(
+                                new ResponseObject(true,Error.OK_MESSAGE,"")
+                        );
+                    }else{
+                        return ResponseEntity.status(Error.FAIL).body(
+                                new ResponseObject(false,Error.FAIL_MESSAGE,"Chage Status Fail !!!")
+                        );
+                    }
                 }else{
-                    return ResponseEntity.status(Error.FAIL).body(
-                            new ResponseObject(false,Error.FAIL_MESSAGE,"")
-                    );
+                    if(cartModel.getAddress().isEmpty() && cartModel.getMethodPay().isEmpty()){
+                        return ResponseEntity.status(Error.FAIL).body(
+                                new ResponseObject(false,Error.FAIL_MESSAGE,"Missing Data !!!")
+                        );
+                    }else{
+                        cartService.chageStatusCart(cartID,1,cartModel.getAddress(),cartModel.getMethodPay());
+                        CartModel check1 = cartService.getCartByID(cartID);
+                        if(check1.getStatus() == 1){
+                            return ResponseEntity.status(Error.OK).body(
+                                    new ResponseObject(true,Error.OK_MESSAGE,"")
+                            );
+                        }else{
+                            return ResponseEntity.status(Error.FAIL).body(
+                                    new ResponseObject(false,Error.FAIL_MESSAGE,"Chage Status Fail !!!")
+                            );
+                        }
+                    }
                 }
             }else{
-                return ResponseEntity.status(Error.FAIL).body(
-                        new ResponseObject(false,Error.FAIL_MESSAGE,"Missing Data !!!")
-                );
+                    return ResponseEntity.status(Error.FAIL).body(
+                            new ResponseObject(false,Error.FAIL_MESSAGE,"Missing Data !!!")
+                    );
             }
         }else{
             return ResponseEntity.status(Error.FAIL).body(

@@ -13,4 +13,8 @@ public interface BillDetailService {
     List<BillDetailModel> getBillDetailByBillID(String billID);
 
     void addBillDetail(BillDetailModel billDetailModel);
+
+    void deleteBillDetail(String billDID);
+
+    void deleteBillDetailByBillID(String billID);
 }

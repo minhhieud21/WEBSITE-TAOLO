@@ -28,6 +28,9 @@ public class BillController {
     CartServicelmpl cartService;
 
     @Autowired
+    CartDetailController cartDetailController;
+
+    @Autowired
     CartDetailServicelmpl cartDetailServicel;
 
     @Autowired
@@ -111,56 +114,50 @@ public class BillController {
         return kq;
     }
 
-    // POST localhost:8080/api/v1/bill/addBillDetail
-//    @PostMapping("/addBill")
-//    ResponseEntity<ResponseObject> addBill(@RequestBody BillModel billModel) {
-//        Optional<BillModel> check = Optional.ofNullable(billService.getBillByBillID(billModel.getBillID()));
-//        if(check.isPresent()){
-//            return ResponseEntity.status(Error.FAIL).body(
-//                    new ResponseObject(false,Error.FAIL_MESSAGE, "")
-//            );
-//        }else{
-//            billService.addBill(billModel);
-//            Optional<BillModel> check1 = Optional.ofNullable(billService.getBillByBillID(billModel.getBillID()));
-//            if(check1.isPresent()){
-//                return ResponseEntity.status(Error.OK).body(
-//                        new ResponseObject(true,Error.OK_MESSAGE, "")
-//                );
-//            }else{
-//                return ResponseEntity.status(Error.FAIL).body(
-//                        new ResponseObject(false,Error.FAIL_MESSAGE, "")
-//                );
-//            }
-//        }
-//    }
+
     @PostMapping("/addBill")
     ResponseEntity<ResponseObject> addBill(@RequestBody Map<String,String> value) {
         String cartID = value.get("cartID");
         CartModel CurCartModel = cartService.getCartByID(cartID);
+        String ErrorMessage = "";
         if(CurCartModel.getStatus() == 1){
             String billID = autoIDBill();
             BillModel billModel = new BillModel(null,billID,CurCartModel.getTotalCost(),CurCartModel.getTotalQuantity(),CurCartModel.getAccID(),CurCartModel.getStatus(), CurCartModel.getAddress(), CurCartModel.getMethodPay());
             billService.addBill(billModel);
             Optional<BillModel> check = Optional.ofNullable(billService.getBillByBillID(billID));
             if(check.isPresent()) {
-                cartService.updateCart(cartID,CurCartModel.getTotalQuantity(),CurCartModel.getTotalCost(),2);
                 List<CartDetailModel> cartDetailModelList = cartDetailServicel.getCartDetailByCartID(cartID);
                 for (int i = 0; i < cartDetailModelList.size(); i++) {
+                    String cartDID = cartDetailModelList.get(i).getCartDID();
                     String billDID = billDetailController.autoIDBillDetail();
                     String proID = cartDetailModelList.get(i).getProID();
                     long cost = cartDetailModelList.get(i).getCost();
                     int quantity = cartDetailModelList.get(i).getQuantity();
                     String imeiCode = autoIMEICode(cartDetailModelList.get(i).getProID());
-                    ProductModel productModel = productService.getProductById(cartDetailModelList.get(i).getProID());
+                    ProductModel productModel = productService.getProductById(proID);
                     String date = date();
                     int wmonth = productModel.getWarrantyMonth();
-                    BillDetailModel billDetailModel = new BillDetailModel(null,billDID,billID,proID,cost,quantity,imeiCode,date,warrantyDate(date,wmonth));
-                    billDetailServicel.addBillDetail(billDetailModel);
+                    if(quantity <= productModel.getQuantity()){
+                        BillDetailModel billDetailModel = new BillDetailModel(null,billDID,billID,proID,cost,quantity,imeiCode,date,warrantyDate(date,wmonth));
+                        billDetailServicel.addBillDetail(billDetailModel);
+                        int newQuantity = productModel.getQuantity() - quantity;
+                        productService.updateQuantity(proID,newQuantity);
+                        cartDetailServicel.deleteCartDetail(cartDID);
+                    }else{
+                        ErrorMessage = ErrorMessage + productModel.getProName() + ",";
+                    }
                 }
+                billService.updateBill(billID,billDetailController.autoLoadQuantity(billID), billDetailController.autoLoadCost(billID),1);
                 Optional<List<BillDetailModel>> check1 = Optional.ofNullable(billDetailServicel.getBillDetailByBillID(billID));
-                if(check1.isPresent()){
+                if(check1.isPresent() && ErrorMessage == ""){
+                    cartService.deleteCart(cartID);
                     return ResponseEntity.status(Error.OK).body(
                             new ResponseObject(true,Error.OK_MESSAGE, "Complete")
+                    );
+                }else if(check1.isPresent() && ErrorMessage != ""){
+                    cartService.updateCart(cartID,cartDetailController.autoLoadQuantity(cartID),cartDetailController.autoLoadQCost(cartID),0);
+                    return ResponseEntity.status(Error.OK).body(
+                            new ResponseObject(true,Error.OK_MESSAGE, "Those Product Is Not Enough Quantity:"+ErrorMessage)
                     );
                 }else{
                     return ResponseEntity.status(Error.FAIL).body(
@@ -174,7 +171,7 @@ public class BillController {
             }
         }else{
             return ResponseEntity.status(Error.FAIL).body(
-                    new ResponseObject(false,Error.FAIL_MESSAGE, "FAIL ")
+                    new ResponseObject(false,Error.FAIL_MESSAGE, "Fail")
             );
         }
     }
@@ -201,7 +198,60 @@ public class BillController {
         }else if(months == 0){
             year =  year + months;
         }
-
         return String.valueOf(year) + "-" + String.valueOf(month) + "-" + String.valueOf(day);
+    }
+
+    @PostMapping("/changeStatusBill")
+    ResponseEntity<ResponseObject> chageStatusBill(String billID, int status){
+        Optional<BillModel> check = Optional.ofNullable(billService.getBillByBillID(billID));
+        if(check.isPresent()){
+            BillModel billModel = billService.getBillByBillID(billID);
+            billService.updateBill(billID,billModel.getToTalQuantity(),billModel.getTotalCost(),status);
+            BillModel billModelCheck = billService.getBillByBillID(billID);
+            if(billModelCheck.getStatus() == status){
+                return ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true,Error.OK_MESSAGE, "Chage Status Success !!!")
+                );
+            }else{
+                return ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true,Error.OK_MESSAGE, "Chage Status Fail !!!")
+                );
+            }
+        }else{
+            return  ResponseEntity.status(Error.LIST_EMPTY).body(
+                    new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "Bill Not Exist")
+            );
+        }
+    }
+
+    @DeleteMapping("/deleteBill")
+    ResponseEntity<ResponseObject> deleteBill(String billID){
+        Optional<BillModel> check = Optional.ofNullable(billService.getBillByBillID(billID));
+        if(check.isPresent()){
+            BillModel billModel = billService.getBillByBillID(billID);
+            if(billModel.getStatus() == 0){
+                billService.deleteBill(billID);
+                billDetailServicel.deleteBillDetailByBillID(billID);
+                Optional<BillModel> billModelCheck = Optional.ofNullable(billService.getBillByBillID(billID));
+                List<BillDetailModel> billDetailModelCheck = billDetailServicel.getBillDetailByBillID(billID);
+                if(billModelCheck.isEmpty() && billDetailModelCheck.isEmpty()){
+                    return  ResponseEntity.status(Error.OK).body(
+                            new ResponseObject(true,Error.OK_MESSAGE, "Delete Success !!!")
+                    );
+                }else{
+                    return  ResponseEntity.status(Error.FAIL).body(
+                            new ResponseObject(false,Error.FAIL_MESSAGE, "Delete Fail !!!")
+                    );
+                }
+            }else{
+                return  ResponseEntity.status(Error.FAIL).body(
+                        new ResponseObject(false,Error.FAIL_MESSAGE, "This Is Not Error Bill, Can Not Delete !!!")
+                );
+            }
+        }else{
+            return  ResponseEntity.status(Error.LIST_EMPTY).body(
+                    new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "Bill Not Exist")
+            );
+        }
     }
 }

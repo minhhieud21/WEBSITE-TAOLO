@@ -14,6 +14,8 @@ public interface CartService {
 
     CartModel getCartByAccID(String accID);
 
+    List<CartModel> getCartCheckOut(String accID);
+
     void saveCart(CartModel cartModel);
 
     void updateCart(String cartID, int quantity, long cost, int status);

@@ -32,4 +32,16 @@ public class BillDetailServicelmpl implements BillDetailService{
     public  void addBillDetail(BillDetailModel billDetailModel){
         billDetailRepository.save(billDetailModel);
     }
+
+    @Override
+    public void deleteBillDetail(String billDID){
+        BillDetailModel billDetailModel = billDetailRepository.getBillDetailByID(billDID);
+        billDetailRepository.delete(billDetailModel);
+    }
+
+    @Override
+    public void deleteBillDetailByBillID(String billID){
+        List<BillDetailModel> billDetailModelList = billDetailRepository.getBillDetailByBillID(billID);
+        billDetailRepository.deleteAll(billDetailModelList);
+    }
 }

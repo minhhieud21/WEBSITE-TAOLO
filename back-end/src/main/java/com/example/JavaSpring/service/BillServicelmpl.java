@@ -31,4 +31,19 @@ public class BillServicelmpl implements BillService{
     public void addBill(BillModel billModel){
         billRepository.save(billModel);
     }
+
+    @Override
+    public void updateBill(String billID, int quantity, long cost, int status){
+        BillModel billModel = billRepository.getBillByBillID(billID);
+        billModel.setStatus(status);
+        billModel.setToTalQuantity(quantity);
+        billModel.setTotalCost(cost);
+        billRepository.save(billModel);
+    }
+
+    @Override
+    public void deleteBill(String billID){
+        BillModel billModel = billRepository.getBillByBillID(billID);
+        billRepository.delete(billModel);
+    }
 }
