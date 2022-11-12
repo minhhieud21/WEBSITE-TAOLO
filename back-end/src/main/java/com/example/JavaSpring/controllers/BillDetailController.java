@@ -48,7 +48,7 @@ public class BillDetailController {
 
     @GetMapping("/getBillDetailByBillID")
     ResponseEntity<ResponseObject> getBillDetailByBillID(String billID){
-        Optional<List<BillDetailModel>> check = Optional.ofNullable(billDetailService.getBillDetailByBillID(billID));
+        List<BillDetailModel> check = billDetailService.getBillDetailByBillID(billID);
         return check.isEmpty() ?
                 ResponseEntity.status(Error.LIST_EMPTY).body(
                         new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
@@ -104,5 +104,44 @@ public class BillDetailController {
         }
     }
 
+    int autoLoadQuantity(String billID){
+        int kq = 0;
+        List<BillDetailModel> billDetailModelList = billDetailService.getBillDetailByBillID(billID);
+        for(int i = 0; i < billDetailModelList.size(); i++){
+            kq = kq + billDetailModelList.get(i).getQuantity();
+        }
+        return kq;
+    }
+
+    long autoLoadCost(String billID){
+        long kq = 0;
+        List<BillDetailModel> billDetailModelList = billDetailService.getBillDetailByBillID(billID);
+        for(int i = 0; i < billDetailModelList.size(); i++){
+            kq = kq + billDetailModelList.get(i).getCost();
+        }
+        return kq;
+    }
+
+    @DeleteMapping("/deleteBillDetail")
+    ResponseEntity<ResponseObject> deleteBillDetail(String billDID){
+        Optional<BillDetailModel> check = Optional.ofNullable(billDetailService.getBillDetailByID(billDID));
+        if(check.isPresent()){
+            billDetailService.deleteBillDetail(billDID);
+            Optional<BillDetailModel> check1 = Optional.ofNullable(billDetailService.getBillDetailByID(billDID));
+            if(check1.isEmpty()){
+                return ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true,Error.OK_MESSAGE, "Delete Bill Detail Success !!!")
+                );
+            }else{
+                return ResponseEntity.status(Error.FAIL).body(
+                        new ResponseObject(false,Error.FAIL_MESSAGE, "Delete Bill Detail Fail !!!")
+                );
+            }
+        }else{
+            return ResponseEntity.status(Error.LIST_EMPTY).body(
+                    new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "Bill Detail Not Exist !!!")
+            );
+        }
+    }
 
 }

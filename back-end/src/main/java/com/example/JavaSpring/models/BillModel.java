@@ -19,20 +19,29 @@ public class BillModel {
     String accID;
     @Field("status")
     int status;
+    @Field("name")
+    String name;
     @Field("address")
     String address;
     @Field("methodPay")
     String methodPay;
+    @Field("phone")
+    String phone;
+    @Field("description")
+    String description;
 
-    public BillModel(String _id, String billID, Long totalCost, int toTalQuantity, String accID, int status, String address, String methodPay) {
+    public BillModel(String _id, String billID, Long totalCost, int toTalQuantity, String accID, int status, String name, String address, String methodPay, String phone, String description) {
         this._id = _id;
         this.billID = billID;
         this.totalCost = totalCost;
         this.toTalQuantity = toTalQuantity;
         this.accID = accID;
         this.status = status;
+        this.name = name;
         this.address = address;
         this.methodPay = methodPay;
+        this.phone = phone;
+        this.description = description;
     }
 
     @Override
@@ -44,8 +53,11 @@ public class BillModel {
                 ", toTalQuantity=" + toTalQuantity +
                 ", accID='" + accID + '\'' +
                 ", status=" + status +
+                ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", methodPay='" + methodPay + '\'' +
+                ", phone='" + phone + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 

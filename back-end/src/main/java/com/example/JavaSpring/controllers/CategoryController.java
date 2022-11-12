@@ -6,6 +6,7 @@ import com.example.JavaSpring.service.CategoryService;
 import com.example.JavaSpring.util.Error;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -65,13 +66,13 @@ public class CategoryController {
                 );
     }
 
-    // POST : localhost:8080/api/v1/category/add
-    @PostMapping("/add")
+    // POST : localhost:8080/api/v1/category/addCategory
+    @PostMapping("/addCategory")
     ResponseEntity<ResponseObject> addnewCategory(@RequestBody CategoryModel cateModel){
         Optional<CategoryModel> check = Optional.ofNullable(categoryService.getCateByID(cateModel.getCateID()));
         if (check.isPresent() == true) {
-            return ResponseEntity.status(Error.LIST_EMPTY).body(
-                    new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,"")
+            return ResponseEntity.status(Error.FAIL).body(
+                    new ResponseObject(false, Error.FAIL_MESSAGE,"Category Already Exist !!!")
             );
         } else {
             categoryService.saveCate(cateModel);
@@ -81,47 +82,33 @@ public class CategoryController {
         }
     }
 
-    @PostMapping("/setCateName")
-    ResponseEntity<ResponseObject> setCateName(@RequestParam(required = false) String cateID,@RequestParam(required = false) String cateName){
-        CategoryModel cateModel = categoryService.getCateByID(cateID);
-        Optional<CategoryModel> check = Optional.ofNullable(cateModel);
-        if(check.isPresent() == true && cateModel.getCateName() != cateName){
-            categoryService.updateCateName(cateID,cateName);
-            return ResponseEntity.status(Error.OK).body(
-                    new ResponseObject(true,Error.OK_MESSAGE,"")
-            );}
-        else {
-            return ResponseEntity.status(Error.DUPLICATE_NAME).body(
-                    new ResponseObject(false,Error.DUPLICATE_NAME_MESSAGE, "")
-            );}
+    // POST : localhost:8080/api/v1/category/updateCategory
+    @PostMapping("/updateCategory")
+    ResponseEntity<ResponseObject> updateCategory(@RequestBody CategoryModel cateModel){
+        Optional<CategoryModel> check = Optional.ofNullable(categoryService.getCateByID(cateModel.getCateID()));
+        if (check.isPresent() == true) {
+            if(cateModel.getCateID() != null && cateModel.getCateName() != null && String.valueOf(cateModel.getStatus()) != null){
+                CategoryModel cate = categoryService.getCateByID(cateModel.getCateID());
+                if(cateModel.getCateName() == ""){
+                    categoryService.updateCategory(cateModel.getCateID(),cate.getCateName(),cateModel.getStatus());
+                }else if(String.valueOf(cateModel.getStatus()) == ""){
+                    categoryService.updateCategory(cateModel.getCateID(),cate.getCateName(),cate.getStatus());
+                }else{
+                    categoryService.updateCategory(cateModel.getCateID(),cateModel.getCateName(),cateModel.getStatus());
+                }
+                return ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true, Error.OK_MESSAGE,"Update Success !!!")
+                );
+            }else{
+                return ResponseEntity.status(Error.FAIL).body(
+                        new ResponseObject(false, Error.FAIL_MESSAGE,"Missing Data !!!")
+                );
+            }
+        } else {
+            return ResponseEntity.status(Error.FAIL).body(
+                    new ResponseObject(false, Error.FAIL_MESSAGE,"Category Not Exist !!!")
+            );
+        }
     }
 
-    @PostMapping("/statusHide")
-    ResponseEntity<ResponseObject> statusHide(@RequestParam(required = false) String cateID){
-        CategoryModel cateModel = categoryService.getCateByID(cateID);
-        Optional<CategoryModel> check = Optional.ofNullable(cateModel);
-        if(check.isPresent() == true && cateModel.getStatus() != 0){
-            categoryService.statusHide(cateID);
-            return ResponseEntity.status(Error.OK).body(
-                    new ResponseObject(true,Error.OK_MESSAGE,"")
-            );}
-        else {
-            return ResponseEntity.status(Error.FAIL_STATUS_CHANGE).body(
-                    new ResponseObject(false,Error.FAIL_STATUS_CHANGE_MESSAGE, "")
-            );}
-    }
-    @PostMapping("/statusShow")
-    ResponseEntity<ResponseObject> statusShow(@RequestParam(required = false) String cateID){
-        CategoryModel cateModel = categoryService.getCateByID(cateID);
-        Optional<CategoryModel> check = Optional.ofNullable(cateModel);
-        if(check.isPresent() == true && cateModel.getStatus() != 1){
-            categoryService.statusShow(cateID);
-            return ResponseEntity.status(Error.OK).body(
-                    new ResponseObject(true,Error.OK_MESSAGE,"")
-            );}
-        else {
-            return ResponseEntity.status(Error.FAIL_STATUS_CHANGE).body(
-                    new ResponseObject(false, Error.FAIL_STATUS_CHANGE_MESSAGE,"")
-            );}
-    }
 }

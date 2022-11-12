@@ -97,6 +97,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public void updateQuantity(String proID, int quantity){
+        ProductModel productModel = productRepository.getProductByID(proID);
+        productModel.setQuantity(quantity);
+        productRepository.save(productModel);
+    }
+
+    @Override
     public void updateProduct(ProductModel productModel, String proId) {
         ProductModel productModel1 = productRepository.getProductByID(proId);
         productModel.set_id(productModel1.get_id());

@@ -30,6 +30,8 @@ public interface ProductService {
 
     void updatePrice(String proId, Long price);
 
+    void updateQuantity(String proId, int quantity);
+
     void updateProduct(ProductModel productModel, String proId);
 
     Page<ProductModel> searchProductAdmin(Pageable paging,String text);
