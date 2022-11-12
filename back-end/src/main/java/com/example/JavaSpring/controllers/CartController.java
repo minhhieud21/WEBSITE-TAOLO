@@ -77,16 +77,16 @@ public class CartController {
                 );
     }
 
-    // GET by id: localhost:8080/api/v1/cart/getCartCheckOut?
-    @GetMapping("/getCartCheckOut")
-    ResponseEntity<ResponseObject> getCartCheckOut( String accID) {
-        List<CartModel> check1 = cartService.getCartCheckOut(accID);
-        return check1.isEmpty() ?
+    // GET by id: localhost:8080/api/v1/cart/getAllCartReadyCheckOut
+    @GetMapping("/getAllCartReadyCheckOut")
+    ResponseEntity<ResponseObject> getAllCartReadyCheckOut() {
+        List<CartModel> check = cartService.getAllCartReadyCheckOut();
+        return check.isEmpty() ?
                 ResponseEntity.status(Error.LIST_EMPTY).body(
                         new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
                 ) :
                 ResponseEntity.status(Error.OK).body(
-                        new ResponseObject(true,Error.OK_MESSAGE, check1)
+                        new ResponseObject(true,Error.OK_MESSAGE, check)
                 );
     }
 
@@ -104,7 +104,7 @@ public class CartController {
         long PriceNew = CurPro.getPrice() * quantity;
         if(check.isEmpty()){
             if(quantity <= CurPro.getQuantity()){
-                CartModel cartModelNew = new CartModel(null,cartID,accID,quantity,PriceNew,0,"","");
+                CartModel cartModelNew = new CartModel(null,cartID,accID,quantity,PriceNew,0,"","","","","");
                 CartDetailModel cartDetailModelNew = new CartDetailModel(null,cartDID,cartID,proID,quantity,PriceNew);
                 cartService.saveCart(cartModelNew);
                 cartDetailController.addnewCartDetail(cartDetailModelNew);
@@ -202,41 +202,6 @@ public class CartController {
             );}
     }
 
-//    @PostMapping("/setTotalQuantity")
-//    ResponseEntity<ResponseObject> setCateName(@RequestParam(required = false) String cartID,@RequestParam(required = false) int tQuantity){
-//        CartModel cartModel = cartService.getCartByID(cartID);
-//        Optional<CartModel> check = Optional.ofNullable(cartModel);
-//        if(check.isPresent() == true && cartModel.getTotalQuantity() != tQuantity){
-//            cartService.updateTotalQuantity(cartID, tQuantity);
-//
-//            return ResponseEntity.status(Error.OK).body(
-//                    new ResponseObject(true,Error.OK_MESSAGE,"")
-//            );}
-//        else {
-//
-//            return ResponseEntity.status(Error.LIST_EMPTY).body(
-//                    new ResponseObject(false,Error.LIST_EMPTY_MESSAGE,"")
-//            );}
-//    }
-//
-//    @PostMapping("/setTotalCost")
-//    ResponseEntity<ResponseObject> setCateName(@RequestParam(required = false) String cartID,@RequestParam(required = false) long tCost){
-//        CartModel cartModel = cartService.getCartByID(cartID);
-//        Optional<CartModel> check = Optional.ofNullable(cartModel);
-//        if(check.isPresent() == true && cartModel.getTotalCost() != tCost){
-//            cartService.updateTotalCost(cartID, tCost);
-//
-//            return ResponseEntity.status(Error.OK).body(
-//                    new ResponseObject(true,Error.OK_MESSAGE,"")
-//            );}
-//        else {
-//
-//            return ResponseEntity.status(Error.LIST_EMPTY).body(
-//                    new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
-//            );}
-//    }
-
-    //
     @DeleteMapping("/delete/{cartID}")
     ResponseEntity<ResponseObject> deleteCart(@PathVariable("cartID") String cartID){
         CartModel cartModel = cartService.getCartByID(cartID);
@@ -267,14 +232,17 @@ public class CartController {
     @PostMapping("/readyCheckout")
     ResponseEntity<ResponseObject> readyCheckout(@RequestBody Map<String,String> value){
         String cartID = value.get("cartID");
+        String name = value.get("name");
         String address = value.get("address");
         String methodPay = value.get("methodPay");
+        String phone = value.get("phone");
+        String description = value.get("description");
         CartModel cartModel = cartService.getCartByID(cartID);
         Optional<CartModel> check = Optional.ofNullable(cartModel);
         if(check.isPresent()){
-            if(address != null  && methodPay != null){
-                if(address != ""  && methodPay != ""){
-                    cartService.chageStatusCart(cartID,1,address,methodPay);
+            if(address != null  && methodPay != null && name != null && phone != null){
+                if(address != ""  && methodPay != "" && name != "" && phone != ""){
+                    cartService.chageStatusCart(cartID,1,name,address,methodPay,phone,description);
                     CartModel check1 = cartService.getCartByID(cartID);
                     if(check1.getStatus() == 1){
                         return ResponseEntity.status(Error.OK).body(
@@ -286,12 +254,12 @@ public class CartController {
                         );
                     }
                 }else{
-                    if(cartModel.getAddress().isEmpty() && cartModel.getMethodPay().isEmpty()){
+                    if(cartModel.getAddress().isEmpty() && cartModel.getMethodPay().isEmpty() && cartModel.getName().isEmpty() && cartModel.getPhone().isEmpty()){
                         return ResponseEntity.status(Error.FAIL).body(
                                 new ResponseObject(false,Error.FAIL_MESSAGE,"Missing Data !!!")
                         );
                     }else{
-                        cartService.chageStatusCart(cartID,1,cartModel.getAddress(),cartModel.getMethodPay());
+                        cartService.chageStatusCart(cartID,1,cartModel.getName(),cartModel.getAddress(),cartModel.getMethodPay(),cartModel.getPhone(),cartModel.getDescription());
                         CartModel check1 = cartService.getCartByID(cartID);
                         if(check1.getStatus() == 1){
                             return ResponseEntity.status(Error.OK).body(

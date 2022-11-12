@@ -14,7 +14,9 @@ public interface CartService {
 
     CartModel getCartByAccID(String accID);
 
-    List<CartModel> getCartCheckOut(String accID);
+//    List<CartModel> getCartCheckOut(String accID);
+
+    List<CartModel> getAllCartReadyCheckOut();
 
     void saveCart(CartModel cartModel);
 
@@ -24,7 +26,7 @@ public interface CartService {
 
     void updateTotalCost(String cartID,long tCost);
 
-    void chageStatusCart(String cartID,int stt, String address, String methodPay);
+    void chageStatusCart(String cartI,int stt ,String name, String address, String methodPay, String phone, String description);
 
     void deleteCart(String cartID);
 

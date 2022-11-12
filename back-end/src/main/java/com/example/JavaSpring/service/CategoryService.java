@@ -9,12 +9,8 @@ public interface CategoryService {
 
     CategoryModel getCateByID(String id);
 
-    void updateCateName(String cateID, String cateName);
+    void updateCategory(String cateID, String cateName, int status);
 
     void saveCate(CategoryModel cateModel);
-
-    void statusShow(String cateID);
-
-    void statusHide(String cateID);
 
 }

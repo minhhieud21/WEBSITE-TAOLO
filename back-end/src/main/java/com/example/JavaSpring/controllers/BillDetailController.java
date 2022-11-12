@@ -49,7 +49,7 @@ public class BillDetailController {
 
     @GetMapping("/getBillDetailByBillID")
     ResponseEntity<ResponseObject> getBillDetailByBillID(String billID){
-        Optional<List<BillDetailModel>> check = Optional.ofNullable(billDetailService.getBillDetailByBillID(billID));
+        List<BillDetailModel> check = billDetailService.getBillDetailByBillID(billID);
         return check.isEmpty() ?
                 ResponseEntity.status(Error.LIST_EMPTY).body(
                         new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
