@@ -1,7 +1,6 @@
 package com.example.JavaSpring.controllers;
 
 import com.example.JavaSpring.models.BillDetailModel;
-import com.example.JavaSpring.models.BillModel;
 import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.service.BillDetailService;
 import com.example.JavaSpring.util.Error;

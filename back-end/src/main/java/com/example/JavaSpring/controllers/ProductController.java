@@ -1,7 +1,10 @@
 package com.example.JavaSpring.controllers;
 
+import com.example.JavaSpring.models.AccountModel;
 import com.example.JavaSpring.models.ProductModel;
 import com.example.JavaSpring.models.ResponseObject;
+import com.example.JavaSpring.service.AccountService;
+import com.example.JavaSpring.service.JwtService;
 import com.example.JavaSpring.service.ProductService;
 import com.example.JavaSpring.util.Error;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +12,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,26 +35,49 @@ public class ProductController {
     @Autowired
     ImageController imageController = new ImageController();
 
+    @Autowired
+    JwtService jwtService;
 
+    @Autowired
+    AccountService accountService;
 
     // GET all : localhost:8080/api/v1/product/getAllProduct/?Type=0&page=1 
     @GetMapping("getAllProduct")
-    ResponseEntity<ResponseObject>getAllProduct(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,@RequestParam(defaultValue = "1") int Type){
+    ResponseEntity<ResponseObject>getAllProduct(ServletRequest request, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "1") int Type){
         if(Type > 1 || Type < 0){
             return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
                     new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
             );
         }
         Pageable paging = PageRequest.of(page,size);
-        Page<ProductModel> check ;
+        Page<ProductModel> check = null;
         List<Object> kq = new ArrayList<Object>();
         if(Type == 1){
            check = productService.getAllProductUser(paging);
        }
        else {
-           check = productService.getAllProduct(paging);
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+            String authToken = httpRequest.getHeader("authorization");
+            String accID = null;
+            if (jwtService.validateTokenLogin(authToken)) {
+                accID = jwtService.getAccIDFromToken(authToken);
+                AccountModel temp = accountService.getUserByAccID(accID);
+                if (String.valueOf(accID.charAt(0)).equals("A")) {
+                    check = productService.getAllProduct(paging);
+                }
+                else {
+                    return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
+                            new ResponseObject(false,"Can quyen Admin","")
+                    );
+                }
+            }
+            else {
+                return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
+                        new ResponseObject(false,"Can quyen Admin","")
+                );
+            }
         }
-        List<ProductModel> a =check.getContent();
+        List<ProductModel> a = check.getContent();
         for(int i=0;i<a.size();i++) {
             HashMap<String,String> object = new HashMap<String,String>();
             object.put("_id",String.valueOf(a.get(i).get_id()));
@@ -81,7 +110,7 @@ public class ProductController {
         Optional<ProductModel> check = Optional.ofNullable(productService.getProductById(id));
         if (check.isPresent()== true ){
                 HashMap<String,String> object = new HashMap<String,String>();
-                ProductModel a =check.get();
+                ProductModel a = check.get();
                 object.put("_id",String.valueOf(a.get_id()));
                 object.put("proId",String.valueOf(a.getproId()));
                 object.put("proName",String.valueOf(a.getProName()));
@@ -106,7 +135,7 @@ public class ProductController {
     //GET : localhost:8080/api/v1/product/getProduct?cateId=MBA&Type=0
     // Type = 0 lay theo binh thuong, Type = 1 lay theo a->z , Type = 2 lay theo z->a , Type = 3 lay gia thap den cao , Type = 4 lay gia cao den thap
     @GetMapping("/getProduct")
-    ResponseEntity<ResponseObject> getProductByCateID(@RequestParam(required = false) String cateId,@RequestParam(defaultValue = "0") int Type,@RequestParam(defaultValue = "0") int sort) {
+    ResponseEntity<ResponseObject> getProductByCateID(ServletRequest request,@RequestParam(required = false) String cateId,@RequestParam(defaultValue = "0") int Type,@RequestParam(defaultValue = "0") int sort) {
         if( Type < 0 || Type > 1 || cateId.length()==0 || sort<0 || sort>4){
             return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
                     new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
@@ -114,8 +143,29 @@ public class ProductController {
         }
         List<ProductModel> a;
         if(Type == 0){
-          a   = productService.getProductByCateID(cateId,sort);}
-        else {a = productService.getProductByCateIDUser(cateId,sort);}
+                HttpServletRequest httpRequest = (HttpServletRequest) request;
+                String authToken = httpRequest.getHeader("authorization");
+                String accID = null;
+                if (jwtService.validateTokenLogin(authToken)) {
+                    accID = jwtService.getAccIDFromToken(authToken);
+                    AccountModel temp = accountService.getUserByAccID(accID);
+                    if (String.valueOf(accID.charAt(0)).equals("A")) {
+                        a   = productService.getProductByCateID(cateId,sort);
+                    }
+                    else {
+                        return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
+                                new ResponseObject(false,"Can quyen Admin","")
+                        );
+                    }
+                }
+                else {
+                    return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
+                            new ResponseObject(false,"Can quyen Admin","")
+                    );
+                }
+         }
+        else {
+            a = productService.getProductByCateIDUser(cateId,sort);}
         List<Object> kq = new ArrayList<Object>();
         if(a.isEmpty() ==true){
                 return ResponseEntity.status(Error.LIST_EMPTY).body(
@@ -177,8 +227,13 @@ public class ProductController {
                 }
             }
             productModel.set_id(max+1);
-            productService.saveProduct(productModel);
-            if(image.length == 1 && !image[0].getOriginalFilename().equals("") || image.length > 1) {
+            if(image.length == 1 && image[0].getOriginalFilename().equals("") == true) {
+                return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+                        new ResponseObject(false,"Thieu anh khi them san pham","")
+                );
+            }
+            else{
+                productService.saveProduct(productModel);
                 ResponseEntity<ResponseObject> aa = imageController.addImage(image, proId);
                 if(aa.getStatusCodeValue()!=200){
                     return aa;
@@ -192,22 +247,6 @@ public class ProductController {
                     new ResponseObject(false,Error.DUPLICATE_ID_MESSAGE,"")
             );
         }
-    }
-
-
-    //Ko dung den
-    @DeleteMapping("/{proId}") /// Đang viết lõ nen để tạm đây
-    ResponseEntity<ResponseObject> deleteProduct(@PathVariable String proId){
-        productService.deleteProduct(proId);
-        return null;
-//        if(check.isPresent() == true){
-//                return ResponseEntity.status(HttpStatus.OK).body(
-//                        new ResponseObject(true,"")
-//                );}
-//        else {
-//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-//                        new ResponseObject(false, "")
-//                );}
     }
 
     // POST : localhost:8080/api/v1/product/statusHide?proId=abc
@@ -273,7 +312,7 @@ public class ProductController {
 
     // GET : localhost:8080/api/v1/product/search/?type=1&text=Macbook
     @GetMapping("/search")
-    ResponseEntity<ResponseObject>search(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,@RequestParam(defaultValue = "1") int type,@RequestParam(defaultValue = "") String text){
+    ResponseEntity<ResponseObject>search(ServletRequest request,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,@RequestParam(defaultValue = "1") int type,@RequestParam(defaultValue = "") String text){
         if(type<0 || type>1){
             return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
                     new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
@@ -286,7 +325,26 @@ public class ProductController {
             check = productService.searchProductUser(paging,text);
         }
         else {
-            check = productService.searchProductAdmin(paging,text);
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+            String authToken = httpRequest.getHeader("authorization");
+            String accID = null;
+            if (jwtService.validateTokenLogin(authToken)) {
+                accID = jwtService.getAccIDFromToken(authToken);
+                AccountModel temp = accountService.getUserByAccID(accID);
+                if (String.valueOf(accID.charAt(0)).equals("A")) {
+                    check = productService.searchProductAdmin(paging,text);
+                }
+                else {
+                    return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
+                            new ResponseObject(false,"Can quyen Admin","")
+                    );
+                }
+            }
+            else {
+                return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
+                        new ResponseObject(false,"Can quyen Admin","")
+                );
+            }
         }
         List<ProductModel> a =check.getContent();
         for(int i=0;i<a.size();i++) {

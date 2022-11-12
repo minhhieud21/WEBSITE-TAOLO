@@ -4,6 +4,11 @@ package com.example.JavaSpring.models;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Document("Account")
 public class AccountModel {
@@ -21,8 +26,19 @@ public class AccountModel {
     String urlID;
     @Field("status")
     int status;
+    private String[] roles;
 
-    public AccountModel(){}
+    public AccountModel() {
+        super();
+    }
+
+    public String[] getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String[] roles) {
+        this.roles = roles;
+    }
 
     @Override
     public String toString() {
@@ -103,4 +119,15 @@ public class AccountModel {
     public void setStatus(int status) {
         this.status = status;
     }
+
+    public List<GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        if (String.valueOf(accID.charAt(0)).equals("A")) {
+            authorities.add(new SimpleGrantedAuthority("Admin"));
+        } else if (String.valueOf(accID.charAt(0)).equals("U"))  {
+            authorities.add(new SimpleGrantedAuthority("User"));
+        }
+        return authorities;
+    }
+
 }

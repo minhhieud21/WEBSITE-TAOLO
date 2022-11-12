@@ -7,8 +7,6 @@ import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.service.CartService;
 import com.example.JavaSpring.service.ProductServiceImpl;
 import com.example.JavaSpring.util.Error;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

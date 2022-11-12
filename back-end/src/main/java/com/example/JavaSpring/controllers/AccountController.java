@@ -5,21 +5,24 @@ import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.models.UserModel;
 import com.example.JavaSpring.service.AccountService;
 import com.example.JavaSpring.service.EmailService;
+import com.example.JavaSpring.service.JwtService;
 import com.example.JavaSpring.service.UserService;
 import com.example.JavaSpring.util.Error;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 
 @RestController
@@ -30,9 +33,11 @@ public class AccountController {
     AccountService accountService;
     @Autowired
     UserService userService;
-
+    @Autowired
+    JwtService jwtService;
     @Autowired
     EmailService emailService;
+
     public String convertHashToString(String text) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("MD5");
         byte[] hashInBytes = md.digest(text.getBytes(StandardCharsets.UTF_8));
@@ -44,21 +49,21 @@ public class AccountController {
     }
 
     public String createID(String text) {
-       char kt1 = text.charAt(2);
-       char kt2 = text.charAt(3);
-       char kt3 = text.charAt(4);
-       int kt = Integer.parseInt(String.valueOf(kt1)+String.valueOf(kt2)+String.valueOf(kt3));
-       kt = kt + 1;
+        char kt1 = text.charAt(2);
+        char kt2 = text.charAt(3);
+        char kt3 = text.charAt(4);
+        int kt = Integer.parseInt(String.valueOf(kt1)+String.valueOf(kt2)+String.valueOf(kt3));
+        kt = kt + 1;
         String ketqua;
-       if(kt < 10){
+        if(kt < 10){
             ketqua = "US00" + String.valueOf(kt);
-       }
-       else if (kt < 100){
+        }
+        else if (kt < 100){
             ketqua = "US0" + String.valueOf(kt);
-       }
-       else {
+        }
+        else {
             ketqua = "US" + String.valueOf(kt);
-       }
+        }
         return ketqua;
     }
     public String createAdminID(String text) {
@@ -88,10 +93,24 @@ public class AccountController {
         return kt;
     }
 
+    @GetMapping("getAllAccount")
+    ResponseEntity<ResponseObject>getAllAccount(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+        Pageable paging = PageRequest.of(page,size);
+        Page<AccountModel> check  = accountService.getAllAccount(paging);
+        if(check.isEmpty() == true){
+            return ResponseEntity.status(Error.LIST_EMPTY).body(
+                    new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,""));
+        }
+        else {
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(true,Error.OK_MESSAGE,check)); }
+    }
+
     @PostMapping("/login")
-        ResponseEntity<ResponseObject> getUserByUsername(@RequestBody(required = false) Map<String,Object> object,@RequestParam(required = false) boolean google_login, @RequestParam(defaultValue = "notthing") String urlID) throws NoSuchAlgorithmException {
+    ResponseEntity<ResponseObject> getUserByUsername(@RequestBody(required = false) Map<String,Object> object,@RequestParam(required = false) boolean google_login, @RequestParam(defaultValue = "notthing") String urlID,HttpServletResponse response) throws NoSuchAlgorithmException {
         AccountModel check = new AccountModel();
         AccountModel accountModel = new AccountModel();
+        String token = "";
         if(google_login == true && urlID.equals("notthing")==true ) {
             return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
                     new ResponseObject(false,Error.WRONG_ACCESS_RIGHTS_MESSAGE,"" )
@@ -114,18 +133,20 @@ public class AccountController {
                 accountModel.setGoogle_login(true);
                 accountModel.setUrlID(urlID);
                 accountService.saveAccount(accountModel);
+                token = jwtService.createTokenUser(accountModel.getAccID());
                 return ResponseEntity.status(Error.OK).body(
-                        new ResponseObject(true,Error.OK_MESSAGE, accountModel.getAccID())
+                        new ResponseObject(true,Error.OK_MESSAGE,token )
                 );
-                }
+            }
             else {
                 if(check.getStatus() == 1){
-                   return ResponseEntity.status(Error.OK).body(
-                        new ResponseObject(true,Error.OK_MESSAGE, check.getAccID())
-                   );}
+                    token = jwtService.createTokenUser(check.getAccID());
+                    return ResponseEntity.status(Error.OK).body(
+                            new ResponseObject(true,Error.OK_MESSAGE,token )
+                    );}
                 else {
-                   return ResponseEntity.status(Error.WRONG_STATUS).body(
-                        new ResponseObject(false,Error.WRONG_STATUS_MESSAGE, ""));
+                    return ResponseEntity.status(Error.WRONG_STATUS).body(
+                            new ResponseObject(false,Error.WRONG_STATUS_MESSAGE, ""));
                 }
             }
         }
@@ -135,7 +156,7 @@ public class AccountController {
                         new ResponseObject(false,Error.WRONG_ACCESS_RIGHTS_MESSAGE,"" )
                 );
             }
-                check = accountService.getUserByUsername(String.valueOf(object.get("username")).toLowerCase());
+            check = accountService.getUserByUsername(String.valueOf(object.get("username")).toLowerCase());
             if(check == null){
                 return ResponseEntity.status(Error.WRONG_USERNAME).body(
                         new ResponseObject(false, Error.WRONG_USERNAME_MESSAGE,"")
@@ -144,8 +165,9 @@ public class AccountController {
                 String checkPassword = convertHashToString(String.valueOf(object.get("password")));
                 if(check.getPassword().equals(checkPassword)){
                     if(check.getStatus() == 1){
+                        token = jwtService.createTokenUser(check.getAccID());
                         return ResponseEntity.status(Error.OK).body(
-                                new ResponseObject(true,Error.OK_MESSAGE, check.getAccID())
+                                new ResponseObject(true,Error.OK_MESSAGE,token )
                         );}
                     else {
                         return ResponseEntity.status(Error.WRONG_STATUS).body(
@@ -162,7 +184,7 @@ public class AccountController {
 
     @PostMapping("/addUser")
     ResponseEntity<ResponseObject> adduserModel(@RequestParam("username") String username,@RequestParam("password") String password, @RequestParam("name")String name,@RequestParam("phone") String phone,@RequestParam("address") String address, @RequestParam("gmail")String gmail,@RequestParam("sex") int sex, @RequestParam("age")int age,@RequestParam(defaultValue = "1") int type) throws NoSuchAlgorithmException {
-        if(username.length() == 0||password.length()==0||name.length()==0||phone.length()==0||address.length()==0||gmail.length()==0||phone.length()<10||password.length()<8||gmail.length()<=9){
+        if(username.length() == 0||password.length()==0||name.length()==0||phone.length()==0||address.length()==0||gmail.length()==0||phone.length()<10||password.length()<8){
             return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
                     new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
             );
@@ -230,39 +252,43 @@ public class AccountController {
     }
 
     @PostMapping("/setPassword")
-    ResponseEntity<ResponseObject> setPassword(@RequestParam("accID") String accID,@RequestParam("oldpassword") String oldpassword, @RequestParam("newpassword")String newpassword,@RequestParam("newpassword1") String newpassword1) throws NoSuchAlgorithmException {
-        AccountModel check = accountService.getUserByAccID(accID);
-        if(accID.length()==0||oldpassword.length()==0||newpassword.length()==0||newpassword1.length()==0){
+    ResponseEntity<ResponseObject> setPassword(ServletRequest request,@RequestParam("oldpassword") String oldpassword, @RequestParam("newpassword")String newpassword, @RequestParam("confirmpassword") String confirmpassword) throws NoSuchAlgorithmException {
+        if(oldpassword.length()==0||newpassword.length()==0||confirmpassword.length()==0){
             return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
                     new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
             );
         }
-        if (check == null) {
-            return ResponseEntity.status(Error.DUPLICATE_ID).body(
-                    new ResponseObject(false, "Ko co Account nay", "")
-            );}
-        String passwordold = convertHashToString(oldpassword);
-        if(passwordold.equals(check.getPassword()) == false){
-            return ResponseEntity.status(Error.WRONG_PASSWORD).body(
-                    new ResponseObject(false, Error.WRONG_PASSWORD_MESSAGE, "")
-            );
-        }
-        for(int i=0;i<newpassword.length();i++){
-            if(String.valueOf(newpassword.charAt(i)).equals(" ") == true){
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String authToken = httpRequest.getHeader("authorization");
+        if (jwtService.validateTokenLogin(authToken)) {
+            String accID = jwtService.getAccIDFromToken(authToken);
+            AccountModel check = accountService.getUserByAccID(accID);
+            if (check == null) {
+                return ResponseEntity.status(Error.DUPLICATE_ID).body(
+                        new ResponseObject(false, "Ko co Account nay", "")
+                );}
+            String passwordold = convertHashToString(oldpassword);
+            if(passwordold.equals(check.getPassword()) == false){
                 return ResponseEntity.status(Error.WRONG_PASSWORD).body(
-                    new ResponseObject(false, "Password khong dc co khoang chan", "")
-            );}
-        }
-        if(newpassword.length()<= 7){
-            return ResponseEntity.status(Error.WRONG_PASSWORD).body(
-                    new ResponseObject(false, "Password qua ngan", "")
-            );
-        }
-        if(newpassword.equals(newpassword1) != true){
-            return ResponseEntity.status(Error.WRONG_PASSWORD).body(
-                    new ResponseObject(false, "Password nhap lai ko giong", "")
-            );
-        }
+                        new ResponseObject(false, Error.WRONG_PASSWORD_MESSAGE, "")
+                );
+            }
+            for(int i=0;i<newpassword.length();i++){
+                if(String.valueOf(newpassword.charAt(i)).equals(" ") == true){
+                    return ResponseEntity.status(Error.WRONG_PASSWORD).body(
+                            new ResponseObject(false, "Password khong dc co khoang chan", "")
+                    );}
+            }
+            if(newpassword.length()<= 7){
+                return ResponseEntity.status(Error.WRONG_PASSWORD).body(
+                        new ResponseObject(false, "Password qua ngan", "")
+                );
+            }
+            if(newpassword.equals(confirmpassword) != true){
+                return ResponseEntity.status(Error.WRONG_PASSWORD).body(
+                        new ResponseObject(false, "Password nhap lai ko giong", "")
+                );
+            }
             String password1 = convertHashToString(newpassword);
             check.setPassword(password1);
             accountService.updatePassword(check);
@@ -270,6 +296,8 @@ public class AccountController {
                     new ResponseObject(true, Error.OK_MESSAGE, "")
             );
         }
+        return null;
+    }
     @PostMapping("/changestatus")
     ResponseEntity<ResponseObject> changestatus(@RequestParam String accID,@RequestParam int status){
         AccountModel check = accountService.getUserByAccID(accID);

@@ -2,12 +2,15 @@ package com.example.JavaSpring.controllers;
 
 import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.models.UserModel;
+import com.example.JavaSpring.service.JwtService;
 import com.example.JavaSpring.service.UserService;
 import com.example.JavaSpring.util.Error;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -18,7 +21,9 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping("")
+    @Autowired
+    JwtService jwtService;
+    @GetMapping("/getAllUser")
     ResponseEntity<ResponseObject> getallUser() {
         List<UserModel> check = userService.getAllUser();
         if (check != null) {
@@ -31,7 +36,7 @@ public class UserController {
             );
         }
     }
-    @GetMapping("/{userID}")
+    @GetMapping("/getUserByID/{userID}")
     ResponseEntity<ResponseObject> addUser(@PathVariable String userID) {
         UserModel check = userService.getUserByUserID(userID);
         if (check != null) {
@@ -47,24 +52,22 @@ public class UserController {
 
 
     @PostMapping("updateUser")
-    ResponseEntity<ResponseObject> updateUser(@RequestParam("userID")String userID,@RequestParam("name")String name,@RequestParam("phone") String phone,@RequestParam("address") String address, @RequestParam("gmail")String gmail,@RequestParam("sex") int sex, @RequestParam("age")int age){
-        if(userID.length() == 0|| name.length() == 0 || phone.length() == 0 || address.length() == 0 || gmail.length() == 0 || phone.length()<= 9  || gmail.length() <=9){
+    ResponseEntity<ResponseObject> updateUser(ServletRequest request, @RequestParam("name")String name, @RequestParam("phone") String phone, @RequestParam("address") String address, @RequestParam("sex") int sex, @RequestParam("age")int age){
+        if( name.length() == 0 || phone.length() == 0 || address.length() == 0 ||  phone.length()<= 9  ){
             return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
                     new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
             );
         }
-        UserModel userModeltemp = userService.getUserByEmail(gmail.toLowerCase());
-        if (userModeltemp != null) {
-            return ResponseEntity.status(Error.DUPLICATE_ID).body(
-                    new ResponseObject(false, "Gmail nay da dc dang ky roi", "")
-            );
-        }
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String authToken = httpRequest.getHeader("authorization");
+        String accID = null;
+        if (jwtService.validateTokenLogin(authToken)) {
+            accID = jwtService.getAccIDFromToken(authToken);}
         UserModel newUser = new UserModel();
-        newUser.setUserID(userID);
+        newUser.setUserID(accID);
         newUser.setName(name);
         newUser.setPhone(phone);
         newUser.setAddress(address);
-        newUser.setGmail(gmail.toLowerCase());
         newUser.setAge(age);
         newUser.setSex(sex);
         UserModel userModel1 = userService.getUserByUserID(newUser.getUserID());

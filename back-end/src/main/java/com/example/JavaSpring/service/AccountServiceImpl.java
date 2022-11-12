@@ -3,6 +3,8 @@ package com.example.JavaSpring.service;
 import com.example.JavaSpring.models.AccountModel;
 import com.example.JavaSpring.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +14,11 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     AccountRepository accountRepository;
+
+    @Override
+    public Page<AccountModel> getAllAccount(Pageable paging) {
+        return accountRepository.findAll(paging);
+    }
 
     @Override
     public AccountModel getUserByUsername(String username) {

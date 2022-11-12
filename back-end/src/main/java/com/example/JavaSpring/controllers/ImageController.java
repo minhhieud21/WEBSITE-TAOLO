@@ -31,13 +31,12 @@ public class ImageController {
     @GetMapping("/{id}")
     ImageModel getPathImageByID(@PathVariable("id")String id) {
         ImageModel check = imageService.getPathImageByID(id);
-        ImageModel a = new ImageModel();
         if (check == null){
-            a.set_id("default");
-            a.setImgPath("default_1.png");
-            a.setStatus(1);
-            a.setProID("default");
-            return a;
+            List<ImageModel> temp = imageService.getPathImage(id);
+            if(temp.isEmpty() == true){
+                return null;
+            }
+            return temp.get(0);
         }
         else{
             return check;}
@@ -46,23 +45,20 @@ public class ImageController {
     List<String> getPathImage(String id) {
         List<String> check = new ArrayList<>();
         ImageModel a = this.getPathImageByID(id);
-        check.add(a.getImgPath());
+        if(a != null){
+            check.add(a.getImgPath());}
         List<ImageModel> temp = imageService.getPathImage(id);
         if(temp.isEmpty() == false){
             for(int i = 0;i<temp.size();i++){
-                check.add(temp.get(i).getImgPath());
+                if(a.getImgPath().equals(temp.get(i).getImgPath()) == false){
+                    check.add(temp.get(i).getImgPath());}
             }}
-        else check.add("default_2.png");
         return check;
     }
     
     @GetMapping("/getAllImage")
     List<ImageModel> getAllImage (){
         return imageService.getAllImage();
-    }
-
-    String dau (){
-        return String.valueOf("\\");
     }
 
     @PostMapping("/add")
@@ -77,6 +73,16 @@ public class ImageController {
             return ResponseEntity.status(Error.LIST_EMPTY).body(
                     new ResponseObject(false,"Ma san pham khong ton tai","")
             );
+        }
+        List<String> temp =  getPathImage(proID);
+        for (int i = 0; i < temp.size(); i++){
+            for(int j = 0 ; j < image.length;j++){
+                if(temp.get(i).equals(StringUtils.cleanPath(image[j].getOriginalFilename()))){
+                    return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+                            new ResponseObject(false,"Anh dang them da ton tai","")
+                    );
+                }
+            }
         }
         for(int i = 0;i<image.length;i++){
                     if (StringUtils.cleanPath(image[i].getContentType()).equals("image/jpeg") || StringUtils.cleanPath(image[i].getContentType()).equals("image/png")){
@@ -98,46 +104,6 @@ public class ImageController {
         );
     }
 
-//    @PostMapping("/update")
-//    void update(){
-//        List<ImageModel> check = this.getAllImage();
-//        for (int i = 0 ; i < check.size();i++){
-//            ImageModel a = check.get(i);
-//            String x = a.getImgPath().replace(a.getProID()+"/","");
-//            a.setImgPath(x);
-//            imageService.update(a);
-//        }
-//    }
-//
-//    @PostMapping("/changestatus")
-//        ResponseEntity<ResponseObject> changestatus(@RequestParam("nameImage") String nameImage,@RequestParam("proID") String proID,@RequestParam("status") int status){
-//        if((status > 1 || status < -1) || nameImage.length()==0||proID.length()==0){
-//            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
-//                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
-//            );
-//        }
-//        if(status == 1){
-//            return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
-//                    new ResponseObject(false,Error.WRONG_ACCESS_RIGHTS_MESSAGE, "")
-//            );
-//        }
-//        ImageModel imageModel = imageService.getImagebyName(nameImage,proID);
-//        if( imageModel == null ){
-//            return ResponseEntity.status(Error.NO_VALUE_BY_ID).body(
-//                    new ResponseObject(false,Error.NO_VALUE_BY_ID_MESSAGE, "")
-//            );}
-//        else if(imageModel.getStatus() == status) {
-//            return ResponseEntity.status(Error.FAIL_STATUS_CHANGE).body(
-//                    new ResponseObject(false, Error.FAIL_STATUS_CHANGE_MESSAGE,"")
-//            );}
-//        else {
-//            imageService.changestatus(imageModel,status);
-//            return ResponseEntity.status(Error.OK).body(
-//                    new ResponseObject(true,Error.OK_MESSAGE,"")
-//            );
-//        }
-//    }
-
     @PostMapping("/mainImage")
     ResponseEntity<ResponseObject> mainImage(@RequestParam("nameImage") String nameImage,@RequestParam("proID") String proID){
         if(nameImage.length()==0||proID.length()==0){
@@ -148,7 +114,7 @@ public class ImageController {
         ImageModel imageModel = imageService.getImagebyName(nameImage,proID);
         if( imageModel == null ){
             return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
-                    new ResponseObject(false,Error.WRONG_ACCESS_RIGHTS_MESSAGE, "")
+                    new ResponseObject(false,"Ma san pham khong ton tai", "")
             );}
         else if(imageModel.getStatus() == 1) {
             return ResponseEntity.status(Error.FAIL_STATUS_CHANGE).body(
@@ -173,16 +139,15 @@ public class ImageController {
             );
         }
         for(int i =0 ;i< listNameImagess.length;i++){
+            List<String> temp =  getPathImage(proID);
+            if(temp.size() >= 1 || temp.isEmpty() == true ){
+                return ResponseEntity.status(Error.FAIL).body(
+                        new ResponseObject(false,"San pham hien con 1 anh hoac ma san pham sai",""));
+            }
             ImageModel imageModel = imageService.getImagebyName(listNameImagess[i],proID);
-            if( imageModel != null){
                 File myObj = new File("src"+imageModel.getImgPath());
                 myObj.delete();
                 imageService.deleteImage(imageModel.get_id());
-            }
-            else {
-                return ResponseEntity.status(Error.LIST_EMPTY).body(
-                    new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,""));
-            }
         }
         return ResponseEntity.status(Error.OK).body(
                 new ResponseObject(true,Error.OK_MESSAGE,"")

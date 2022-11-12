@@ -2,7 +2,6 @@ package com.example.JavaSpring.repository;
 
 
 import com.example.JavaSpring.models.CartDetailModel;
-import com.example.JavaSpring.models.CartModel;
 import com.example.JavaSpring.service.CartDetailService;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;

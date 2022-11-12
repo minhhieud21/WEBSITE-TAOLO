@@ -40,6 +40,7 @@ public class UserServiceImpl implements UserService {
         UserModel userModel1 = userRepository1.getUserByUserID(userID);
         userModel.set_id(userModel1.get_id());
         userModel.setUserID(userModel1.getUserID());
+        userModel.setGmail(userModel1.getGmail());
         userRepository1.save(userModel);
     }
 }

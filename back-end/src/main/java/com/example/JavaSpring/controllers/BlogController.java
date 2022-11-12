@@ -2,22 +2,13 @@ package com.example.JavaSpring.controllers;
 
 
 import com.example.JavaSpring.models.BlogModel;
-import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/api/v1/blog") //localhost:8080/api/v1/blog
