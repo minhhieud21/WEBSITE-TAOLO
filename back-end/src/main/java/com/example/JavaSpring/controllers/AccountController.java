@@ -1,6 +1,7 @@
 package com.example.JavaSpring.controllers;
 
 import com.example.JavaSpring.models.AccountModel;
+import com.example.JavaSpring.models.ProductModel;
 import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.models.UserModel;
 import com.example.JavaSpring.service.AccountService;
@@ -310,6 +311,11 @@ public class AccountController {
             return ResponseEntity.status(Error.NO_VALUE_BY_ID).body(
                     new ResponseObject(false,Error.NO_VALUE_BY_ID_MESSAGE, "")
             );}
+        else if(check.getUsername().equals("admin")){
+            return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
+                    new ResponseObject(false,"Ko the thay doi trang thai Admin", "")
+            );
+        }
         else if(check.getStatus() == status) {
             return ResponseEntity.status(Error.FAIL_STATUS_CHANGE).body(
                     new ResponseObject(false, Error.FAIL_STATUS_CHANGE_MESSAGE,"")
@@ -444,4 +450,47 @@ public class AccountController {
         return null;
     }
 
+    @GetMapping("/search")
+    ResponseEntity<ResponseObject>search(ServletRequest request,@RequestParam(defaultValue = "") String text,@RequestParam(defaultValue = "0") int type){
+            if((type > 1 && type < 0)){
+                return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+                        new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
+                );
+            }
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+            String authToken = httpRequest.getHeader("authorization");
+            String accID = null;
+            if (jwtService.validateTokenLogin(authToken)) {
+                accID = jwtService.getAccIDFromToken(authToken);
+                if (String.valueOf(accID.charAt(0)).equals("A")) {
+                    List<UserModel> temp1 = userService.searchUser(text,type);
+                    if(temp1.isEmpty() == true ){
+                        return ResponseEntity.status(Error.NO_VALUE_BY_ID).body(
+                                new ResponseObject(false,Error.NO_VALUE_BY_ID_MESSAGE,""));
+                    }else {
+                        List<AccountModel> check = new ArrayList<>();
+                        for (int i = 0 ; i<temp1.size();i++){
+                            AccountModel accountModel= accountService.getUserByAccID(temp1.get(i).getUserID());
+                            if(accountModel != null){
+                                check.add(accountModel); }}
+                        if(check.isEmpty()==true){
+                            return ResponseEntity.status(Error.NO_VALUE_BY_ID).body(
+                                    new ResponseObject(false,Error.NO_VALUE_BY_ID_MESSAGE,""));
+                        }
+                        return ResponseEntity.status(Error.OK).body(
+                                new ResponseObject(true,Error.OK_MESSAGE,check));
+                    }
+                }
+                else {
+                    return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
+                            new ResponseObject(false,"Can quyen Admin","")
+                    );
+                }
+            }
+            else {
+                return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
+                        new ResponseObject(false, "Can quyen Admin", "")
+                );
+            }
+    }
 }

@@ -14,4 +14,6 @@ public interface UserService {
     List<UserModel> getAllUser();
 
     void updateUser(UserModel userModel, String userID);
+
+    List<UserModel> searchUser(String text, int type);
 }
