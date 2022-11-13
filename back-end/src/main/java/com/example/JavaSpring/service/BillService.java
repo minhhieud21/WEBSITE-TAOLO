@@ -15,7 +15,4 @@ public interface BillService {
 
     void addBill(BillModel billModel);
 
-    void updateBill(String billID, int quantity, long cost, int status);
-
-    void deleteBill(String billID);
 }

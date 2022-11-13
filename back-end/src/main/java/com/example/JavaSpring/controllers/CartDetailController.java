@@ -97,17 +97,17 @@ public class CartDetailController {
     }
 
     // localhost:8080/api/v1/cartdetail/getCartDetailByCartID?cartID=?
-    @GetMapping("/getCartDetailByCartID")
-    ResponseEntity<ResponseObject> getcartdetailByCartID(String cartID) {
-        List<CartDetailModel> check = cartDetailService.getCartDetailByCartID(cartID);
-        return check.isEmpty() ?
-                ResponseEntity.status(Error.LIST_EMPTY).body(
-                        new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
-                ) :
-                ResponseEntity.status(Error.OK).body(
-                        new ResponseObject(true,Error.OK_MESSAGE, check)
-                );
-    }
+//    @GetMapping("/getCartDetailByCartID")
+//    ResponseEntity<ResponseObject> getCartDetailByCartID(String cartID) {
+//        List<CartDetailModel> check = cartDetailService.getCartDetailByCartID(cartID);
+//        return check.isEmpty() ?
+//                ResponseEntity.status(Error.LIST_EMPTY).body(
+//                        new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
+//                ) :
+//                ResponseEntity.status(Error.OK).body(
+//                        new ResponseObject(true,Error.OK_MESSAGE, check)
+//                );
+//    }
     List<CartDetailModel> getCartDetailByCartID(String cartID) {
         return cartDetailService.getCartDetailByCartID(cartID);
     }
@@ -208,6 +208,7 @@ public class CartDetailController {
         }
     }
 
+
     //DELETE localhost:8080/api/v1/cartdetail/deleteCartDetail/?
     @DeleteMapping("/deleteCartDetail/{cartDID}")
     ResponseEntity<ResponseObject> deleteCartDetail(@PathVariable("cartDID") String cartDID) {
@@ -237,6 +238,30 @@ public class CartDetailController {
         }
     }
 
+//    //DELETE localhost:8080/api/v1/cartdetail/deleteCartDetail/?
+//    @DeleteMapping("/deleteCartDetail/{cartDID}")
+//    ResponseEntity<ResponseObject> deleteCartDetail(@PathVariable("cartDID") String cartDID) {
+//        CartDetailModel cartDetailModel = cartDetailService.getCartDetailByID(cartDID);
+//        Optional<CartDetailModel> check = Optional.ofNullable(cartDetailModel);
+//        if(check.isPresent()){
+//            cartDetailService.deleteCartDetail(cartDID);
+//            CartDetailModel cartDetailModel1 = cartDetailService.getCartDetailByID(cartDID);
+//            Optional<CartDetailModel> check1 = Optional.ofNullable(cartDetailModel1);
+//            if(check1.isEmpty()){
+//                return ResponseEntity.status(Error.OK).body(
+//                        new ResponseObject(true,"")
+//                );
+//            }else{
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+//                        new ResponseObject(false, "")
+//                );
+//            }
+//        }else{
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+//                    new ResponseObject(false, "")
+//            );
+//        }
+//    }
     //DELETE localhost:8080/api/v1/cartdetail/deleteCartDetail/
     @DeleteMapping("/deleteAllCartDetail/{cartID}")
     int deleteAllCartDetail (@PathVariable("cartID") String cartID) {

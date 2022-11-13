@@ -30,15 +30,23 @@ public class CategoryServiceImpl implements CategoryService{
         categoryRepository.save(cateModel);
     }
 
-   @Override
-    public void updateCategory(String cateID, String cateName, int status){
-        CategoryModel categoryModel = categoryRepository.getCateByID(cateID);
-        if(categoryModel.getCateName() != cateName){
-            categoryModel.setCateName(cateName);
-        }
-        if(categoryModel.getStatus() != status){
-            categoryModel.setStatus(status);
-        }
-        categoryRepository.save(categoryModel);
-   }
+    public  void updateCateName( String cateID ,String cateName){
+        CategoryModel cateModel = categoryRepository.getCateByID(cateID);
+        cateModel.setCateName(cateName);
+        categoryRepository.save(cateModel);
+    }
+
+    @Override
+    public void statusShow(String cateID){
+        CategoryModel cateModel = categoryRepository.getCateByID(cateID);
+        cateModel.setStatus(1);
+        categoryRepository.save(cateModel);
+    }
+
+    @Override
+    public void statusHide(String cateID) {
+        CategoryModel cateModel = categoryRepository.getCateByID(cateID);
+        cateModel.setStatus(0);
+        categoryRepository.save(cateModel);
+    }
 }

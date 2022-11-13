@@ -29,16 +29,6 @@ public class CartServicelmpl implements CartService{
     }
 
     @Override
-    public List<CartModel> getAllCartReadyCheckOut(){
-        return cartRepository.getAllCartReadyCheckOut();
-    }
-
-//    @Override
-//    public List<CartModel> getCartCheckOut(String accID){
-//        return cartRepository.getCartCheckOut(accID);
-//    }
-
-    @Override
     public void saveCart(CartModel cartModel){
         cartRepository.save(cartModel);
     }
@@ -75,12 +65,9 @@ public class CartServicelmpl implements CartService{
     }
 
     @Override
-    public void chageStatusCart(String cartID,int stt,String name, String address, String methodPay, String phone, String description){
+    public void chageStatusCart(String cartID,int stt, String address, String methodPay){
         CartModel cartModel = cartRepository.getCartByID(cartID);
         cartModel.setStatus(stt);
-        cartModel.setName(name);
-        cartModel.setPhone(phone);
-        cartModel.setDescription(description);
         cartModel.setAddress(address);
         cartModel.setMethodPay(methodPay);
         cartRepository.save(cartModel);

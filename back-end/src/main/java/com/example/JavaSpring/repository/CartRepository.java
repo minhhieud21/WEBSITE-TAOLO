@@ -17,7 +17,5 @@ public interface CartRepository extends MongoRepository<CartModel,String> {
     @Query("{accID:/?0/,status:0}")
     CartModel getCartByAccID(String accID);
 
-    @Query("{status:1}")
-    List<CartModel> getAllCartReadyCheckOut();
 
 }
