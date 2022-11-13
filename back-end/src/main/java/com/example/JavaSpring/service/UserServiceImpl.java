@@ -43,4 +43,14 @@ public class UserServiceImpl implements UserService {
         userModel.setGmail(userModel1.getGmail());
         userRepository1.save(userModel);
     }
+
+    @Override
+    public List<UserModel> searchUser(String text, int type) {
+        if(type == 0){
+            return userRepository1.searchUserByGmail(text);
+        }
+        else {
+            return userRepository1.searchUserByPhone(text);
+        }
+    }
 }

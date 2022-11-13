@@ -23,19 +23,7 @@ public class UserController {
 
     @Autowired
     JwtService jwtService;
-    @GetMapping("/getAllUser")
-    ResponseEntity<ResponseObject> getallUser() {
-        List<UserModel> check = userService.getAllUser();
-        if (check != null) {
-            return ResponseEntity.status(Error.OK).body(
-                    new ResponseObject(true,Error.OK_MESSAGE,check)
-            );
-        } else {
-            return ResponseEntity.status(Error.LIST_EMPTY).body(
-                    new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
-            );
-        }
-    }
+
     @GetMapping("/getUserByID/{userID}")
     ResponseEntity<ResponseObject> addUser(@PathVariable String userID) {
         UserModel check = userService.getUserByUserID(userID);
