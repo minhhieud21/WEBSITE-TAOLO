@@ -241,9 +241,9 @@ public class CartDetailController {
     @DeleteMapping("/deleteAllCartDetail/{cartID}")
     int deleteAllCartDetail (@PathVariable("cartID") String cartID) {
         List<CartDetailModel> check = cartDetailService.getCartDetailByCartID(cartID);
-
         if(!check.isEmpty()){
             cartDetailService.deleteAllCartDetail(cartID);
+            cartServicelmpl.updateCart(cartID,0,0,0);
             List<CartDetailModel> check1 = cartDetailService.getCartDetailByCartID(cartID);
             if(check1.isEmpty()){
                 return 1;

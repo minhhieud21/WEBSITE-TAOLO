@@ -122,7 +122,7 @@ public class BillController {
         Optional<CartModel> checkE = Optional.ofNullable(CurCartModel);
         String ErrorMessage = "";
         int ck = 0;
-        if(checkE.isPresent()){
+        if(checkE.isPresent() && CurCartModel.getTotalQuantity() != 0){
             if(CurCartModel.getStatus() == 1){
                 String billID = autoIDBill();
                 List<CartDetailModel> cartDetailModelList = cartDetailServicel.getCartDetailByCartID(cartID);
@@ -198,7 +198,7 @@ public class BillController {
             }
         }else{
             return ResponseEntity.status(Error.FAIL).body(
-                    new ResponseObject(false,Error.FAIL_MESSAGE, "Cart Not Exist !!!")
+                    new ResponseObject(false,Error.FAIL_MESSAGE, "Cart Not Exist !!! Or There Is No Product On Cart !!!")
             );
         }
     }
