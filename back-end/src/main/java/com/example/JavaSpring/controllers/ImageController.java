@@ -28,8 +28,7 @@ public class ImageController {
     ProductService productService;
 
     public ImageController(){};
-    @GetMapping("/{id}")
-    ImageModel getPathImageByID(@PathVariable("id")String id) {
+    ImageModel getPathImageByID(String id) {
         ImageModel check = imageService.getPathImageByID(id);
         if (check == null){
             List<ImageModel> temp = imageService.getPathImage(id);
@@ -56,10 +55,6 @@ public class ImageController {
         return check;
     }
     
-    @GetMapping("/getAllImage")
-    List<ImageModel> getAllImage (){
-        return imageService.getAllImage();
-    }
 
     @PostMapping("/add")
     ResponseEntity<ResponseObject> addImage(@RequestParam("image") MultipartFile[] image,@RequestParam("proID") String proID) throws IOException {
@@ -79,7 +74,7 @@ public class ImageController {
             for(int j = 0 ; j < image.length;j++){
                 if(temp.get(i).equals(StringUtils.cleanPath(image[j].getOriginalFilename()))){
                     return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
-                            new ResponseObject(false,"Anh dang them da ton tai","")
+                            new ResponseObject(false,"Anh dang them da ton tai",temp.get(i))
                     );
                 }
             }
@@ -140,14 +135,18 @@ public class ImageController {
         }
         for(int i =0 ;i< listNameImagess.length;i++){
             List<String> temp =  getPathImage(proID);
-            if(temp.size() >= 1 || temp.isEmpty() == true ){
+            if(temp.isEmpty() == true  ){
+                return ResponseEntity.status(Error.NO_VALUE_BY_ID).body(
+                        new ResponseObject(false,"Ma san pham khong ton tai",""));
+            }
+            if(temp.size() == 1 ){
                 return ResponseEntity.status(Error.FAIL).body(
-                        new ResponseObject(false,"San pham hien con 1 anh hoac ma san pham sai",""));
+                        new ResponseObject(false,"San pham hien con 1 anh ",""));
             }
             ImageModel imageModel = imageService.getImagebyName(listNameImagess[i],proID);
-                File myObj = new File("src"+imageModel.getImgPath());
+                File myObj = new File("src/Image/"+imageModel.getProID()+"/"+imageModel.getImgPath());
                 myObj.delete();
-                imageService.deleteImage(imageModel.get_id());
+                imageService.deleteImage(imageModel);
         }
         return ResponseEntity.status(Error.OK).body(
                 new ResponseObject(true,Error.OK_MESSAGE,"")

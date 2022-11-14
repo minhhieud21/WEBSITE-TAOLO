@@ -137,13 +137,12 @@ public class BillController {
     ResponseEntity<ResponseObject> addBill(@RequestBody Map<String,String> value) {
         String cartID = value.get("cartID");
         CartModel CurCartModel = cartService.getCartByID(cartID);
-        if(CurCartModel.getStatus() == 1){
-            String billID = autoIDBill();
-            BillModel billModel = new BillModel(null,billID,CurCartModel.getTotalCost(),CurCartModel.getTotalQuantity(),CurCartModel.getAccID(),CurCartModel.getStatus(), CurCartModel.getAddress(), CurCartModel.getMethodPay());
-            billService.addBill(billModel);
-            Optional<BillModel> check = Optional.ofNullable(billService.getBillByBillID(billID));
-            if(check.isPresent()) {
-                cartService.updateCart(cartID,CurCartModel.getTotalQuantity(),CurCartModel.getTotalCost(),2);
+        Optional<CartModel> checkE = Optional.ofNullable(CurCartModel);
+        String ErrorMessage = "";
+        int ck = 0;
+        if(checkE.isPresent() && CurCartModel.getTotalQuantity() != 0){
+            if(CurCartModel.getStatus() == 1){
+                String billID = autoIDBill();
                 List<CartDetailModel> cartDetailModelList = cartDetailServicel.getCartDetailByCartID(cartID);
                 for (int i = 0; i < cartDetailModelList.size(); i++) {
                     String billDID = billDetailController.autoIDBillDetail();
@@ -174,7 +173,7 @@ public class BillController {
             }
         }else{
             return ResponseEntity.status(Error.FAIL).body(
-                    new ResponseObject(false,Error.FAIL_MESSAGE, "FAIL ")
+                    new ResponseObject(false,Error.FAIL_MESSAGE, "Cart Not Exist !!! Or There Is No Product On Cart !!!")
             );
         }
     }
