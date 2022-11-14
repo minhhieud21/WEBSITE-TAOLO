@@ -1,27 +1,63 @@
-import React from "react";
-import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
-import ListProduct from "./ListProduct/ListProduct";
-import SideBar from "./SideBar/SideBar";
+import React, { useState, useEffect, useContext } from "react"
+import Breadcrumb from "../../components/Breadcrumb/Breadcrumb"
+import ListProduct from "./ListProduct/ListProduct"
+import SideBar from "./SideBar/SideBar"
+import { useLocation } from "react-router-dom"
+import {
+	getAllCategories,
+	getProductByCateId,
+	searchProductByName,
+} from "../../services"
+import { CartAndProductContext } from "layouts/MainLayout/ContainerMainLayout"
 
 const Shop = () => {
-  return (
-    <>
-      <div className="container">
-        {/* HERO SECTION*/}
-        <Breadcrumb name="Shop" />
-        <section className="py-5">
-          <div className="container p-0">
-            <div className="row">
-              {/* SHOP SIDEBAR*/}
-              <SideBar />
-              {/* SHOP LISTING*/}
-              <ListProduct />
-            </div>
-          </div>
-        </section>
-      </div>
-    </>
-  );
-};
+	const search = useLocation().search
+	const cateId = new URLSearchParams(search).get("cateId")
+	const searchValue = new URLSearchParams(search).get("name")
+	const { product } = useContext(CartAndProductContext)
+	const [products, setProducts] = useState([])
+	const [categories, setCategories] = useState([])
 
-export default Shop;
+	useEffect(() => {
+		getAllCategories()
+			.then((res) => {
+				setCategories(res.data)
+			})
+			.catch((e) => console.log(e))
+
+		fetchProduct(cateId, searchValue)
+	}, [cateId, searchValue])
+
+	const fetchProduct = (cateId, searchValue) => {
+		// if (!cateId) {
+		// 	getProductByCateId(cateId).then((res) => {
+		// 		setProducts(product) //res.data.data)
+		// 	})
+		// } else {
+		// }
+		searchProductByName(searchValue).then((res) => {
+			setProducts(res.data.data)
+		})
+	}
+
+	return (
+		<>
+			<div className="container">
+				{/* HERO SECTION*/}
+				<Breadcrumb name="Shop" />
+				<section className="py-5">
+					<div className="container p-0">
+						<div className="row">
+							{/* SHOP SIDEBAR*/}
+							<SideBar categories={categories} cateId={cateId} />
+							{/* SHOP LISTING*/}
+							<ListProduct products={products} />
+						</div>
+					</div>
+				</section>
+			</div>
+		</>
+	)
+}
+
+export default Shop

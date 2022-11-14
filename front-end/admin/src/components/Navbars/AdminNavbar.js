@@ -43,6 +43,11 @@ function Header() {
     }
     return "Brand";
   };
+
+  const handleLogOut = () =>{
+      localStorage.clear();
+  }
+
   return (
     <Navbar bg="light" expand="lg">
       <Container fluid>
@@ -196,7 +201,7 @@ function Header() {
               <Nav.Link
                 className="m-0"
                 href="/admin/login"
-               
+                onClick={handleLogOut}
               >
                 <span className="no-icon">Log out</span>
               </Nav.Link>

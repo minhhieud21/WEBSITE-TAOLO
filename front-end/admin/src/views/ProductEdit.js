@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom"
 
@@ -25,48 +25,36 @@ function ProductEdit() {
 
   const [product, setProduct] = useState({})
   const [cateName, setCateName] = useState("")
-  const { register, watch, handleSubmit, formState: { errors } } = useForm();
+  const [productEdit, setProductEdit] = useState({})
+  const { register, watch, handleSubmit, formState: { errors } } = useForm({
+    defaultValues: useMemo(() => productEdit, [productEdit])
+  });
   const { productId } = useParams();
   const watchAllFields = watch("proName", false);
   const history = useHistory();
 
-  const cateIdToName = [{
-    id: "MBA",
-    value: "Macbook Air",
-  },
-  {
-    id: 'MBP',
-    value: "Macbook Pro",
-  }
-    ,
-  {
-    id: 'IM',
-    value: "IMac",
-  }
-    ,
-  {
-    id: 'MM',
-    value: "Mac Mini",
-  }
-  ]
-
   useEffect(() => {
     getProductById(productId).then(res => {
-      console.log(res.data)
+      setProductEdit(res.data)
       setProduct(res.data)
     }).catch(e => console.log(e))
   }, [productId])
 
 
   const onSubmit = data => {
-    const productEdit = {
+    const check = JSON.stringify(data) === JSON.stringify(productEdit);
+    const tmp = check ? {
       ...data,
       proId: productId,
       image: product.Image ? product.Image : ""
+    } : {
+      ...productEdit,
+      proId: productId,
+      image: product.Image ? product.Image : ""
     }
-    updateProduct(productEdit).then(data => {
-
-      history.push("/admin/product")
+    console.log(tmp,check)
+    updateProduct(tmp).then(data => {
+      //history.push("/admin/product")
     }).catch(e => console.log(e))
 
   }

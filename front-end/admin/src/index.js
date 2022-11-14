@@ -15,6 +15,7 @@ import Login from "components/Login/Login";
 import UserEdit from "views/UserEdit";
 import ProductEdit from "views/ProductEdit";
 import ProductAdd from "views/ProductAdd";
+import NotFound from "components/NotfoundPage";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -27,6 +28,7 @@ root.render(
       <Route path="/admin/product/:productId" component={ProductEdit} />
       <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
       <Redirect from="/" to="/admin/dashboard" />
+      <Route path="*" component={NotFound} />
     </Switch>
   </BrowserRouter>
 );

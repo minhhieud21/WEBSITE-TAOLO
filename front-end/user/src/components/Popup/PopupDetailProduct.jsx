@@ -16,24 +16,24 @@ const PopupDetailProduct = () => {
             <div className="modal-body p-0">
               <div className="row align-items-stretch">
                 <div className="col-lg-6 p-lg-0">
-                  <a
+                  <Link
                     className="glightbox product-view d-block h-100 bg-cover bg-center"
                     style={{
                       background: "url(../../assets/img/product-5.jpg)",
                     }}
-                    href="img/product-5.jpg"
+                    to="img/product-5.jpg"
                     data-gallery="gallery1"
                     data-glightbox="Red digital smartwatch"
                   />
-                  <a
+                  <Link
                     className="glightbox d-none"
-                    href="img/product-5-alt-1.jpg"
+                    to="img/product-5-alt-1.jpg"
                     data-gallery="gallery1"
                     data-glightbox="Red digital smartwatch"
                   />
-                  <a
+                  <Link
                     className="glightbox d-none"
-                    href="img/product-5-alt-2.jpg"
+                    to="img/product-5-alt-2.jpg"
                     data-gallery="gallery1"
                     data-glightbox="Red digital smartwatch"
                   />
@@ -95,13 +95,13 @@ const PopupDetailProduct = () => {
                         </Link>
                       </div>
                     </div>
-                    <a
+                    <Link
                       className="btn btn-link text-dark text-decoration-none p-0"
-                      href="#!"
+                      to="#!"
                     >
                       <i className="far fa-heart me-2" />
                       Add to wish list
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>

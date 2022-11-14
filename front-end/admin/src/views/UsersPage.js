@@ -15,9 +15,6 @@ import { Link } from 'react-router-dom';
 
 import Confirm from 'components/Popup/Confirm';
 import { getAllProduct, getAllUsers } from 'services';
-import { useDispatch, useSelector } from 'react-redux';
-import { productSelector, userSelector } from 'redux/selector';
-import { addProduct, addUser,getAllUsersRedux } from 'redux/actions';
 
 export default function UsersPage() {
     //const dispatch = useDispatch();
@@ -37,7 +34,7 @@ export default function UsersPage() {
 
     return (
         <>
-            {del ? <Confirm isOpen={del} /> : ''}
+            {/* {del ? <Confirm isOpen={del} /> : ''} */}
             <Container fluid>
                 <Row>
                     <Col md="12">

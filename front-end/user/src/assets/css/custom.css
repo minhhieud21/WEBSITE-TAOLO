@@ -1,1 +1,10 @@
-/* your styles go here */
+.pass-word {
+	display: flex;
+	position: relative;
+}
+.pass-word i {
+	position: absolute;
+	right: 0;
+	top: 30%;
+	cursor: pointer;
+}

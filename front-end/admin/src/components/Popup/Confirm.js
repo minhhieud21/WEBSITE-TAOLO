@@ -17,7 +17,7 @@ function Confirm(props) {
   const { className, isOpen, productName } = props;
   const {del, setDel} = useContext();
   const toggle = () => setDel(!del)
-  console.log(del)
+
   return (
     <div>
       <Modal

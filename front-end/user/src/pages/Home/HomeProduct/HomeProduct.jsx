@@ -1,16 +1,9 @@
-import React from "react"
-import { useEffect } from "react"
-import { useState } from "react"
+import React, { useContext } from "react"
 import ItemProduct from "../../../components/ItemProduct/ItemProduct"
-import { getAllProduct } from "../../../services"
-const HomeProduct = () => {
-	const [products, setProducts] = useState([])
+import { CartAndProductContext } from "layouts/MainLayout/ContainerMainLayout"
 
-	useEffect(() => {
-		getAllProduct().then((res) => {
-			setProducts(res.data.content)
-		})
-	}, [])
+const HomeProduct = () => {
+	const { product } = useContext(CartAndProductContext)
 
 	return (
 		<>
@@ -22,14 +15,16 @@ const HomeProduct = () => {
 					<h2 className="h5 text-uppercase mb-4">Top trending products</h2>
 				</header>
 				<div className="row">
-					{products.map((product) => (
-						<ItemProduct
-							key={product.proId}
-							proId={product.proId}
-							proName={product.proName}
-							price={product.price}
-						/>
-					))}
+					{product &&
+						product.map((product) => (
+							<ItemProduct
+								key={product.proId}
+								proId={product.proId}
+								proName={product.proName}
+								price={product.price}
+								img={product.image}
+							/>
+						))}
 				</div>
 			</section>
 		</>

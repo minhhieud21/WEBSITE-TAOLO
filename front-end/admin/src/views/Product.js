@@ -47,7 +47,7 @@ function Product() {
     <PopUpContext.Provider value={{
       del, setDel
     }}>
-         {del ? <Confirm productName={currentProduct} />: ""} 
+         {/* {del ? <Confirm productName={currentProduct} />: ""}  */}
       <Container fluid>
         <Row>
           <Col md="12">
@@ -75,7 +75,7 @@ function Product() {
                         <td>{product.status}</td>
                         <td>
                           <div className='d-flex' style={{ cursor: "pointer" }}>
-                            <i className="nc-icon nc-simple-remove text-danger pr-3" onClick={() => setDel(!del)}></i>
+                            <i className="nc-icon nc-simple-remove text-danger pr-3" onClick={() => changeProductStatus(product.proId)}></i>
 
                             <Link className="reset-anchor" to={`/admin/product/${product.proId}`}>
                               <i className="nc-icon nc-settings-gear-64"></i>

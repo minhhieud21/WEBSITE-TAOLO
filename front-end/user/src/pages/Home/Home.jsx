@@ -12,7 +12,7 @@ const Home = () => {
       <Popup />
       <Banner />
       {/* CATEGORIES SECTION*/}
-      {/* <Categories /> */}
+      <Categories />
       {/* TRENDING PRODUCTS*/}
       <HomeProduct />
       {/* SERVICES*/}

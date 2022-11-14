@@ -2942,6 +2942,7 @@ fieldset:disabled .btn {
 .btn-primary {
   color: #212529;
   background-color: #dcb14a;
+  border-radius: 5px;
   border-color: #dcb14a;
 }
 
@@ -4074,7 +4075,8 @@ fieldset:disabled .btn {
 .nav-tabs .nav-link.active,
 .nav-tabs .nav-item.show .nav-link {
   color: #fff;
-  background-color: #000;
+  background-color: #42b0ff;
+  border-radius: 5px;
   border-color: #000;
 }
 

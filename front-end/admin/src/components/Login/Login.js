@@ -1,20 +1,25 @@
 import React, { useState } from 'react';
 import { Form, FormGroup, Col, Container, Button } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
+import { useForm } from 'react-hook-form';
+import { login } from 'services';
 
 export default function Login() {
-    const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
+
+    const { register, handleSubmit, getValues } = useForm()
     const history = useHistory()
-    const handleLogin = (e) => {
-        e.preventDefault();
-        if (username, password) {
-            history.push("/admin/dashboard")
-        }
+    const handleLogin = (data) => {
+        login(data).then(res => {
+            if (res && res.data) {
+                history.push("/");
+                localStorage.setItem("userName", getValues("username"))
+            }
+            
+        })
     }
     return (
         <Container className='py-5'>
-            <Form onSubmit={handleLogin}>
+            <Form onSubmit={handleSubmit(handleLogin)}>
                 <FormGroup >
                     <label htmlFor="exampleEmail">
                         Email
@@ -23,9 +28,8 @@ export default function Login() {
                         id="exampleEmail"
                         name="email"
                         placeholder="Email"
-                        type="email"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        type="text"
+                        {...register("username", { required: true })}
                     />
                 </FormGroup>
                 {' '}
@@ -38,8 +42,7 @@ export default function Login() {
                         name="password"
                         placeholder="Password"
                         type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        {...register("password", { required: true })}
                     />
                 </FormGroup>
                 {' '}

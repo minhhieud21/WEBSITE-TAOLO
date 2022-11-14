@@ -1,20 +1,28 @@
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import ImgGG from "../../assets/img/google.svg"
 import firebase, { auth } from "../../firebase/config"
-import { useNavigate } from "react-router-dom"
-import { getLocalStorage } from "../../services/LocalStorageService"
+import { useNavigate, Link } from "react-router-dom"
 import axios from "axios"
-import { setLocalStorage } from "../../services/LocalStorageService"
+import { googleLogin, setLocalStorage, getLocalStorage } from "../../services"
+import { useForm } from "react-hook-form"
+
+import { ToastContainer,toast } from "react-toastify"
+import { PopupSuccess } from "components/Popup/PopupSuccess"
 
 const ggProvider = new firebase.auth.GoogleAuthProvider()
+
 const Login = () => {
-	const [userName, setUserName] = useState("")
-	const [passWord, setPassWord] = useState("")
 	const [isPassShow, setIsPassShow] = useState(false)
 	const [isLoginFail, setIsLoginFail] = useState(false)
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm()
+	const navigate = useNavigate()
 	const textLoginFail = "Username or Password is wrong!"
 	const isLogin = getLocalStorage("username")
-	const navigate = useNavigate()
+
 	useEffect(() => {
 		if (isLogin) navigate("/")
 	}, [isLogin])
@@ -22,40 +30,42 @@ const Login = () => {
 	const handleSignInWithGoogle = () => {
 		auth
 			.signInWithPopup(ggProvider)
-			.then((res) => {
-				if (res) {
+			.then(async (res) => {
+				if (res.user) {
 					navigate("/")
 					window.location.reload()
+					await googleLogin(res.user.photoURL)
 				}
 			})
 			.catch((err) => {
 				console.log(err)
 			})
 	}
+	const notifySuccess = () => {
+		toast.success("Đăng nhập thành công!", {
+			position: toast.POSITION.BOTTOM_CENTER,
+		})
+	}
 
-	const handleBasicAuth = (event) => {
-		event.preventDefault()
-		const params = {
-			username: userName,
-			password: passWord,
-		}
+	const handleBasicAuth = (data) => {
 		axios
-			.post(`${process.env.REACT_APP_DEV_ENV}account/login`, params)
+			.post(`${process.env.REACT_APP_DEV_ENV}account/login`, data)
 			.then((res) => {
-				if (res && res.data) {
-					setLocalStorage("username", userName)
+				if (res) {
+					setLocalStorage("username", data.username)
+					setLocalStorage("userId", res.data.data)
+					setLocalStorage("token", res.data.data)
 					navigate("/")
-					window.location.reload()
 				}
 			})
-			.catch((e) => setIsLoginFail(!isLoginFail))
+			.catch((e) => setIsLoginFail(true))
 	}
 	return (
 		<>
 			<div className="card mb-4" id="forms">
 				<div className="card-header">Login</div>
 				<div className="card-body">
-					<form onSubmit={handleBasicAuth}>
+					<form onSubmit={handleSubmit(handleBasicAuth)}>
 						<div className="mb-3">
 							<label className="form-label" htmlFor="exampleInputEmail1">
 								Email address
@@ -66,50 +76,42 @@ const Login = () => {
 								type="text"
 								aria-describedby="emailHelp"
 								autoFocus
-								value={userName}
-								onChange={(e) => setUserName(e.target.value)}
+								{...register("username", { required: true })}
 							/>
-							<div className="form-text" id="emailHelp">
-								We'll never share your email with anyone else.
-							</div>
+							{errors.username && (
+								<p className="text-danger">Please enter username</p>
+							)}
 						</div>
 						<div className="mb-3">
 							<label className="form-label" htmlFor="exampleInputPassword1">
 								Password
 							</label>
-							<div className="d-flex">
+							<div className="pass-word">
 								<input
 									className="form-control"
 									id="exampleInputPassword1"
 									type={isPassShow ? "text" : "password"}
-									value={passWord}
-									onChange={(e) => setPassWord(e.target.value)}
+									{...register("password", { required: true, minLength: 8 })}
 								/>
 								<i
 									className={isPassShow ? "fa fa-eye-slash" : "fa fa-eye"}
-									style={{
-										position: "absolute",
-										right: "2%",
-										top: "68%",
-										cursor: "pointer",
-									}}
 									onClick={() => setIsPassShow(!isPassShow)}
 								></i>
 							</div>
-							{isLoginFail ? (
-								<span className="form-text text-danger fw-bold" id="emailHelp">
-									{textLoginFail}
-								</span>
-							) : (
-								""
+							{errors.password && (
+								<p className="text-danger">Please enter password</p>
 							)}
 						</div>
+						{isLoginFail ? <p className="text-danger">{textLoginFail}</p> : ""}
+						<Link
+							className="d-flex justify-content-end"
+							to={`/forgot-password`}
+						>
+							Forget password!
+						</Link>
+
 						<div>
-							<button
-								type="submit"
-								className="btn btn-primary me-3"
-								onClick={handleBasicAuth}
-							>
+							<button type="submit" className="btn btn-primary me-3">
 								Login
 							</button>
 						</div>
@@ -135,6 +137,7 @@ const Login = () => {
 					</div>
 				</div>
 			</div>
+			<ToastContainer autoClose={1500} />
 		</>
 	)
 }

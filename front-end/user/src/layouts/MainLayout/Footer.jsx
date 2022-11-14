@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import footer from "../../assets/js/footer.json"
 const Footer = () => {
   return (
@@ -10,24 +11,24 @@ const Footer = () => {
               <h6 className="text-uppercase mb-3">{footer.CUSTOMER_SERVICES}</h6>
               <ul className="list-unstyled mb-0">
                 <li>
-                  <a className="footer-link" href="#!">
+                  <Link className="footer-link" to="#!">
                     {footer.Help_Contact_Us}
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a className="footer-link" href="#!">
+                  <Link className="footer-link" to="#!">
                     {footer.Returns_Refunds}
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a className="footer-link" href="#!">
+                  <Link className="footer-link" to="#!">
                     {footer.Online_Stores}
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a className="footer-link" href="#!">
+                  <Link className="footer-link" to="#!">
                     {footer.Terms_Conditions}
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -35,24 +36,24 @@ const Footer = () => {
               <h6 className="text-uppercase mb-3">Company</h6>
               <ul className="list-unstyled mb-0">
                 <li>
-                  <a className="footer-link" href="#!">
+                  <Link className="footer-link" to="#!">
                     What We Do
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a className="footer-link" href="#!">
+                  <Link className="footer-link" to="#!">
                     Available Services
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a className="footer-link" href="#!">
+                  <Link className="footer-link" to="#!">
                     Latest Posts
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a className="footer-link" href="#!">
+                  <Link className="footer-link" to="#!">
                     FAQs
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -60,24 +61,24 @@ const Footer = () => {
               <h6 className="text-uppercase mb-3">Social media</h6>
               <ul className="list-unstyled mb-0">
                 <li>
-                  <a className="footer-link" href="#!">
+                  <Link className="footer-link" to="#!">
                     Twitter
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a className="footer-link" href="#!">
+                  <Link className="footer-link" to="#!">
                     Instagram
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a className="footer-link" href="#!">
+                  <Link className="footer-link" to="#!">
                     Tumblr
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a className="footer-link" href="#!">
+                  <Link className="footer-link" to="#!">
                     Pinterest
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -95,12 +96,9 @@ const Footer = () => {
               <div className="col-md-6 text-center text-md-end">
                 <p className="small text-muted mb-0">
                   Template designed by{" "}
-                  <a
-                    className="text-white reset-anchor"
-                    href="https://bootstrapious.com/p/boutique-bootstrap-e-commerce-template"
-                  >
+            
                     Bootstrapious
-                  </a>
+                
                 </p>
                 {/* If you want to remove the backlink, please purchase the Attribution-Free License. See details in readme.txt or license.txt. Thanks!*/}
               </div>

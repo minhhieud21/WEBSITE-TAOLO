@@ -6,7 +6,7 @@ import Routers from "./routers";
 import 'firebase/compat/auth'
 import store from "./redux/store";
 import "./assets/css/style.default.css";
-
+import "./assets/css/custom.css"
 
 function App() {
   return (

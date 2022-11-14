@@ -1,0 +1,31 @@
+html {
+	position: relative;
+	min-height: 100%;
+	padding-bottom: 160px;
+}
+
+body {
+	margin-bottom: 160px;
+}
+
+footer {
+	color: pink !important;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 160px;
+}
+
+.pass-word {
+	display: flex;
+	position: relative;
+
+	i {
+
+		position: absolute;
+		right: 0;
+		top: 30%;
+		cursor: pointer;
+
+	}
+}

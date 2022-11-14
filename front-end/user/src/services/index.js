@@ -1,2 +1,6 @@
 export * from './ProductService'
 export * from './CartService'
+export * from './CartDetailService'
+export * from './AccountService'
+export * from './LocalStorageService'
+export * from './CategoryService'

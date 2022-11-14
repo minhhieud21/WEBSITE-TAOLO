@@ -8,6 +8,9 @@ export const API_PRODUCT_CHANGE_STATUS = "product/changestatus"
 export const API_CATE = "category/getAllCategoryAdmin"
 export const API_USER= "user"
 
+export const API_LOGIN = "account/login"
+
+export const API_BILL = "bill"
 
 export const categories = [{
     id: "MBA",

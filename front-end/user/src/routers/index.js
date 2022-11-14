@@ -6,9 +6,20 @@ import Home from "../pages/Home";
 import Login from "../pages/Login";
 import ProductDetail from "../pages/ProductDetail";
 import Shop from "../pages/Shop";
-import { getLocalStorage, setLocalStorage } from "../services/LocalStorageService"
+import { setLocalStorage } from "../services/LocalStorageService"
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
+import ForgotPassword from "../pages/Login/ForgotPassword";
+import ResetPassword from "../pages/Login/ResetPassword";
+import EditAccount from "../pages/Account/EditAccount";
+import { PopupSuccess } from "components/Popup/PopupSuccess";
+import { toast,ToastContainer } from "react-toastify"; 
+
+const notifySuccess = () => {
+  toast.success("Đăng nhập thành công!", {
+    position: toast.POSITION.BOTTOM_CENTER,
+  })
+}
 
 const Routers = () => {
   useEffect(() => {
@@ -16,12 +27,11 @@ const Routers = () => {
       .auth()
       .onAuthStateChanged(async (user) => {
         if (!user) {
-          // user logout, handle something here
-          console.log("User is not login");
           return;
         }
         const token = await user.getIdToken();
         setLocalStorage("username",user.displayName)
+        PopupSuccess("ok")
       });
 
     return () => unregisterAuthObserver();
@@ -30,13 +40,17 @@ const Routers = () => {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/detail/:proId" element={<ProductDetail />} />
+        <Route path="/account" element={<EditAccount /> } />
         <Route path="/shop" element={<Shop />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/detail/:productName/:proId" element={<ProductDetail />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/" element={<Home />} />
       </Routes>
+      <ToastContainer />
     </>
   );
 };

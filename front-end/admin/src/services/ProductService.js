@@ -2,7 +2,7 @@ import axios from 'axios';
 import { API_URL, API_PRODUCT, API_PRODUCT_EDIT, API_PRODUCT_CHANGE_STATUS } from 'constant';
 
 const getAllProduct = async () => {
-  const res = await axios.get(`${API_URL}${API_PRODUCT}?Type=0`)
+  const res = await axios.get(`${API_URL}${API_PRODUCT}`)
   return res.data;
 }
 

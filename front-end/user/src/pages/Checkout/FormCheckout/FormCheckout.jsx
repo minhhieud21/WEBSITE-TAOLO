@@ -301,7 +301,7 @@ const FormCheckout = () => {
               </div>
             </div>
             <div className="col-lg-12 form-group">
-              <button className="btn btn-dark" type="submit">
+              <button className="btn btn-primary text-white text-uppercase fw-bold" type="submit">
                 Checkout
               </button>
             </div>

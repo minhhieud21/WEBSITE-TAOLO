@@ -16,7 +16,7 @@ const Banner = () => {
                 New Inspiration 2020
               </p>
               <h1 className="h2 text-uppercase mb-3">20% off on new season</h1>
-              <Link className="btn btn-dark" to="/shop">
+              <Link className="btn btn-dark" to="#">
                 Browse collections
               </Link>
             </div>
