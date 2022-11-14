@@ -25,19 +25,34 @@ public class UserController {
     JwtService jwtService;
 
     @GetMapping("/getUserByID/{userID}")
-    ResponseEntity<ResponseObject> addUser(@PathVariable String userID) {
+    ResponseEntity<ResponseObject> addUser(ServletRequest request,@PathVariable String userID) {
         UserModel check = userService.getUserByUserID(userID);
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String authToken = httpRequest.getHeader("authorization");
+        String accID = null;
+        if (jwtService.validateTokenLogin(authToken)) {
+            accID = jwtService.getAccIDFromToken(authToken);}
         if (check != null) {
+            if(String.valueOf(accID.charAt(0)).equals("A") == true){
             return ResponseEntity.status(Error.OK).body(
                     new ResponseObject(true,Error.OK_MESSAGE, check)
-            );
+            );}
+            else if(check.getUserID().equals(accID) == true){
+                return ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true,Error.OK_MESSAGE, check)
+                );
+            }
+            else {
+                return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
+                        new ResponseObject(false,"Ban khong co quyen admin","")
+                );
+            }
         } else {
             return ResponseEntity.status(Error.NO_VALUE_BY_ID).body(
                     new ResponseObject(false,Error.NO_VALUE_BY_ID_MESSAGE,"")
             );
         }
     }
-
 
     @PostMapping("updateUser")
     ResponseEntity<ResponseObject> updateUser(ServletRequest request, @RequestParam("name")String name, @RequestParam("phone") String phone, @RequestParam("address") String address, @RequestParam("sex") int sex, @RequestParam("age")int age){

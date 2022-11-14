@@ -74,8 +74,8 @@ public class ImageServiceImpl implements ImageService{
         return null;
     }
     @Override
-    public void deleteImage(String imageModel){
-        imageRepository.deleteById(imageModel);
+    public void deleteImage(ImageModel imageModel){
+        imageRepository.delete(imageModel);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.example.JavaSpring.controllers;
 
 import com.example.JavaSpring.models.AccountModel;
-import com.example.JavaSpring.models.ProductModel;
 import com.example.JavaSpring.models.ResponseObject;
 import com.example.JavaSpring.models.UserModel;
 import com.example.JavaSpring.service.AccountService;
@@ -361,7 +360,7 @@ public class AccountController {
                     new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
             );
         }
-        UserModel userModeltemp = userService.getUserByEmail(String.valueOf(object.get("gmail")).toLowerCase());
+            UserModel userModeltemp = userService.getUserByEmail(String.valueOf(object.get("gmail")).toLowerCase());
         if (userModeltemp == null) {
             return ResponseEntity.status(Error.NO_VALUE_BY_ID).body(
                     new ResponseObject(false, "Gmail nay khong ton tai trong he thong", "")

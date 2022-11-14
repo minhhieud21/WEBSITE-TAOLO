@@ -24,7 +24,7 @@ public interface ImageService {
 
     ImageModel getImagebyName(String imgPath,String proID);
 
-    void deleteImage(String imageModel);
+    void deleteImage(ImageModel imageModel);
 
     void changestatus(ImageModel imageModel, int Status);
 }

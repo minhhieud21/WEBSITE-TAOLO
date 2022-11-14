@@ -43,8 +43,8 @@ public class ProductController {
 
     // GET all : localhost:8080/api/v1/product/getAllProduct/?Type=0&page=1 
     @GetMapping("getAllProduct")
-    ResponseEntity<ResponseObject>getAllProduct(ServletRequest request, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "1") int Type){
-        if(Type > 1 || Type < 0){
+    ResponseEntity<ResponseObject>getAllProduct(ServletRequest request, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "1") int type){
+        if(type > 1 || type < 0){
             return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
                     new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
             );
@@ -52,7 +52,7 @@ public class ProductController {
         Pageable paging = PageRequest.of(page,size);
         Page<ProductModel> check = null;
         List<Object> kq = new ArrayList<Object>();
-        if(Type == 1){
+        if(type == 1){
            check = productService.getAllProductUser(paging);
        }
        else {
@@ -135,14 +135,14 @@ public class ProductController {
     //GET : localhost:8080/api/v1/product/getProduct?cateId=MBA&Type=0
     // Type = 0 lay theo binh thuong, Type = 1 lay theo a->z , Type = 2 lay theo z->a , Type = 3 lay gia thap den cao , Type = 4 lay gia cao den thap
     @GetMapping("/getProduct")
-    ResponseEntity<ResponseObject> getProductByCateID(ServletRequest request,@RequestParam(required = false) String cateId,@RequestParam(defaultValue = "0") int Type,@RequestParam(defaultValue = "0") int sort) {
-        if( Type < 0 || Type > 1 || cateId.length()==0 || sort<0 || sort>4){
+    ResponseEntity<ResponseObject> getProductByCateID(ServletRequest request,@RequestParam(required = false) String cateId,@RequestParam(defaultValue = "1") int type,@RequestParam(defaultValue = "0") int sort) {
+        if( type < 0 || type > 1 || cateId.length()==0 || sort<0 || sort>4){
             return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
                     new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
             );
         }
         List<ProductModel> a;
-        if(Type == 0){
+        if(type == 0){
                 HttpServletRequest httpRequest = (HttpServletRequest) request;
                 String authToken = httpRequest.getHeader("authorization");
                 String accID = null;
