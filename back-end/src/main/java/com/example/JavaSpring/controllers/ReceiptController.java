@@ -45,32 +45,33 @@ public class ReceiptController {
                 );
     }
 
-//    @PostMapping("/showReceiptExcelFile")
-//    ResponseEntity<ResponseObject> addReceipt(@RequestParam("list") MultipartFile list) throws IOException{
-//        XSSFWorkbook workbook = new XSSFWorkbook(list.getInputStream());
-//        XSSFSheet worksheet = workbook.getSheetAt(0);
-//        List<ProductModel> NewProList = new ArrayList<ProductModel>();
-//        for(int i=1;i<worksheet.getPhysicalNumberOfRows() ;i++) {
-//            XSSFRow row = worksheet.getRow(i);
-//            ProductModel NewPro = new ProductModel();
-//            NewPro.setproId(row.getCell(1).getStringCellValue());
-//            NewPro.setProName(row.getCell(2).getStringCellValue());
-//            NewPro.setDescription(row.getCell(3).getStringCellValue());
-//            NewPro.setPrice(row.getCell(4).getCTCell().getS());
-//            NewPro.setCateId(row.getCell(5).getStringCellValue());
-//            NewPro.setColor(row.getCell(6).getStringCellValue());
-//            NewPro.setQuantity(row.getCell(7).getColumnIndex());
-//            NewPro.setWarrantyMonth(row.getCell(8).getColumnIndex());
-//            NewProList.add(NewPro);
-//        }
-//        if(NewProList.size() > 0){
-//            return ResponseEntity.status(Error.OK).body(
-//                    new ResponseObject(true,Error.OK_MESSAGE, NewProList)
-//            );
-//        }else{
-//            return ResponseEntity.status(Error.FAIL).body(
-//                    new ResponseObject(false,Error.FAIL_MESSAGE, "Can Not read Data In File !!!")
-//            );
-//        }
-//    }
+    @PostMapping("/showReceiptExcelFile")
+    ResponseEntity<ResponseObject> addReceipt(@RequestParam("list") MultipartFile list) throws IOException{
+        XSSFWorkbook workbook = new XSSFWorkbook(list.getInputStream());
+        XSSFSheet worksheet = workbook.getSheetAt(0);
+        List<ProductModel> NewProList = new ArrayList<ProductModel>();
+        for(int i=1;i<worksheet.getPhysicalNumberOfRows() ;i++) {
+            XSSFRow row = worksheet.getRow(i);
+            ProductModel NewPro = new ProductModel();
+            NewPro.setproId(row.getCell(1).getStringCellValue());
+            NewPro.setProName(row.getCell(2).getStringCellValue());
+            NewPro.setDescription(row.getCell(3).getStringCellValue());
+            NewPro.setPrice((long)row.getCell(4).getNumericCellValue());
+            NewPro.setCateId(row.getCell(5).getStringCellValue());
+            NewPro.setColor(row.getCell(6).getStringCellValue());
+            NewPro.setQuantity((int)row.getCell(7).getNumericCellValue());
+            NewPro.setWarrantyMonth((int)row.getCell(8).getNumericCellValue());
+            NewPro.setStatus(1);
+            NewProList.add(NewPro);
+        }
+        if(NewProList.size() > 0){
+            return ResponseEntity.status(Error.OK).body(
+                    new ResponseObject(true,Error.OK_MESSAGE, NewProList)
+            );
+        }else{
+            return ResponseEntity.status(Error.FAIL).body(
+                    new ResponseObject(false,Error.FAIL_MESSAGE, "Can Not read Data In File !!!")
+            );
+        }
+    }
 }

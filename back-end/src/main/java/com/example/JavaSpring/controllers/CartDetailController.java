@@ -96,18 +96,18 @@ public class CartDetailController {
         return cartDetailService.getCartDetailByID(cartDID);
     }
 
-    // localhost:8080/api/v1/cartdetail/getCartDetailByCartID?cartID=?
-//    @GetMapping("/getCartDetailByCartID")
-//    ResponseEntity<ResponseObject> getCartDetailByCartID(String cartID) {
-//        List<CartDetailModel> check = cartDetailService.getCartDetailByCartID(cartID);
-//        return check.isEmpty() ?
-//                ResponseEntity.status(Error.LIST_EMPTY).body(
-//                        new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
-//                ) :
-//                ResponseEntity.status(Error.OK).body(
-//                        new ResponseObject(true,Error.OK_MESSAGE, check)
-//                );
-//    }
+     //localhost:8080/api/v1/cartdetail/getCartDetailByCartID?cartID=?
+    @GetMapping("/getCartDetailByCartID")
+    ResponseEntity<ResponseObject> getCartDetailbyCartID(String cartID) {
+        List<CartDetailModel> check = cartDetailService.getCartDetailByCartID(cartID);
+        return check.isEmpty() ?
+                ResponseEntity.status(Error.LIST_EMPTY).body(
+                        new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
+                ) :
+                ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true,Error.OK_MESSAGE, check)
+                );
+    }
     List<CartDetailModel> getCartDetailByCartID(String cartID) {
         return cartDetailService.getCartDetailByCartID(cartID);
     }
