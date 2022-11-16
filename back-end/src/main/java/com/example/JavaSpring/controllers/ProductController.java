@@ -19,10 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @RestController
@@ -109,20 +106,19 @@ public class ProductController {
     ResponseEntity<ResponseObject> getProductById(@PathVariable("id") String id) {
         Optional<ProductModel> check = Optional.ofNullable(productService.getProductById(id));
         if (check.isPresent()== true ){
-                HashMap<String,String> object = new HashMap<String,String>();
+                HashMap<String,List<String>> object = new HashMap<String,List<String>>();
                 ProductModel a = check.get();
-                object.put("_id",String.valueOf(a.get_id()));
-                object.put("proId",String.valueOf(a.getproId()));
-                object.put("proName",String.valueOf(a.getProName()));
-                object.put("description",String.valueOf(a.getDescription()));
-                object.put("price",String.valueOf(a.getPrice()));
-                object.put("cateId",String.valueOf(a.getCateId()));
-                object.put("color",String.valueOf(a.getColor()));
-                object.put("quantity",String.valueOf(a.getQuantity()));
-                object.put("warrantyMonth",String.valueOf(a.getWarrantyMonth()));
-                object.put("status",String.valueOf(a.getStatus()));
-                if(imageController.getPathImage(id).isEmpty()==false){
-                    object.put("Image",String.valueOf(imageController.getPathImage(id)));}
+                object.put("_id", Collections.singletonList(String.valueOf(a.get_id())));
+                object.put("proId", Collections.singletonList(String.valueOf(a.getproId())));
+                object.put("proName", Collections.singletonList(String.valueOf(a.getProName())));
+                object.put("description", Collections.singletonList(String.valueOf(a.getDescription())));
+                object.put("price", Collections.singletonList(String.valueOf(a.getPrice())));
+                object.put("cateId", Collections.singletonList(String.valueOf(a.getCateId())));
+                object.put("color", Collections.singletonList(String.valueOf(a.getColor())));
+                object.put("quantity", Collections.singletonList(String.valueOf(a.getQuantity())));
+                object.put("warrantyMonth", Collections.singletonList(String.valueOf(a.getWarrantyMonth())));
+                object.put("status", Collections.singletonList(String.valueOf(a.getStatus())));
+                object.put("Image",(imageController.getPathImage(id)));
                 return ResponseEntity.status(Error.OK).body(
                         new ResponseObject(true, Error.OK_MESSAGE,object)
                 );}

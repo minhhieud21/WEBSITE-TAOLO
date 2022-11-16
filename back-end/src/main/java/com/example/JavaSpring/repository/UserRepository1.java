@@ -22,5 +22,5 @@ public interface UserRepository1 extends MongoRepository<UserModel,String> {
     List<UserModel> searchUserByGmail(String text) ;
 
     @Query("{phone:/?0/}") //SELECT * FROM Product WHERE title like ?
-    List<UserModel> searchUserByPhone(String text) ;
+        List<UserModel> searchUserByPhone(String text) ;
 }
