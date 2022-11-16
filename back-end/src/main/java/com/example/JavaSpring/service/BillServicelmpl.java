@@ -31,4 +31,10 @@ public class BillServicelmpl implements BillService{
     public void addBill(BillModel billModel){
         billRepository.save(billModel);
     }
+
+    @Override
+    public BillModel getBillByDayDone(String BillID){
+        return  billRepository.getBillByDayDone(BillID,1);
+    }
+
 }

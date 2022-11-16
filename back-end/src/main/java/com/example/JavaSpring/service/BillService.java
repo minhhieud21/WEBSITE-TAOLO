@@ -15,4 +15,5 @@ public interface BillService {
 
     void addBill(BillModel billModel);
 
+    BillModel getBillByDayDone(String BillID);
 }

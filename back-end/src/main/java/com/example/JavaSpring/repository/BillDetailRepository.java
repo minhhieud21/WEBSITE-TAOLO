@@ -16,6 +16,6 @@ public interface BillDetailRepository extends MongoRepository<BillDetailModel,St
     @Query("{billID:?0}")
     List<BillDetailModel> getBillDetailByBillID(String billID);
 
-    @Query("{warrantyStart:?0}")
+    @Query("{warrantyStart:/?0/}")
     List<BillDetailModel> getBillDetailByDay(String day);
 }
