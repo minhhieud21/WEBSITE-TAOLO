@@ -26,10 +26,26 @@ public class ReceiptDetailServicelmpl implements ReceiptDetailService{
     }
 
     @Override
+    public List<ReceiptDetailModel> getReceiptDetailByRecID(String recID){
+        return receiptDetailRepository.getReceiptDetailByRecID(recID);
+    }
+
+    @Override
     public void addReceiptDetail(ReceiptDetailModel receiptDetailModel){
         receiptDetailRepository.save(receiptDetailModel);
     }
 
+    @Override
+    public void deleteReceiptDetail(String recDID){
+        ReceiptDetailModel receiptDetailModel = receiptDetailRepository.getReceiptDetailByID(recDID);
+        receiptDetailRepository.delete(receiptDetailModel);
+    }
+
+    @Override
+    public void deleteAllReceiptDetail(String recID){
+        List<ReceiptDetailModel> receiptDetailModelList = receiptDetailRepository.getReceiptDetailByRecID(recID);
+        receiptDetailRepository.deleteAll(receiptDetailModelList);
+    }
 
     public String autoID(){
         List<ReceiptDetailModel> receiptDetailModelList = receiptDetailRepository.findAll();

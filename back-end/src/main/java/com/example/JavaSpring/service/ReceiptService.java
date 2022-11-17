@@ -8,5 +8,12 @@ public interface ReceiptService {
 
     List<ReceiptModel> getAllReceipt();
 
+    ReceiptModel getReceiptByID(String recID);
+
     String autoID();
+
+    void changeStatusReceipt(String recID, int status);
+
+    void deleteReceipt(String recID);
+
 }

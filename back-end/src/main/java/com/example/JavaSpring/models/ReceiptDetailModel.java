@@ -20,20 +20,26 @@ public class ReceiptDetailModel {
     String description;
     @Field("quantity")
     int quantity;
+    @Field("price")
+    long price;
     @Field("cost")
     long cost;
+    @Field("totalCost")
+    long totalCost;
     @Field("warrantyMonth")
     int warrantyMonth;
 
-    public ReceiptDetailModel(String recDID, String recID, String proID, String proName, String description, int quantity, long cost, int warrantyMonth) {
-        this._id = null;
+    public ReceiptDetailModel(String _id, String recDID, String recID, String proID, String proName, String description, int quantity, long price, long cost, long totalCost, int warrantyMonth) {
+        this._id = _id;
         this.recDID = recDID;
         this.recID = recID;
         this.proID = proID;
         this.proName = proName;
         this.description = description;
         this.quantity = quantity;
+        this.price = price;
         this.cost = cost;
+        this.totalCost = totalCost;
         this.warrantyMonth = warrantyMonth;
     }
 
@@ -47,8 +53,10 @@ public class ReceiptDetailModel {
                 ", proName='" + proName + '\'' +
                 ", description='" + description + '\'' +
                 ", quantity=" + quantity +
+                ", price=" + price +
                 ", cost=" + cost +
-                ", warrantyMonth='" + warrantyMonth + '\'' +
+                ", totalCost=" + totalCost +
+                ", warrantyMonth=" + warrantyMonth +
                 '}';
     }
 
@@ -108,12 +116,28 @@ public class ReceiptDetailModel {
         this.quantity = quantity;
     }
 
+    public long getPrice() {
+        return price;
+    }
+
+    public void setPrice(long price) {
+        this.price = price;
+    }
+
     public long getCost() {
         return cost;
     }
 
     public void setCost(long cost) {
         this.cost = cost;
+    }
+
+    public long getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(long totalCost) {
+        this.totalCost = totalCost;
     }
 
     public int getWarrantyMonth() {
