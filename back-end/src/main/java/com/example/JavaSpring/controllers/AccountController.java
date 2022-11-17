@@ -111,6 +111,7 @@ public class AccountController {
         AccountModel check = new AccountModel();
         AccountModel accountModel = new AccountModel();
         String token = "";
+        HashMap<String,String> ooo = new HashMap<String,String>();
         if(google_login == true && urlID.equals("notthing")==true ) {
             return ResponseEntity.status(Error.WRONG_ACCESS_RIGHTS).body(
                     new ResponseObject(false,Error.WRONG_ACCESS_RIGHTS_MESSAGE,"" )
@@ -134,15 +135,19 @@ public class AccountController {
                 accountModel.setUrlID(urlID);
                 accountService.saveAccount(accountModel);
                 token = jwtService.createTokenUser(accountModel.getAccID());
+                ooo.put("token",token);
+                ooo.put("userID",accountModel.getAccID());
                 return ResponseEntity.status(Error.OK).body(
-                        new ResponseObject(true,Error.OK_MESSAGE,token )
+                        new ResponseObject(true,Error.OK_MESSAGE,ooo )
                 );
             }
             else {
                 if(check.getStatus() == 1){
                     token = jwtService.createTokenUser(check.getAccID());
+                    ooo.put("token",token);
+                    ooo.put("userID",check.getAccID());
                     return ResponseEntity.status(Error.OK).body(
-                            new ResponseObject(true,Error.OK_MESSAGE,token )
+                            new ResponseObject(true,Error.OK_MESSAGE,ooo )
                     );}
                 else {
                     return ResponseEntity.status(Error.WRONG_STATUS).body(
@@ -166,8 +171,10 @@ public class AccountController {
                 if(check.getPassword().equals(checkPassword)){
                     if(check.getStatus() == 1){
                         token = jwtService.createTokenUser(check.getAccID());
+                        ooo.put("token",token);
+                        ooo.put("userID",check.getAccID());
                         return ResponseEntity.status(Error.OK).body(
-                                new ResponseObject(true,Error.OK_MESSAGE,token )
+                                new ResponseObject(true,Error.OK_MESSAGE,ooo )
                         );}
                     else {
                         return ResponseEntity.status(Error.WRONG_STATUS).body(
@@ -357,7 +364,7 @@ public class AccountController {
     ResponseEntity<ResponseObject> resetPassword(@RequestBody Map<String,Object> object,HttpServletResponse response) throws NoSuchAlgorithmException {
         if(String.valueOf(object.get("gmail")).length()==0){
             return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
-                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
+                    new ResponseObject( false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
             );
         }
             UserModel userModeltemp = userService.getUserByEmail(String.valueOf(object.get("gmail")).toLowerCase());

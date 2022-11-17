@@ -15,4 +15,7 @@ public interface  BillRepository  extends MongoRepository<BillModel,String> {
 
     @Query("{accID:?0}")
     List<BillModel> getBillByAccID(String accID);
+
+    @Query("{billID:?0,status:?1}")
+    BillModel getBillByDayDone(String BillID,int status);
 }

@@ -32,4 +32,9 @@ public class BillDetailServicelmpl implements BillDetailService{
     public  void addBillDetail(BillDetailModel billDetailModel){
         billDetailRepository.save(billDetailModel);
     }
+
+    @Override
+    public List<BillDetailModel> getBillDetailByDay(String day) {
+        return billDetailRepository.getBillDetailByDay(day);
+    }
 }

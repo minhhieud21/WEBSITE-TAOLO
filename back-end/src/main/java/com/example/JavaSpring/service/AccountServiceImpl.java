@@ -17,7 +17,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Page<AccountModel> getAllAccount(Pageable paging) {
-        return accountRepository.findAll(paging);
+        return accountRepository.getAllAccount(paging,false);
     }
 
     @Override

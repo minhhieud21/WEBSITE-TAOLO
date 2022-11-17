@@ -19,10 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @RestController
@@ -109,20 +106,19 @@ public class ProductController {
     ResponseEntity<ResponseObject> getProductById(@PathVariable("id") String id) {
         Optional<ProductModel> check = Optional.ofNullable(productService.getProductById(id));
         if (check.isPresent()== true ){
-                HashMap<String,String> object = new HashMap<String,String>();
+                HashMap<String,Object> object = new HashMap<String,Object>();
                 ProductModel a = check.get();
-                object.put("_id",String.valueOf(a.get_id()));
-                object.put("proId",String.valueOf(a.getproId()));
-                object.put("proName",String.valueOf(a.getProName()));
-                object.put("description",String.valueOf(a.getDescription()));
-                object.put("price",String.valueOf(a.getPrice()));
-                object.put("cateId",String.valueOf(a.getCateId()));
-                object.put("color",String.valueOf(a.getColor()));
-                object.put("quantity",String.valueOf(a.getQuantity()));
-                object.put("warrantyMonth",String.valueOf(a.getWarrantyMonth()));
-                object.put("status",String.valueOf(a.getStatus()));
-                if(imageController.getPathImage(id).isEmpty()==false){
-                    object.put("Image",String.valueOf(imageController.getPathImage(id)));}
+                object.put("_id", (String.valueOf(a.get_id())));
+                object.put("proId", (String.valueOf(a.getproId())));
+                object.put("proName", (String.valueOf(a.getProName())));
+                object.put("description", (String.valueOf(a.getDescription())));
+                object.put("price", (String.valueOf(a.getPrice())));
+                object.put("cateId", (String.valueOf(a.getCateId())));
+                object.put("color", (String.valueOf(a.getColor())));
+                object.put("quantity", (String.valueOf(a.getQuantity())));
+                object.put("warrantyMonth", (String.valueOf(a.getWarrantyMonth())));
+                object.put("status", (String.valueOf(a.getStatus())));
+                object.put("Image",(imageController.getPathImage(id)));
                 return ResponseEntity.status(Error.OK).body(
                         new ResponseObject(true, Error.OK_MESSAGE,object)
                 );}
@@ -247,6 +243,36 @@ public class ProductController {
                     new ResponseObject(false,Error.DUPLICATE_ID_MESSAGE,"")
             );
         }
+    }
+
+    @PostMapping("/addListProduct")
+    ResponseEntity<ResponseObject> addListProduct(@RequestParam("proId") String[] proId,@RequestParam("proName") String[] proName, @RequestParam("description")String[] description,@RequestParam("price") Long[] price, @RequestParam("cateId") String[] cateId,@RequestParam("color") String[] color,@RequestParam("quantity") int[] quantity,@RequestParam("warrantyMonth") int[] warrantyMonth,@RequestParam("image") MultipartFile[] image) throws IOException {
+        if(proId.length == 0 ||proName.length == 0 || description.length == 0|| price.length == 0 || cateId.length == 0 || color.length == 0 || warrantyMonth.length == 0){
+            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
+            );
+        }
+        int size = proId.length;
+        if(size != proName.length || size != description.length || size != price.length || size != cateId.length || size != color.length || size != quantity.length || size != warrantyMonth.length || size != image.length){
+            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
+                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
+            );}
+        for (int i = 0 ; i < size; i++){
+             Optional<ProductModel> check = Optional.ofNullable(productService.getProductById(proId[i]));
+             if(check.isPresent() == true){
+                 return ResponseEntity.status(Error.DUPLICATE_ID).body(
+                         new ResponseObject(false,Error.DUPLICATE_ID_MESSAGE,"")
+                 );
+             }
+        }
+        for (int i = 0 ; i < size ; i++){
+            MultipartFile[] multipartFile = new MultipartFile[1];
+            multipartFile[0]=image[i];
+            addnewProduct(proId[i],proName[i],description[i],price[i],cateId[i],color[i],quantity[i],warrantyMonth[i],multipartFile);
+        }
+        return ResponseEntity.status(Error.OK).body(
+                new ResponseObject(true,Error.OK_MESSAGE, "")
+        );
     }
 
     // POST : localhost:8080/api/v1/product/statusHide?proId=abc
