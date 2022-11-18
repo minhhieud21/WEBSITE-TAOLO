@@ -8,6 +8,7 @@ import {
 	formatVnd,
 	getLocalStorage,
 	addCart,
+	setLocalStorage,
 } from "../../../services"
 
 import { ToastContainer, toast } from "react-toastify"
@@ -17,13 +18,14 @@ import { ProductDetailProvider } from "../ProductDetail"
 
 const Detail = () => {
 	const [quantity, setQuantity] = useState(1)
-	const [success, setSuccess] = useState(false)
+	const [success, setSuccess] = useState(true)
 	const [isLogged, setIsLogged] = useState(false)
 	const userId = getLocalStorage("userId")
 	const [des, setDes] = useState([])
 
 	const { productDetail } = useContext(ProductDetailProvider)
-	console.log(productDetail)
+	const { proId } = useParams()
+	
 	useEffect(() => {
 		if (getLocalStorage("username")) {
 			setIsLogged(true)
@@ -37,7 +39,7 @@ const Detail = () => {
 	}
 
 	const notifyFail = () => {
-		toast.error("Thêm giỏ hàng thất bại!", {
+		toast.error(" Thêm giỏ hàng thất bại!", {
 			position: toast.POSITION.TOP_RIGHT,
 		})
 	}
@@ -48,13 +50,15 @@ const Detail = () => {
 
 	const addToCart = async () => {
 		const data = {
-			accID: "US011", //userId,
-			proID: productDetail.proId,
+			accID: userId,
+			proID: proId,
 			quantity: quantity,
 		}
-
 		addCart(data)
-			.then((res) => setSuccess(true))
+			.then((res) => {
+				// setLocalStorage('cartId',)
+				setSuccess(true)
+			})
 			.catch((e) => setSuccess(false))
 
 		checkSuccessAddCart()
@@ -109,7 +113,7 @@ const Detail = () => {
 							<Link
 								onClick={addToCart}
 								className="btn btn-primary text-white text-uppercase btn-sm btn-block h-100 d-flex align-items-center justify-content-center px-0"
-								to={isLogged ? "#" : "/login"}
+								to={isLogged ? "#" : "#"}
 							>
 								Add to cart
 							</Link>
@@ -121,7 +125,7 @@ const Detail = () => {
 					</div>
 				)}
 				<br />
-				<ToastContainer autoClose={1500} />
+				<ToastContainer autoClose={50} />
 			</div>
 		</>
 	)

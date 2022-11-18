@@ -8,10 +8,8 @@ export default function Logout({ username }) {
 		auth
 			.signOut()
 			.then((res) => {
-				removeLocalStorage("username")
-				removeLocalStorage("userId")
+				localStorage.clear()
 				navigate("/")
-				window.location.reload()
 			})
 			.catch((err) => {
 				console.log(err)
@@ -29,6 +27,7 @@ export default function Logout({ username }) {
 			</button>
 			<ul className="dropdown-menu">
 				<li className="dropdown-item"><Link to={`/account`}>Setting</Link></li>
+				<li className="dropdown-item"><Link to={`/purchase`}>Purchase</Link></li>
 				<li className="dropdown-item" onClick={handleLogOut}>
 					Logout
 				</li>

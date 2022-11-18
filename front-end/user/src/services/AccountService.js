@@ -4,8 +4,7 @@ import {
 	API_ACCOUNT_LOGIN,
 	API_ACCOUNT_RESET_PASSWORD,
 	API_USER,
-	API_ACCOUNT_CREATE_NEW_PASSWORD,
-	token
+	API_ACCOUNT_CREATE_NEW_PASSWORD
 } from "../assets/constant"
 
 
@@ -17,22 +16,28 @@ const googleLogin = async (data) => {
 	})
 }
 
-const changePassword = async (data) => {
+const changePassword = async (data,token) => {
 	await axios({
 		method: "post",
 		url: `${API_URL}account/setPassword`,
 		data: data,
 		headers: {
 			'Content-Type': "multipart/form-data",
-			'Authorization': 'Bearer ' + token
+			Authorization: token
 		},
 
 
 	})
-	console.log(token)
+	
 }
-const getUserByUserId = async (userId) => {
-	return await axios.get(`${API_URL}${API_USER}/${userId}`)
+const getUserByUserId = async (userId,token) => {
+	return await axios({
+		method: "get",
+		url:`${API_URL}${API_USER}/${userId}`,
+		headers:{
+			Authorization: token
+		}
+})
 }
 
 const forgotPassword = async (data) => {

@@ -8,8 +8,7 @@ import {
 	getProductByCateId,
 	searchProductByName,
 } from "../../services"
-import { CartAndProductContext } from "layouts/MainLayout/ContainerMainLayout"
-
+import { CartAndProductContext } from "../../layouts/MainLayout/ContainerMainLayout"
 const Shop = () => {
 	const search = useLocation().search
 	const cateId = new URLSearchParams(search).get("cateId")
@@ -29,15 +28,26 @@ const Shop = () => {
 	}, [cateId, searchValue])
 
 	const fetchProduct = (cateId, searchValue) => {
-		// if (!cateId) {
-		// 	getProductByCateId(cateId).then((res) => {
-		// 		setProducts(product) //res.data.data)
-		// 	})
-		// } else {
-		// }
-		searchProductByName(searchValue).then((res) => {
-			setProducts(res.data.data)
-		})
+		try {
+			/**
+			 * filter with category
+			 */
+			if (cateId && !searchValue) {
+				getProductByCateId(cateId).then((res) => {
+					setProducts(res.data.data)
+				})
+			} 
+			/**
+			 * search with product name
+			 */
+			else {
+				searchProductByName(searchValue).then((res) => {
+					setProducts(res.data.data)
+				})
+			}
+		} catch (error) {
+			
+		}
 	}
 
 	return (

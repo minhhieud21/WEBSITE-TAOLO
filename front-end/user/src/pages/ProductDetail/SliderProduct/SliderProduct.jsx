@@ -10,7 +10,7 @@ const SliderProduct = () => {
 	const [currentImg, setCurrentImg] = useState(img)
 	const arrImg = [img, img1, img2]
 	const { productDetail } = useContext(ProductDetailProvider)
-  console.log(typeof productDetail.Image)
+  
 	return (
 		<div className="col-lg-6">
 			{/* PRODUCT SLIDER*/}

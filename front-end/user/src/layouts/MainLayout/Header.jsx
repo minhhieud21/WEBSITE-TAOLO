@@ -10,21 +10,15 @@ import { CartAndProductContext } from "./ContainerMainLayout"
 import { useForm } from "react-hook-form"
 
 const Header = () => {
-	const { tmp } = useContext(CartAndProductContext)
+	const { itemCart } = useContext(CartAndProductContext)
 	const navigate = useNavigate()
 	const { register, handleSubmit, getValues, setValue } = useForm()
-
 	const checkLogin = checkLocalStorage("username")
-	const [cartQuantity, setCartQuantity] = useState(0)
 
-	useEffect(() => {
-		setCartQuantity(tmp.length)
-	}, [tmp.length])
-
+	
 	const handleSearchProduct = () => {
-		const searchValue = getValues("text")
+		const searchValue = getValues("searchValue")
 		navigate(`/shop?name=${searchValue}`)
-		setValue("text","")
 	}
 
 	return (
@@ -64,7 +58,7 @@ const Header = () => {
 										type="text"
 										placeholder="Search..."
 										className="w-100"
-										{...register("text")}
+										{...register("searchValue")}
 									/>
 									<i
 										className="fa fa-search position-absolute end-0"
@@ -79,7 +73,7 @@ const Header = () => {
 											<i className="fas fa-dolly-flatbed me-1 text-gray" />
 											Cart
 											<small className="text-gray fw-normal">
-												({cartQuantity})
+												({itemCart.length})
 											</small>
 										</Link>
 									</li>

@@ -1,9 +1,10 @@
-import React, { useState } from "react"
+import React, { useState,useContext } from "react"
 import { useForm } from "react-hook-form"
 import { ErrorMessage } from "@hookform/error-message"
 import { changePassword } from "../../services"
 import { getLocalStorage } from "../../services/LocalStorageService"
 import { useNavigate } from "react-router-dom"
+import { CartAndProductContext } from "../../layouts/MainLayout/ContainerMainLayout"
 // import '../../assets/style.scss'
 
 export default function () {
@@ -19,6 +20,7 @@ export default function () {
 	const [isPassShow, setIsPassShow] = useState(false)
 	const [isNewPassShow, setIsNewPassShow] = useState(false)
 	const [isConfirmPassShow, setConfirmPassShow] = useState(false)
+	const {token} = useContext(CartAndProductContext)
 
 	const navigate = useNavigate()
 
@@ -27,11 +29,10 @@ export default function () {
 
 	const handleChangePassword = (data) => {
 		const tmpData = {
-			accID: 'US011',//userId,
+			accID: userId,
 			...data,
 		}
-		console.log(tmpData)
-		changePassword(tmpData)
+		changePassword(tmpData,token)
 			.then((res) => {
 				navigate("/")
 			})
