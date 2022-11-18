@@ -50,6 +50,11 @@ public class ReceiptServicelmpl implements ReceiptService{
     }
 
     @Override
+    public void addReceipt(ReceiptModel receiptModel){
+        receiptRepository.save(receiptModel);
+    }
+
+    @Override
     public void changeStatusReceipt(String recID, int status){
         ReceiptModel receiptModel = receiptRepository.getReceiptByID(recID);
         receiptModel.setStatus(status);
