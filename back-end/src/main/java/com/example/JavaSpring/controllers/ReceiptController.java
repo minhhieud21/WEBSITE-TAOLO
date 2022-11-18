@@ -63,35 +63,35 @@ public class ReceiptController {
                 );
     }
 
-//    @PostMapping("/changeReceiptStatus")
-//    ResponseEntity<ResponseObject> changeReceiptStatus(String recID, int status){
-//        Optional<ReceiptModel> check = Optional.ofNullable(receiptService.getReceiptByID(recID));
-//        if(check.isPresent()){
-//            receiptService.changeStatusReceipt(recID,status);
-//            ReceiptModel receiptModel = receiptService.getReceiptByID(recID);
-//            if(receiptModel.getStatus() == status){
-//                return ResponseEntity.status(Error.OK).body(
-//                        new ResponseObject(true, Error.OK_MESSAGE,"Change Status Receipt Success !!!")
-//                );
-//            }else{
-//                return ResponseEntity.status(Error.FAIL).body(
-//                        new ResponseObject(false, Error.FAIL_MESSAGE,"Change Status Receipt Fail !!!")
-//                );
-//            }
-//        }else{
-//            return ResponseEntity.status(Error.FAIL).body(
-//                    new ResponseObject(false, Error.FAIL_MESSAGE,"Receipt Not Exist !!!")
-//            );
-//        }
-//
-//    }
-//
-//    String date(){
-//        long millis=System.currentTimeMillis();
-//        java.sql.Date date = new java.sql.Date(millis);
-//        return date.toString();
-//    }
-//
+    @PostMapping("/changeReceiptStatus")
+    ResponseEntity<ResponseObject> changeReceiptStatus(String recID, int status){
+        Optional<ReceiptModel> check = Optional.ofNullable(receiptService.getReceiptByID(recID));
+        if(check.isPresent()){
+            receiptService.changeStatusReceipt(recID,status);
+            ReceiptModel receiptModel = receiptService.getReceiptByID(recID);
+            if(receiptModel.getStatus() == status){
+                return ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true, Error.OK_MESSAGE,"Change Status Receipt Success !!!")
+                );
+            }else{
+                return ResponseEntity.status(Error.FAIL).body(
+                        new ResponseObject(false, Error.FAIL_MESSAGE,"Change Status Receipt Fail !!!")
+                );
+            }
+        }else{
+            return ResponseEntity.status(Error.FAIL).body(
+                    new ResponseObject(false, Error.FAIL_MESSAGE,"Receipt Not Exist !!!")
+            );
+        }
+
+    }
+
+    String date(){
+        long millis=System.currentTimeMillis();
+        java.sql.Date date = new java.sql.Date(millis);
+        return date.toString();
+    }
+
 //    @PostMapping("/addReceipt")
 //    ResponseEntity<ResponseObject> addReceipt(@RequestBody List<Map<String,String>> list, @RequestParam("file") MultipartFile[] listFile) throws IOException {
 //        int ck = 0;
@@ -142,8 +142,10 @@ public class ReceiptController {
 //            String recID = receiptService.autoID();
 //            for(int i = 0; i < list.size() ; i++){
 //                ProductModel productModel = productService.getProductById(list.get(i).get("proID"));
-//                Optional<ProductModel> check = Optional.of()
-//                if()
+//                Optional<ProductModel> check = Optional.of(productModel);
+//                if(check.isPresent()){
+//
+//                }
 //            }
 //
 //        }else{
