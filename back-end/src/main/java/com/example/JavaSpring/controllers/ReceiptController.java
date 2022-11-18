@@ -1,6 +1,8 @@
 package com.example.JavaSpring.controllers;
 
 import com.example.JavaSpring.models.*;
+import com.example.JavaSpring.service.CategoryServiceImpl;
+import com.example.JavaSpring.service.ProductServiceImpl;
 import com.example.JavaSpring.service.ReceiptDetailServicelmpl;
 import com.example.JavaSpring.service.ReceiptService;
 import com.example.JavaSpring.util.Error;
@@ -27,9 +29,14 @@ public class ReceiptController {
     @Autowired
     ReceiptDetailServicelmpl receiptDetailService;
 
-    Map<String,String> imgA = null;
+    @Autowired
+    CategoryServiceImpl categoryService;
 
-    MultipartFile[] imgV = null;
+    @Autowired
+    ProductController productController;
+
+    @Autowired
+    ProductServiceImpl productService;
 
     // Get : localhost:8080/api/v1/receipt/getAllReceipt
     @GetMapping("/getAllReceipt")
@@ -79,8 +86,77 @@ public class ReceiptController {
 
     }
 
+    String date(){
+        long millis=System.currentTimeMillis();
+        java.sql.Date date = new java.sql.Date(millis);
+        return date.toString();
+    }
+
+//    @PostMapping("/addReceipt")
+//    ResponseEntity<ResponseObject> addReceipt(@RequestBody List<Map<String,String>> list, @RequestParam("file") MultipartFile[] listFile) throws IOException {
+//        int ck = 0;
+//        for(int i = 0; i < list.size(); i++){
+//            if(list.get(i).get("proID") != null && list.get(i).get("proName") != null && list.get(i).get("description") != null && list.get(i).get("price") != null && list.get(i).get("cost") != null && list.get(i).get("totalCost") != null && list.get(i).get("cateID") != null && list.get(i).get("color") != null && list.get(i).get("quantity") != null && list.get(i).get("warrantyMonth") != null){
+//                if(list.get(i).get("proID") != "" && list.get(i).get("proName") != "" && list.get(i).get("description") != "" && list.get(i).get("price") != "" && list.get(i).get("cost") != "" && list.get(i).get("totalCost") != "" && list.get(i).get("cateID") != "" && list.get(i).get("color") != "" && list.get(i).get("quantity") != "" && list.get(i).get("warrantyMonth") != ""){
+//                    CategoryModel categoryModel = categoryService.getCateByID(list.get(i).get("cateID"));
+//                    Optional<CategoryModel> check = Optional.ofNullable(categoryModel);
+//                    if(check.isPresent()){
+//                        ck = 1;
+//                    }else{
+//                        return ResponseEntity.status(Error.FAIL).body(
+//                                new ResponseObject(false, Error.FAIL_MESSAGE,"Category Is Not Exist !!!")
+//                        );
+//                    }
+//                }else{
+//                    return ResponseEntity.status(Error.FAIL).body(
+//                            new ResponseObject(false, Error.FAIL_MESSAGE,"Missing Data !!!")
+//                    );
+//                }
+//            }else{
+//                return ResponseEntity.status(Error.FAIL).body(
+//                        new ResponseObject(false, Error.FAIL_MESSAGE,"Missing Data !!!")
+//                );
+//            }
+//        }
+//
+//        if(ck == 1){
+//            String proID[] = new String[list.size()];
+//            String proName[] = new String[list.size()];
+//            String description[] = new String[list.size()];
+//            long price[] = new long[list.size()];
+//            String cateID[] = new String[list.size()];
+//            String color[] = new String[list.size()];
+//            int quantity[] = new int[list.size()];
+//            int warrantyMonth[] = new int[list.size()];
+//            for(int i = 0; i < list.size(); i++){
+//                proID[i] = list.get(i).get("proID");
+//                proName[i] = list.get(i).get("proName");
+//                description[i] = list.get(i).get("description");
+//                price[i] =  Long.parseLong(list.get(i).get("price"));
+//                cateID[i] = list.get(i).get("cateID");
+//                color[i] = list.get(i).get("color");
+//                quantity[i] = Integer.parseInt(list.get(i).get("quantity"));
+//                warrantyMonth[i] = Integer.parseInt(list.get(i).get("warrantyMonth"));
+//            }
+//            productController.addListProduct(proID,proName,description,price,cateID,color,quantity,warrantyMonth,listFile);
+//            String recID = receiptService.autoID();
+//            for(int i = 0; i < list.size() ; i++){
+//                ProductModel productModel = productService.getProductById(list.get(i).get("proID"));
+//                Optional<ProductModel> check = Optional.of(productModel);
+//                if(check.isPresent()){
+//
+//                }
+//            }
+//
+//        }else{
+//            return ResponseEntity.status(Error.FAIL).body(
+//                    new ResponseObject(false, Error.FAIL_MESSAGE,"Category Is Not Exist !!!")
+//            );
+//        }
+//    }
+
     @PostMapping("/showReceiptExcelFile")
-    ResponseEntity<ResponseObject> addReceipt(@RequestParam("list") MultipartFile[] list) throws IOException{
+    ResponseEntity<ResponseObject> showReceiptExcelFile(@RequestParam("list") MultipartFile[] list) throws IOException{
         if(list.length == 1 && list[0].getOriginalFilename().equals("") == true ) {
             return ResponseEntity.status(Error.LIST_EMPTY).body(
                     new ResponseObject(false,Error.LIST_EMPTY_MESSAGE,"")

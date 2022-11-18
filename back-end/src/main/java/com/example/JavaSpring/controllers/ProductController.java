@@ -246,7 +246,7 @@ public class ProductController {
     }
 
     @PostMapping("/addListProduct")
-    ResponseEntity<ResponseObject> addListProduct(@RequestParam("proId") String[] proId,@RequestParam("proName") String[] proName, @RequestParam("description")String[] description,@RequestParam("price") Long[] price, @RequestParam("cateId") String[] cateId,@RequestParam("color") String[] color,@RequestParam("quantity") int[] quantity,@RequestParam("warrantyMonth") int[] warrantyMonth,@RequestParam("image") MultipartFile[] image) throws IOException {
+    ResponseEntity<ResponseObject> addListProduct(@RequestParam("proId") String[] proId,@RequestParam("proName") String[] proName, @RequestParam("description")String[] description,@RequestParam("price") long[] price, @RequestParam("cateId") String[] cateId,@RequestParam("color") String[] color,@RequestParam("quantity") int[] quantity,@RequestParam("warrantyMonth") int[] warrantyMonth,@RequestParam("image") MultipartFile[] image) throws IOException {
         if(proId.length == 0 ||proName.length == 0 || description.length == 0|| price.length == 0 || cateId.length == 0 || color.length == 0 || warrantyMonth.length == 0){
             return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
                     new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
@@ -258,12 +258,16 @@ public class ProductController {
                     new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
             );}
         for (int i = 0 ; i < size; i++){
-             Optional<ProductModel> check = Optional.ofNullable(productService.getProductById(proId[i]));
-             if(check.isPresent() == true){
-                 return ResponseEntity.status(Error.DUPLICATE_ID).body(
-                         new ResponseObject(false,Error.DUPLICATE_ID_MESSAGE,"")
-                 );
-             }
+            ProductModel productModel = productService.getProductById(proId[i]);
+            Optional<ProductModel> check = Optional.ofNullable(productModel);
+            if(check.isPresent() == true){
+//                 return ResponseEntity.status(Error.DUPLICATE_ID).body(
+//                         new ResponseObject(false,Error.DUPLICATE_ID_MESSAGE,"")
+//                 );
+                int newQuantity  = productModel.getQuantity() + quantity[i];
+                productModel.setQuantity(newQuantity);
+                productService.updateProduct(productModel,proId[i]);
+            }
         }
         for (int i = 0 ; i < size ; i++){
             MultipartFile[] multipartFile = new MultipartFile[1];

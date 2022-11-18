@@ -10,6 +10,8 @@ public interface ReceiptService {
 
     ReceiptModel getReceiptByID(String recID);
 
+    void addReceipt(ReceiptModel receiptModel);
+
     String autoID();
 
     void changeStatusReceipt(String recID, int status);
