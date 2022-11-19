@@ -88,7 +88,7 @@ public class ImageController {
                         );
                     }
         }
-        String uploadDir = "src/Image/"+proID+"/";
+        String uploadDir = "user/public/Image/"+proID+"/";
         for(int i = 0;i<image.length;i++){
             String fileName = StringUtils.cleanPath(image[i].getOriginalFilename());
             imageService.saveImage(fileName,proID);
@@ -144,7 +144,7 @@ public class ImageController {
                         new ResponseObject(false,"San pham hien con 1 anh ",""));
             }
             ImageModel imageModel = imageService.getImagebyName(listNameImagess[i],proID);
-                File myObj = new File("src/Image/"+imageModel.getProID()+"/"+imageModel.getImgPath());
+                File myObj = new File("user/public/Image/"+imageModel.getProID()+"/"+imageModel.getImgPath());
                 myObj.delete();
                 imageService.deleteImage(imageModel);
         }

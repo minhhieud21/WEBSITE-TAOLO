@@ -92,13 +92,22 @@ public class ProductController {
             }
             kq.add(object);
         }
+        HashMap<String,Object> temp = new HashMap<String,Object>();
+        temp.put("content",kq);
+        temp.put("pageable",check.getPageable());
+        temp.put("size",check.getSize());
+        temp.put("totalElements",check.getTotalElements());
+        temp.put("totalPages",check.getTotalPages());
+        temp.put("number",check.getNumber());
+        temp.put("numberOfElements",check.getNumberOfElements());
+        temp.put("empty",check.isEmpty());
         if(check.isEmpty() == true){
             return ResponseEntity.status(Error.LIST_EMPTY).body(
                     new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,""));
         }
         else {
             return ResponseEntity.status(Error.OK).body(
-                    new ResponseObject(true,Error.OK_MESSAGE,kq)); }
+                    new ResponseObject(true,Error.OK_MESSAGE,temp)); }
     }
 
     // GET by id: localhost:8080/api/v1/product/abc
@@ -394,6 +403,15 @@ public class ProductController {
             }
             kq.add(object);
         }
+        HashMap<String,Object> temp = new HashMap<String,Object>();
+        temp.put("content",kq);
+        temp.put("pageable",check.getPageable());
+        temp.put("size",check.getSize());
+        temp.put("totalElements",check.getTotalElements());
+        temp.put("totalPages",check.getTotalPages());
+        temp.put("number",check.getNumber());
+        temp.put("numberOfElements",check.getNumberOfElements());
+        temp.put("empty",check.isEmpty());
         if(check.isEmpty() == true){
             return ResponseEntity.status(Error.LIST_EMPTY).body(
                     new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,""));
