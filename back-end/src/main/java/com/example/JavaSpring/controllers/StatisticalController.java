@@ -61,15 +61,21 @@ public class  StatisticalController {
             afterdate = AfterMonth((month-1),year);
         }
         HashMap<String,Object> object = new HashMap<String,Object>();
-        object.put("tongdoanhthu",Tongdoanhthu(date,afterdate));
-        object.put("tongsoluong",ThongKeSoLuong(date,afterdate));
-        object.put("topsanpham",thongkesanpham(date));
+        object.put("tongdoanhthu",Tongdoanhthu(date,afterdate,type));
+        object.put("tongsoluong",ThongKeSoLuong(date,afterdate,type));
+        object.put("topsanpham",thongkesanpham(date,type));
         return ResponseEntity.status(Error.OK).body(
                 new ResponseObject(true,Error.OK_MESSAGE,object)
         );
     }
-    public long[] Tongdoanhthu(String Date,String afterDate){
-        List<BillDetailModel> a = billDetailService.getBillDetailByDay(Date);
+    public long[] Tongdoanhthu(String Date,String afterDate,int type){
+        List<BillDetailModel> a = null;
+        if(type==0){
+           a = billDetailService.getBillDetailByDay(Date);
+        }
+        else if(type==1){
+            a = billDetailService.getBillDetailByMonth(Date);
+        }
         long ketqua[] = new long[2] ;
         if(a.isEmpty() == false){
             ketqua[0]=0;
@@ -96,8 +102,14 @@ public class  StatisticalController {
         ketqua[1] = ketqua[0] - ketqua[1];
         return ketqua;
     }
-    public long[] ThongKeSoLuong(String Date,String afterDate){
-        List<BillDetailModel> a = billDetailService.getBillDetailByDay(Date);
+    public long[] ThongKeSoLuong(String Date,String afterDate,int type){
+        List<BillDetailModel> a = null;
+        if(type==0){
+            a = billDetailService.getBillDetailByDay(Date);
+        }
+        else if(type==1){
+            a = billDetailService.getBillDetailByMonth(Date);
+        }
         long ketqua[] = new long[2] ;
         if(a.isEmpty() == false){
             ketqua[0]=0;
@@ -125,8 +137,14 @@ public class  StatisticalController {
         return ketqua;
     }
 
-    public AbstractMap<String,Integer> thongkesanpham(String Date){
-        List<BillDetailModel> a = billDetailService.getBillDetailByDay(Date);
+    public AbstractMap<String,Integer> thongkesanpham(String Date,int type){
+        List<BillDetailModel> a = null;
+        if(type==0){
+            a = billDetailService.getBillDetailByDay(Date);
+        }
+        else if(type==1){
+            a = billDetailService.getBillDetailByMonth(Date);
+        }
         HashMap<String,Integer> object = new HashMap<String,Integer>();
         List<String> check = new ArrayList<>();
         if(a.isEmpty() == false) {

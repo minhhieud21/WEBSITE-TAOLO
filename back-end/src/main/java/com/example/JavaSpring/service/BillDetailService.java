@@ -15,4 +15,6 @@ public interface BillDetailService {
     void addBillDetail(BillDetailModel billDetailModel);
 
     List<BillDetailModel> getBillDetailByDay(String day);
+
+    List<BillDetailModel> getBillDetailByMonth(String month);
 }

@@ -37,4 +37,9 @@ public class BillDetailServicelmpl implements BillDetailService{
     public List<BillDetailModel> getBillDetailByDay(String day) {
         return billDetailRepository.getBillDetailByDay(day);
     }
+
+    @Override
+    public List<BillDetailModel> getBillDetailByMonth(String month) {
+        return billDetailRepository.getBillDetailByMonth(month);
+    }
 }
