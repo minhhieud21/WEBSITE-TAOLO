@@ -1,0 +1,17 @@
+.login {
+    min-height: 500px;
+
+    &__background {
+        background-image: url('../img/sidebar-4.jpg');
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+    }
+
+    &__form {
+
+        label {
+            min-width: 100px;
+        }
+    }
+}

@@ -6,8 +6,7 @@ import axios from "axios"
 import { googleLogin, setLocalStorage, getLocalStorage } from "../../services"
 import { useForm } from "react-hook-form"
 
-import { ToastContainer,toast } from "react-toastify"
-import { PopupSuccess } from "components/Popup/PopupSuccess"
+import { ToastContainer, toast } from "react-toastify"
 
 const ggProvider = new firebase.auth.GoogleAuthProvider()
 
@@ -33,7 +32,6 @@ const Login = () => {
 			.then(async (res) => {
 				if (res.user) {
 					navigate("/")
-					window.location.reload()
 					await googleLogin(res.user.photoURL)
 				}
 			})
@@ -53,8 +51,8 @@ const Login = () => {
 			.then((res) => {
 				if (res) {
 					setLocalStorage("username", data.username)
-					setLocalStorage("userId", res.data.data)
-					setLocalStorage("token", res.data.data)
+					setLocalStorage("userId", res.data.data.userID)
+					setLocalStorage("token", res.data.data.token)
 					navigate("/")
 				}
 			})
@@ -103,13 +101,17 @@ const Login = () => {
 							)}
 						</div>
 						{isLoginFail ? <p className="text-danger">{textLoginFail}</p> : ""}
-						<Link
-							className="d-flex justify-content-end"
-							to={`/forgot-password`}
-						>
-							Forget password!
-						</Link>
-
+						<div className="d-flex justify-content-end">
+							<Link className="text-info me-2" to={`/sign-up`}>
+								Sign up!
+							</Link>
+							<Link
+								className=""
+								to={`/forgot-password`}
+							>
+								Forget password!
+							</Link>
+						</div>
 						<div>
 							<button type="submit" className="btn btn-primary me-3">
 								Login

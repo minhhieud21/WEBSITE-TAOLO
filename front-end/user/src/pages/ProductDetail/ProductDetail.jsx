@@ -6,7 +6,7 @@ import SliderProduct from "./SliderProduct/SliderProduct";
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { createContext } from "react";
-import { getProductById } from "services";
+import { getProductById } from "../../services";
 
 
 export const ProductDetailProvider = createContext()

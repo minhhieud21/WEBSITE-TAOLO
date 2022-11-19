@@ -43,4 +43,28 @@ public class ReceiptServicelmpl implements ReceiptService{
         }
         return ck;
     }
+
+    @Override
+    public ReceiptModel getReceiptByID(String recID){
+        return receiptRepository.getReceiptByID(recID);
+    }
+
+    @Override
+    public void addReceipt(ReceiptModel receiptModel){
+        receiptRepository.save(receiptModel);
+    }
+
+    @Override
+    public void changeStatusReceipt(String recID, int status){
+        ReceiptModel receiptModel = receiptRepository.getReceiptByID(recID);
+        receiptModel.setStatus(status);
+        receiptRepository.save(receiptModel);
+    }
+
+    @Override
+    public void deleteReceipt(String recID){
+        ReceiptModel receiptModel = receiptRepository.getReceiptByID(recID);
+        receiptRepository.delete(receiptModel);
+    }
+
 }

@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import { useForm } from "react-hook-form"
 import { getUserByUserId } from "../../services"
 import { getLocalStorage } from "../../services/LocalStorageService"
 import { useNavigate } from "react-router-dom"
+import { CartAndProductContext } from "../../layouts/MainLayout/ContainerMainLayout"
 
 export default function () {
 	const { register, handleSubmit } = useForm()
 	const userId = getLocalStorage("userId")
-
+	const {token} = useContext(CartAndProductContext)
 	const [userInfo, setUserInfo] = useState({})
 
 	useEffect(() => {
-		getUserByUserId(userId)
+		getUserByUserId(userId,token)
 			.then((res) => {
+				console.log(res.data)
 				setUserInfo(res.data.data)
 			})
 			.catch((e) => console.log(e))
@@ -31,7 +33,7 @@ export default function () {
 							id="exampleInputEmail1"
 							type="text"
 							readOnly
-							value={userInfo.name}
+							defaultValue={userInfo.name}
 						/>
 					</div>
 				</div>
@@ -44,7 +46,7 @@ export default function () {
 							className="form-control"
 							id="exampleInputEmail2"
 							type="text"
-							value={userInfo.phone}
+							defaultValue={userInfo.phone}
 
 						/>
 					</div>
@@ -58,10 +60,15 @@ export default function () {
 							className="form-control"
 							id="exampleInputEmail3"
 							type="text"
-							value={userInfo.address}
+							defaultValue={userInfo.address}
 
 						/>
 					</div>
+				</div>
+				<div>
+					<button type="submit" className="btn btn-primary me-3">
+						Change
+					</button>
 				</div>
 			</form>
 		</>

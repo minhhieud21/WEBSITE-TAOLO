@@ -1,14 +1,24 @@
-import React, { useState, useContext } from "react"
+import React, { useState, useContext, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { deleteCartDetailByCartDetailId } from "services"
-import { updateCartDetail } from "services"
+import { deleteCartDetailByCartDetailId,getCartDetailByCartID,getLocalStorage,updateCartDetail } from "../../../services"
 import img from "../../../assets/img/product-1.jpg"
-import * as cartService from "../../../services/CartService"
-import { CartAndProductContext } from "layouts/MainLayout/ContainerMainLayout"
+import { CartAndProductContext } from "../../../layouts/MainLayout/ContainerMainLayout"
 
 const ItemCart = () => {
-	const { product, tmp } = useContext(CartAndProductContext)
+	const { itemCart } = useContext(CartAndProductContext)
 	const [quantity, setQuantity] = useState(1)
+	const [tmp, setTmp] = useState([])
+	const [cartDetail, setCartDetail] = useState([])
+	const cartId = getLocalStorage('cartId')
+	
+	useEffect(() => {
+		getCartDetailByCartID(cartId).then((res) => {
+			setCartDetail(res.data.data)
+		})
+	}, [])
+	
+	console.log(itemCart)
+
 	const handleUpdateCart = (cartDID) => {
 		updateCartDetail(cartDID, quantity)
 			.then((res) => console.log(res))
@@ -19,15 +29,14 @@ const ItemCart = () => {
 			await deleteCartDetailByCartDetailId(cartDID)
 		}
 	}
-
 	const convertNumber = (a, b) => {
 		return Number(a) + Number(b)
 	}
 
 	return (
 		<>
-			{tmp &&
-				tmp.map((cartDetail) => {
+			{itemCart &&
+				itemCart.map((cartDetail) => {
 					return (
 						<tr key={cartDetail.cartDID}>
 							<th className="ps-0 py-3 border-light" scope="row">
@@ -44,7 +53,7 @@ const ItemCart = () => {
 												className="reset-anchor animsition-link"
 												to={`/detail/${cartDetail.proID}`}
 											>
-												abc
+												{cartDetail.proName}
 											</Link>
 										</strong>
 									</div>

@@ -1,6 +1,6 @@
 import React, { useContext } from "react"
 import ItemProduct from "../../../components/ItemProduct/ItemProduct"
-import { CartAndProductContext } from "layouts/MainLayout/ContainerMainLayout"
+import { CartAndProductContext } from "../../../layouts/MainLayout/ContainerMainLayout"
 
 const HomeProduct = () => {
 	const { product } = useContext(CartAndProductContext)

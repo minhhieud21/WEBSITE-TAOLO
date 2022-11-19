@@ -45,6 +45,18 @@ public class ReceiptDetailController {
                 );
     }
 
+    @GetMapping("/getReceiptDetailByRecID")
+    ResponseEntity<ResponseObject> getReceiptDetailByRecID(String recID){
+        List<ReceiptDetailModel> check = receiptDetailService.getReceiptDetailByRecID(recID);
+        return check.isEmpty() ?
+                ResponseEntity.status(Error.LIST_EMPTY).body(
+                        new ResponseObject(false, Error.LIST_EMPTY_MESSAGE,"")
+                ) :
+                ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true,Error.OK_MESSAGE, check)
+                );
+    }
+
     @PostMapping("/addReceiptDetail")
     ResponseEntity<ResponseObject> addReceiptDetail(@RequestBody ReceiptDetailModel receiptDetailModel){
         Optional<ReceiptDetailModel> check = Optional.ofNullable(receiptDetailService.getReceiptDetailByID(receiptDetailModel.getRecDID()));

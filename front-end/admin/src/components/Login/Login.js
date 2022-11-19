@@ -13,44 +13,51 @@ export default function Login() {
             if (res && res.data) {
                 history.push("/");
                 localStorage.setItem("userName", getValues("username"))
+                localStorage.setItem("userID", res.data.data.userID)
+                localStorage.setItem("token", res.data.data.token)
             }
-            
+
         })
     }
     return (
-        <Container className='py-5'>
-            <Form onSubmit={handleSubmit(handleLogin)}>
-                <FormGroup >
-                    <label htmlFor="exampleEmail">
-                        Email
-                    </label>
-                    <input
-                        id="exampleEmail"
-                        name="email"
-                        placeholder="Email"
-                        type="text"
-                        {...register("username", { required: true })}
-                    />
-                </FormGroup>
-                {' '}
-                <FormGroup>
-                    <label htmlFor="examplePassword">
-                        Password
-                    </label>
-                    <input
-                        id="examplePassword"
-                        name="password"
-                        placeholder="Password"
-                        type="password"
-                        {...register("password", { required: true })}
-                    />
-                </FormGroup>
-                {' '}
-                <Button type='submit'>
-                    Submit
-                </Button>
-            </Form>
+        <div className='login d-flex'>
+            <div className='login__background'>
+            </div>
+            <Container className='login__form py-5'>
+                <Form onSubmit={handleSubmit(handleLogin)}>
+                    <FormGroup >
+                        <label htmlFor="exampleEmail">
+                            Email
+                        </label>
+                        <input
+                            id="exampleEmail"
+                            name="email"
+                            placeholder="Email"
+                            type="text"
+                            {...register("username", { required: true })}
+                        />
+                    </FormGroup>
+                    {' '}
+                    <FormGroup>
+                        <label htmlFor="examplePassword">
+                            Password
+                        </label>
+                        <input
+                            id="examplePassword"
+                            name="password"
+                            placeholder="Password"
+                            type="password"
+                            {...register("password", { required: true })}
+                        />
+                    </FormGroup>
+                    {' '}
+                    <Button type='submit'>
+                        Submit
+                    </Button>
+                </Form>
 
-        </Container>
+            </Container>
+
+        </div>
     )
 }

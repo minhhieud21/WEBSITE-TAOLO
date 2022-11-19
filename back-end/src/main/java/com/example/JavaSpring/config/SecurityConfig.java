@@ -61,7 +61,20 @@ public class SecurityConfig {
 				.antMatchers(HttpMethod.POST, "/api/v1/product/addProduct","/api/v1/product/changestatus","/api/v1/product/updateProduct","/api/v1/product/addListProduct").access("hasAuthority('Admin')")
 				.antMatchers(HttpMethod.POST, "/api/v1/image/add","/api/v1/image/mainImage").access("hasAuthority('Admin')")
 				.antMatchers(HttpMethod.DELETE, "/api/v1/image/deleteImage").access("hasAuthority('Admin')")
+				//JWT category
+				.antMatchers(HttpMethod.GET,"/api/v1/category/getAllCategoryAdmin").access("hasAuthority('Admin')")
+//				.antMatchers(HttpMethod.GET,"/api/v1/category/getAllCategoryUser").access("hasAnyAuthority('Admin','User')")
+				.antMatchers(HttpMethod.GET,"/api/v1/category/getCategoryByID").access("hasAuthority('Admin')")
+				.antMatchers(HttpMethod.POST,"/api/v1/category/addCategory").access("hasAuthority('Admin')")
+				.antMatchers(HttpMethod.POST,"/api/v1/category/updateCategory").access("hasAuthority('Admin')")
+				//JWT Cart
+				.antMatchers(HttpMethod.GET,"/api/v1/category/ge").access("hasAuthority('Admin')")
+
+
+
+
 				.antMatchers(HttpMethod.GET, "/api/v1/statistical/getStatisticalService").access("hasAnyAuthority('Admin')")
+
 				.and()
 				.addFilter(new JwtAuthorizationFilter(
 						authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)),

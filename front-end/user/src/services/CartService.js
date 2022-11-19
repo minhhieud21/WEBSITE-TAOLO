@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL, API_GET_CART_BY_USER_ID, API_CART_ADD_CART } from "../assets/constant";
+import { API_URL, API_GET_CART_BY_USER_ID, API_CART_ADD_CART, API_CART_READY_CHECKOUT } from "../assets/constant";
 
 const increaseQuantity = (quantity) => {
     return quantity + 1;
@@ -21,6 +21,14 @@ const addCart = async (data) => {
     await axios({
         method: "post",
         url: `${API_URL}${API_CART_ADD_CART}`,
+        data: data,
+    })
+}
+
+export const readyCheckout = async (data) =>{
+    await axios({
+        method: "post",
+        url: `${API_URL}${API_CART_READY_CHECKOUT}`,
         data: data,
     })
 }

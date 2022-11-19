@@ -8,9 +8,7 @@ const ItemProduct = ({ proName, price, proId, img }) => {
 	const openPopup = useCallback(() => {
 		setPopup(!popup)
 	}, [])
-
-	const toAbsoluteUrl = (pathname) => `../../assets/Image/${proId}/${pathname}`
-	console.log(toAbsoluteUrl(img))
+	
 	return (
 		<>
 			<Popup />

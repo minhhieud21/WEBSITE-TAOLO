@@ -8,7 +8,6 @@ export default function ForgotPassword() {
 
 	const [email, setEmail] = useState("")
 
-	console.log(email)
 	const handleForgotPassword = (data) => {
 		const tmpData = {
 			...data,
