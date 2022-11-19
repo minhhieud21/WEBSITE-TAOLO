@@ -92,68 +92,60 @@ public class ReceiptController {
         return date.toString();
     }
 
-//    @PostMapping("/addReceipt")
-//    ResponseEntity<ResponseObject> addReceipt(@RequestBody List<Map<String,String>> list, @RequestParam("file") MultipartFile[] listFile) throws IOException {
-//        int ck = 0;
-//        for(int i = 0; i < list.size(); i++){
-//            if(list.get(i).get("proID") != null && list.get(i).get("proName") != null && list.get(i).get("description") != null && list.get(i).get("price") != null && list.get(i).get("cost") != null && list.get(i).get("totalCost") != null && list.get(i).get("cateID") != null && list.get(i).get("color") != null && list.get(i).get("quantity") != null && list.get(i).get("warrantyMonth") != null){
-//                if(list.get(i).get("proID") != "" && list.get(i).get("proName") != "" && list.get(i).get("description") != "" && list.get(i).get("price") != "" && list.get(i).get("cost") != "" && list.get(i).get("totalCost") != "" && list.get(i).get("cateID") != "" && list.get(i).get("color") != "" && list.get(i).get("quantity") != "" && list.get(i).get("warrantyMonth") != ""){
-//                    CategoryModel categoryModel = categoryService.getCateByID(list.get(i).get("cateID"));
-//                    Optional<CategoryModel> check = Optional.ofNullable(categoryModel);
-//                    if(check.isPresent()){
-//                        ck = 1;
-//                    }else{
-//                        return ResponseEntity.status(Error.FAIL).body(
-//                                new ResponseObject(false, Error.FAIL_MESSAGE,"Category Is Not Exist !!!")
-//                        );
-//                    }
-//                }else{
-//                    return ResponseEntity.status(Error.FAIL).body(
-//                            new ResponseObject(false, Error.FAIL_MESSAGE,"Missing Data !!!")
-//                    );
-//                }
-//            }else{
-//                return ResponseEntity.status(Error.FAIL).body(
-//                        new ResponseObject(false, Error.FAIL_MESSAGE,"Missing Data !!!")
-//                );
-//            }
-//        }
-//
-//        if(ck == 1){
-//            String proID[] = new String[list.size()];
-//            String proName[] = new String[list.size()];
-//            String description[] = new String[list.size()];
-//            long price[] = new long[list.size()];
-//            String cateID[] = new String[list.size()];
-//            String color[] = new String[list.size()];
-//            int quantity[] = new int[list.size()];
-//            int warrantyMonth[] = new int[list.size()];
-//            for(int i = 0; i < list.size(); i++){
-//                proID[i] = list.get(i).get("proID");
-//                proName[i] = list.get(i).get("proName");
-//                description[i] = list.get(i).get("description");
-//                price[i] =  Long.parseLong(list.get(i).get("price"));
-//                cateID[i] = list.get(i).get("cateID");
-//                color[i] = list.get(i).get("color");
-//                quantity[i] = Integer.parseInt(list.get(i).get("quantity"));
-//                warrantyMonth[i] = Integer.parseInt(list.get(i).get("warrantyMonth"));
-//            }
-//            productController.addListProduct(proID,proName,description,price,cateID,color,quantity,warrantyMonth,listFile);
-//            String recID = receiptService.autoID();
-//            for(int i = 0; i < list.size() ; i++){
-//                ProductModel productModel = productService.getProductById(list.get(i).get("proID"));
-//                Optional<ProductModel> check = Optional.of(productModel);
-//                if(check.isPresent()){
-//
-//                }
-//            }
-//
-//        }else{
-//            return ResponseEntity.status(Error.FAIL).body(
-//                    new ResponseObject(false, Error.FAIL_MESSAGE,"Category Is Not Exist !!!")
-//            );
-//        }
-//    }
+    @PostMapping("/addReceipt")
+    ResponseEntity<ResponseObject> addReceipt(@RequestParam("proID") String[] proID,@RequestParam("proName") String[] proName, @RequestParam("description") String[] description, @RequestParam("price") long[] price, @RequestParam("cost") long[] cost, @RequestParam("totalCost") long[] totalCost,@RequestParam("cateID") String[] cateID, @RequestParam("color") String[] color, @RequestParam("quantity") int[] quantity, @RequestParam("warrantyMonth") int[] warrantyMonth,@RequestParam("file") MultipartFile[] listFile) throws IOException {
+        int ck = 0;
+        if(proID.length == 0 || proName.length == 0 || description.length == 0 || quantity.length == 0 || price.length == 0 || cost.length == 0 || totalCost.length == 0 || cateID.length == 0 || color.length == 0 || warrantyMonth.length == 0 || listFile.length == 0){
+            return ResponseEntity.status(Error.FAIL).body(
+                        new ResponseObject(false, Error.FAIL_MESSAGE,"Missing Data !!!")
+                );
+        }else{
+            if(proID.length == proName.length  || proName.length == description.length || quantity.length == description.length || price.length == quantity.length || cost.length == price.length || totalCost.length == cost.length || cateID.length == totalCost.length || color.length == cateID.length ||  warrantyMonth.length == color.length || listFile.length == proID.length){
+                for(int i = 0; i < cateID.length ; i++){
+                        Optional<CategoryModel> check = Optional.ofNullable(categoryService.getCateByID(cateID[i]));
+                        if(check.isEmpty()) {
+                            return ResponseEntity.status(Error.FAIL).body(
+                                    new ResponseObject(false, Error.FAIL_MESSAGE, "Some Category Is Not Exist!!!")
+                            );
+                        }
+                }
+                int totalQuantity = 0;
+                long costTotal = 0;
+                productController.addListProduct(proID,proName,description,price,cateID,color,quantity,warrantyMonth,listFile);
+                String recID = receiptService.autoID();
+                for(int i = 0 ; i < proID.length; i++){
+                    Optional<ProductModel> check1 = Optional.ofNullable(productService.getProductById(proID[i]));
+                    String recDID = receiptDetailService.autoID();
+                    if(check1.isPresent()){
+                        ReceiptDetailModel newReceiptDetail = new ReceiptDetailModel(null,recDID,recID,proID[i],proName[i],description[i],quantity[i],price[i],cost[i],totalCost[i],warrantyMonth[i]);
+                        receiptDetailService.addReceiptDetail(newReceiptDetail);
+                        totalQuantity = totalQuantity + quantity[i];
+                        costTotal = costTotal + totalCost[i];
+                    }
+                }
+                List<ReceiptDetailModel> check2 = receiptDetailService.getReceiptDetailByRecID(recID);
+                if(!check2.isEmpty()){
+                    ReceiptModel newReceipt = new ReceiptModel(null,recID,date(),totalQuantity,costTotal,1);
+                    receiptService.addReceipt(newReceipt);
+                }
+                List<ReceiptDetailModel> check3 = receiptDetailService.getReceiptDetailByRecID(recID);
+                Optional<ReceiptModel> check4 = Optional.ofNullable(receiptService.getReceiptByID(recID));
+                if(!check3.isEmpty() && check4.isPresent()){
+                    return ResponseEntity.status(Error.OK).body(
+                            new ResponseObject(true, Error.OK_MESSAGE,"Add Receipt Success !!!")
+                    );
+                }else{
+                    return ResponseEntity.status(Error.FAIL).body(
+                            new ResponseObject(false, Error.FAIL_MESSAGE,"Add Receipt Fail !!!")
+                    );
+                }
+            }else{
+                return ResponseEntity.status(Error.FAIL).body(
+                        new ResponseObject(false, Error.FAIL_MESSAGE,"Missing Data !!!")
+                );
+            }
+        }
+    }
 
     @PostMapping("/showReceiptExcelFile")
     ResponseEntity<ResponseObject> showReceiptExcelFile(@RequestParam("list") MultipartFile[] list) throws IOException{
@@ -190,7 +182,6 @@ public class ReceiptController {
                 );
             }
         }
-
     }
 
     @DeleteMapping("/deleteReceipt")

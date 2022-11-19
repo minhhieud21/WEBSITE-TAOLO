@@ -58,7 +58,7 @@ public class SecurityConfig {
 				.antMatchers(HttpMethod.GET, "/api/v1/user/getAllUser").access("hasAnyAuthority('Admin')")
 				.antMatchers(HttpMethod.GET, "/api/v1/user/**").access("hasAnyAuthority('Admin','User')")
 				.antMatchers(HttpMethod.POST, "/api/v1/user/updateUser").access("hasAnyAuthority('Admin','User')")
-				.antMatchers(HttpMethod.POST, "/api/v1/product/addProduct","/api/v1/product/changestatus","/api/v1/product/updateProduct").access("hasAuthority('Admin')")
+				.antMatchers(HttpMethod.POST, "/api/v1/product/addProduct","/api/v1/product/changestatus","/api/v1/product/updateProduct","/api/v1/product/addListProduct").access("hasAuthority('Admin')")
 				.antMatchers(HttpMethod.POST, "/api/v1/image/add","/api/v1/image/mainImage").access("hasAuthority('Admin')")
 				.antMatchers(HttpMethod.DELETE, "/api/v1/image/deleteImage").access("hasAuthority('Admin')")
 				//JWT category
