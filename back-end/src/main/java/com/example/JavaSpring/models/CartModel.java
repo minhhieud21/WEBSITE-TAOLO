@@ -19,6 +19,8 @@ public class CartModel {
     Long totalCost;
     @Field("status")
     int status;
+    @Field("name")
+    String name;
     @Field("address")
     String address;
     @Field("methodPay")
@@ -28,13 +30,14 @@ public class CartModel {
     @Field("description")
     String description;
 
-    public CartModel(String _id, String cartID, String accID, int totalQuantity, Long totalCost, int status, String address, String methodPay, String phone, String description) {
+    public CartModel(String _id, String cartID, String accID, int totalQuantity, Long totalCost, int status, String name, String address, String methodPay, String phone, String description) {
         this._id = _id;
         this.cartID = cartID;
         this.accID = accID;
         this.totalQuantity = totalQuantity;
         this.totalCost = totalCost;
         this.status = status;
+        this.name = name;
         this.address = address;
         this.methodPay = methodPay;
         this.phone = phone;
@@ -50,6 +53,7 @@ public class CartModel {
                 ", totalQuantity=" + totalQuantity +
                 ", totalCost=" + totalCost +
                 ", status=" + status +
+                ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", methodPay='" + methodPay + '\'' +
                 ", phone='" + phone + '\'' +
@@ -135,5 +139,13 @@ public class CartModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

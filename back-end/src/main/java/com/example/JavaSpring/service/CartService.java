@@ -24,7 +24,7 @@ public interface CartService {
 
     void updateTotalCost(String cartID,long tCost);
 
-    void chageStatusCart(String cartID,int stt, String address, String methodPay, String phone, String description);
+    void chageStatusCart(String cartID,int stt, String address,String name, String methodPay, String phone, String description);
 
     void deleteCart(String cartID);
 

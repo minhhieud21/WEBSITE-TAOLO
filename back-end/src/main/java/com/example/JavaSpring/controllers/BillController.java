@@ -28,7 +28,13 @@ public class BillController {
     CartServicelmpl cartService;
 
     @Autowired
+    CartController cartController;
+
+    @Autowired
     CartDetailServicelmpl cartDetailServicel;
+
+    @Autowired
+    CartDetailController cartDetailController;
 
     @Autowired
     ProductServiceImpl productService;
@@ -151,26 +157,59 @@ public class BillController {
                     int quantity = cartDetailModelList.get(i).getQuantity();
                     String imeiCode = autoIMEICode(cartDetailModelList.get(i).getProID());
                     ProductModel productModel = productService.getProductById(cartDetailModelList.get(i).getProID());
+                    int quantitybill = productModel.getQuantity() - quantity;
                     String date = date();
                     int wmonth = productModel.getWarrantyMonth();
-                    BillDetailModel billDetailModel = new BillDetailModel(null,billDID,billID,proID,cost,quantity,imeiCode,date,warrantyDate(date,wmonth));
-                    billDetailServicel.addBillDetail(billDetailModel);
+                    if(quantitybill > 0){
+                        BillDetailModel billDetailModel = new BillDetailModel(null,billDID,billID,proID,cost,quantity,imeiCode,date,warrantyDate(date,wmonth));
+                        billDetailServicel.addBillDetail(billDetailModel);
+                        productModel.setQuantity(quantitybill);
+                        productService.updateProduct(productModel,proID);
+                    }else{
+                        ErrorMessage = ErrorMessage + productModel.getProName() + "/";
+                        CartModel cartModel = cartService.getCartByAccID(CurCartModel.getAccID());
+                        Optional<CartModel> check1 = Optional.ofNullable(cartModel);
+                        if(check1.isPresent()){
+                            CartDetailModel cartDetailModelNew = new CartDetailModel(null,cartDetailController.autoIDCartDetail(),cartModel.getCartID(),proID,quantity,cost);
+                            cartDetailServicel.saveCartDetail(cartDetailModelNew);
+                        }else{
+                            String cartIDNew = cartController.autoIDCart();
+                            CartDetailModel cartDetailModelNew = new CartDetailModel(null,cartDetailController.autoIDCartDetail(), cartIDNew,proID,quantity,cost);
+                            cartDetailServicel.saveCartDetail(cartDetailModelNew);
+                            CartModel cartModel1 = new CartModel(null,cartIDNew, CurCartModel.getAccID(),cartDetailController.autoLoadQuantity(cartIDNew),cartDetailController.autoLoadQCost(cartID),0, CurCartModel.getName(),CurCartModel.getAddress(),CurCartModel.getMethodPay(), CurCartModel.getPhone(),CurCartModel.getDescription());
+                            cartService.saveCart(cartModel1);
+                        }
+                    }
+                    cartDetailServicel.deleteCartDetail(cartDetailModelList.get(i).getCartDID());
                 }
-                Optional<List<BillDetailModel>> check1 = Optional.ofNullable(billDetailServicel.getBillDetailByBillID(billID));
-                if(check1.isPresent()){
-                    BillModel billModel = new BillModel(null,billID, billDetailServicel.autoLoadCost(billID), billDetailServicel.autoLoadQuantity(billID), CurCartModel.getAccID(),1, CurCartModel.getAddress(), CurCartModel.getMethodPay(), CurCartModel.getPhone(), CurCartModel.getDescription());
+                List<CartDetailModel> cartDetailModelList1 = cartDetailServicel.getCartDetailByCartID(cartID);
+                if(cartDetailModelList1.isEmpty()){
+                    cartService.deleteCart(cartID);
+                }
+                List<BillDetailModel> check1 = billDetailServicel.getBillDetailByBillID(billID);
+                BillModel billModel = new BillModel(null,billID, billDetailServicel.autoLoadCost(billID), billDetailServicel.autoLoadQuantity(billID), CurCartModel.getAccID(),1,CurCartModel.getName(),CurCartModel.getAddress(), CurCartModel.getMethodPay(), CurCartModel.getPhone(), CurCartModel.getDescription());
+                if(!check1.isEmpty() && ErrorMessage == ""){
                     billService.addBill(billModel);
                     return ResponseEntity.status(Error.OK).body(
                             new ResponseObject(true,Error.OK_MESSAGE, "Complete")
                     );
+                }else if(!check1.isEmpty()  && ErrorMessage != ""){
+                    billService.addBill(billModel);
+                    return ResponseEntity.status(Error.OK).body(
+                            new ResponseObject(true,Error.OK_MESSAGE, "There Is Some Product Out Of Quantity:" + ErrorMessage)
+                    );
+                }else if(check1.isEmpty()  && ErrorMessage != ""){
+                    return ResponseEntity.status(Error.OK).body(
+                            new ResponseObject(true,Error.OK_MESSAGE, "There Is Some Product Out Of Quantity:" + ErrorMessage)
+                    );
                 }else{
                     return ResponseEntity.status(Error.FAIL).body(
-                            new ResponseObject(false,Error.FAIL_MESSAGE, "Error Bill Detail")
+                            new ResponseObject(false,Error.FAIL_MESSAGE, "Error Create Bill")
                     );
                 }
             }else{
                 return ResponseEntity.status(Error.FAIL).body(
-                        new ResponseObject(false,Error.FAIL_MESSAGE, "Error Bill")
+                        new ResponseObject(false,Error.FAIL_MESSAGE, "This Cart Not Ready CheckOut Yet !!!")
                 );
             }
         }else{
@@ -189,7 +228,7 @@ public class BillController {
     String warrantyDate(String date, int warrantyMonth){
         String[] dateSplit = date.split("-");
         int day = Integer.parseInt(dateSplit[2]);
-        int month = Integer.parseInt(dateSplit[1]) + warrantyMonth;
+        int month = Integer.parseInt(dateSplit[1]) ;
         int months =  month / 12;
         int year = Integer.parseInt(dateSplit[0]);
         if(day == 29 && Integer.parseInt(dateSplit[1]) == 2){
@@ -199,6 +238,9 @@ public class BillController {
         if(months != 0){
             year =  year + months;
             month = -((12*months) - month);
+            if(month == 0){
+                month = Integer.parseInt(dateSplit[1]);
+            }
         }else if(months == 0){
             year =  year + months;
         }

@@ -75,7 +75,7 @@ public class CartServicelmpl implements CartService{
     }
 
     @Override
-    public void chageStatusCart(String cartID,int stt, String address, String methodPay, String phone, String description){
+    public void chageStatusCart(String cartID,int stt, String name,String address, String methodPay, String phone, String description){
         CartModel cartModel = cartRepository.getCartByID(cartID);
         if(cartModel.getStatus() != stt ){
             cartModel.setStatus(stt);
@@ -91,6 +91,9 @@ public class CartServicelmpl implements CartService{
         }
         if(cartModel.getDescription() != description){
             cartModel.setDescription(description);
+        }
+        if(cartModel.getName() != name){
+            cartModel.setName(name);
         }
         cartRepository.save(cartModel);
     }

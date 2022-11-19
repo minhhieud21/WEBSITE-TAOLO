@@ -81,6 +81,26 @@ public class SecurityConfig {
 				.antMatchers(HttpMethod.POST,"/api/v1/cartdetail/updateCartDetail").access("hasAnyAuthority('Admin','User')")
 				//JWT Bill
 				.antMatchers(HttpMethod.GET,"/api/v1/bill").access("hasAnyAuthority('Admin')")
+				.antMatchers(HttpMethod.GET,"/api/v1/bill/getBillByBillID").access("hasAnyAuthority('Admin')")
+				.antMatchers(HttpMethod.GET,"/api/v1/bill/getBillByAccID").access("hasAnyAuthority('Admin','User')")
+				.antMatchers(HttpMethod.POST,"/api/v1/bill/changeStatusBill").access("hasAnyAuthority('Admin')")
+				.antMatchers(HttpMethod.POST,"/api/v1/bill/addBill").access("hasAnyAuthority('Admin')")
+				.antMatchers(HttpMethod.DELETE,"/api/v1/bill/deleteBill").access("hasAnyAuthority('Admin')")
+				//JWT Bill Detail
+				.antMatchers(HttpMethod.GET,"/api/v1/billDetail").access("hasAnyAuthority('Admin')")
+				.antMatchers(HttpMethod.GET,"/api/v1/billDetailByID").access("hasAnyAuthority('Admin')")
+				.antMatchers(HttpMethod.GET,"/api/v1/billDetailBillID").access("hasAnyAuthority('Admin','User')")
+				//JWT receipt
+				.antMatchers(HttpMethod.GET,"/api/v1/receipt/getAllReceipt").access("hasAnyAuthority('Admin')")
+				.antMatchers(HttpMethod.GET,"/api/v1/receipt/getReceiptByID").access("hasAnyAuthority('Admin')")
+				.antMatchers(HttpMethod.POST,"/api/v1/receipt/showReceiptExcelFile").access("hasAnyAuthority('Admin')")
+				.antMatchers(HttpMethod.POST,"/api/v1/receipt/changeReceiptStatus").access("hasAnyAuthority('Admin')")
+				.antMatchers(HttpMethod.DELETE,"/api/v1/receipt/deleteReceipt").access("hasAnyAuthority('Admin')")
+				//JWT receipt detail
+				.antMatchers(HttpMethod.GET,"/api/v1/receiptdetail/getReceiptDetailByRecID").access("hasAnyAuthority('Admin')")
+				.antMatchers(HttpMethod.GET,"/api/v1/receiptdetail/getReceiptDetailByID").access("hasAnyAuthority('Admin')")
+				.antMatchers(HttpMethod.GET,"/api/v1/receiptdetail/getAllReceiptDetail").access("hasAnyAuthority('Admin')")
+				.antMatchers(HttpMethod.POST,"/api/v1/receiptdetail/addReceiptDetail").access("hasAnyAuthority('Admin')")
 
 				.antMatchers(HttpMethod.GET, "/api/v1/statistical/getStatisticalService").access("hasAnyAuthority('Admin')")
 

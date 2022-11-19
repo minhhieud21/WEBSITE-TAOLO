@@ -111,26 +111,32 @@ public class CartController {
         ProductModel CurPro = productService.getProductById(proID);
         Optional<CartModel> check = Optional.ofNullable(cartService.getCartByAccID(accID));
         long PriceNew = CurPro.getPrice() * quantity;
-        if(check.isEmpty()){
-            CartModel cartModelNew = new CartModel(null,cartID,accID,quantity,PriceNew,0,"","","","");
-            CartDetailModel cartDetailModelNew = new CartDetailModel(null,cartDID,cartID,proID,quantity,PriceNew);
-            cartService.saveCart(cartModelNew);
-            cartDetailController.addnewCartDetail(cartDetailModelNew);
-            Optional<CartModel> check1 = Optional.ofNullable(cartService.getCartByID(cartID));
-            Optional<CartDetailModel> check2 = Optional.ofNullable(cartDetailController.getCartDetailById(cartDID));
-            if (check1.isPresent() == true && check2.isPresent() == true) {
-                ck = 1;
-            }
-        }else{
-            CartModel CurCart = cartService.getCartByAccID(accID);
-            if(CurCart.getStatus() != 2){
-                Optional<CartDetailModel> check1 = Optional.ofNullable(cartDetailController.getCartDetailByProID(CurCart.getCartID(), proID));
+        int quantityCart = CurPro.getQuantity() - quantity;
+        if(quantityCart > 0) {
+            if (check.isEmpty()) {
+                CartModel cartModelNew = new CartModel(null, cartID, accID, quantity, PriceNew, 0, "", "", "", "", "");
+                CartDetailModel cartDetailModelNew = new CartDetailModel(null, cartDID, cartID, proID, quantity, PriceNew);
+                cartService.saveCart(cartModelNew);
+                cartDetailController.addnewCartDetail(cartDetailModelNew);
+                Optional<CartModel> check1 = Optional.ofNullable(cartService.getCartByID(cartID));
+                Optional<CartDetailModel> check2 = Optional.ofNullable(cartDetailController.getCartDetailById(cartDID));
+                if (check1.isPresent() == true && check2.isPresent() == true) {
+                    ck = 1;
+                }
+            } else {
+                CartModel CurCart = cartService.getCartByAccID(accID);
+                CartDetailModel CurCartDetail = cartDetailController.getCartDetailByProID(CurCart.getCartID(), proID);
+                Optional<CartDetailModel> check1 = Optional.ofNullable(CurCartDetail);
                 if (check1.isPresent()) {
-                    CartDetailModel CurCartDetail = cartDetailController.getCartDetailByProID(CurCart.getCartID(), proID);
                     int QuantityNew = CurCartDetail.getQuantity() + quantity;
                     long CostNew = CurPro.getPrice() * QuantityNew;
-                    ck = cartDetailController.updateCart(CurCartDetail.getCartDID(), QuantityNew, CostNew);
-
+                    if (QuantityNew < CurPro.getQuantity()) {
+                        ck = cartDetailController.updateCart(CurCartDetail.getCartDID(), QuantityNew, CostNew);
+                    } else {
+                        return ResponseEntity.status(Error.FAIL).body(
+                                new ResponseObject(false, Error.FAIL_MESSAGE, "Product Not Enough Quantity !!!")
+                        );
+                    }
                 } else {
                     CartDetailModel CartDetailNew = new CartDetailModel(null, cartDID, CurCart.getCartID(), proID, quantity, PriceNew);
                     cartDetailController.addnewCartDetail(CartDetailNew);
@@ -139,11 +145,14 @@ public class CartController {
                         ck = 1;
                     }
                 }
-                updateCart(CurCart.getCartID(), cartDetailController.autoLoadQuantity(CurCart.getCartID()), cartDetailController.autoLoadQCost(CurCart.getCartID()),0);
-            }else{
-                ck = 0;
+                updateCart(CurCart.getCartID(), cartDetailController.autoLoadQuantity(CurCart.getCartID()), cartDetailController.autoLoadQCost(CurCart.getCartID()), 0);
             }
+        }else{
+            return ResponseEntity.status(Error.FAIL).body(
+                    new ResponseObject(false, Error.FAIL_MESSAGE,"Product Not Enough Quantity !!!")
+            );
         }
+
         if (ck == 1) {
             return ResponseEntity.status(Error.OK).body(
                     new ResponseObject(true, Error.OK_MESSAGE, "")
@@ -257,22 +266,23 @@ public class CartController {
     @PostMapping("/readyCheckout")
     ResponseEntity<ResponseObject> readyCheckout(@RequestBody Map<String,String> value){
         String cartID = value.get("cartID");
+        String name = value.get("name");
         String address = value.get("address");
         String methodPay = value.get("methodPay");
         String phone = value.get("phone");
         String description = value.get("description");
         Optional<CartModel> check = Optional.ofNullable(cartService.getCartByID(cartID));
         if(check.isPresent()){
-            if(address != "" && methodPay != "" && phone != ""){
-                cartService.chageStatusCart(cartID,1,address,methodPay,phone,description);
+            if(address != "" && methodPay != "" && name != "" && phone != ""){
+                cartService.chageStatusCart(cartID,1,name,address,methodPay,phone,description);
                 CartModel check1 = cartService.getCartByID(cartID);
                 if(check1.getStatus() == 1){
                     return ResponseEntity.status(Error.OK).body(
-                            new ResponseObject(true,Error.OK_MESSAGE,"")
+                            new ResponseObject(true,Error.OK_MESSAGE,"Checkout Success !!!")
                     );
                 }else{
                     return ResponseEntity.status(Error.FAIL).body(
-                            new ResponseObject(false,Error.FAIL_MESSAGE,"")
+                            new ResponseObject(false,Error.FAIL_MESSAGE,"Checkout Fail !!!")
                     );
                 }
             }else{
