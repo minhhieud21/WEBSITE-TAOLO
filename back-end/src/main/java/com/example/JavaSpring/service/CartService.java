@@ -7,9 +7,11 @@ import java.util.List;
 public interface CartService {
 
 
-
     List<CartModel> getAllCart();
 
+    List<CartModel> getAllCartReadyCheckOut();
+
+    List<CartModel> getCartReadyCheckOutByAccID(String accID);
     CartModel getCartByID(String cartID);
 
     CartModel getCartByAccID(String accID);
@@ -22,7 +24,7 @@ public interface CartService {
 
     void updateTotalCost(String cartID,long tCost);
 
-    void chageStatusCart(String cartID,int stt, String address, String methodPay);
+    void chageStatusCart(String cartID,int stt, String address, String methodPay, String phone, String description);
 
     void deleteCart(String cartID);
 

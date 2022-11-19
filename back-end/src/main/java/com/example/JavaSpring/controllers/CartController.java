@@ -75,6 +75,30 @@ public class CartController {
                 );
     }
 
+    @GetMapping("/getAllCartReadyCheckOut")
+    ResponseEntity<ResponseObject> getAllCartReadyCheckOut() {
+        List<CartModel> check = cartService.getAllCartReadyCheckOut();
+        return check.isEmpty() ?
+                ResponseEntity.status(Error.LIST_EMPTY).body(
+                        new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
+                ) :
+                ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true,Error.OK_MESSAGE, check)
+                );
+    }
+
+    @GetMapping("/getCartReadyCheckOutByAccID")
+    ResponseEntity<ResponseObject> getCartReadyCheckOutByAccID( String accID) {
+        List<CartModel> check = cartService.getCartReadyCheckOutByAccID(accID);
+        return check.isEmpty() ?
+                ResponseEntity.status(Error.LIST_EMPTY).body(
+                        new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
+                ) :
+                ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true,Error.OK_MESSAGE, check)
+                );
+    }
+
     // POST localhost:8080/api/v1/cart/addCart
     @PostMapping("/addCart")
     ResponseEntity<ResponseObject> addnewCart(@RequestBody Map<String,String> value) {
@@ -88,7 +112,7 @@ public class CartController {
         Optional<CartModel> check = Optional.ofNullable(cartService.getCartByAccID(accID));
         long PriceNew = CurPro.getPrice() * quantity;
         if(check.isEmpty()){
-            CartModel cartModelNew = new CartModel(null,cartID,accID,quantity,PriceNew,0,"","");
+            CartModel cartModelNew = new CartModel(null,cartID,accID,quantity,PriceNew,0,"","","","");
             CartDetailModel cartDetailModelNew = new CartDetailModel(null,cartDID,cartID,proID,quantity,PriceNew);
             cartService.saveCart(cartModelNew);
             cartDetailController.addnewCartDetail(cartDetailModelNew);
@@ -209,24 +233,22 @@ public class CartController {
     ResponseEntity<ResponseObject> deleteCart(@PathVariable("cartID") String cartID){
         CartModel cartModel = cartService.getCartByID(cartID);
         Optional<CartModel> check = Optional.ofNullable(cartModel);
-
         if(check.isPresent()){
+            cartDetailController.deleteAllCartDetail(cartID);
             cartService.deleteCart(cartID);
-            CartModel cartModel1 = cartService.getCartByID(cartID);
-            Optional<CartModel> check1 = Optional.ofNullable(cartModel1);
-            int check2 = cartDetailController.deleteAllCartDetail(cartID);
-            if(check1.isEmpty() && check2 == 1){
-                return ResponseEntity.status(Error.OK).body(
-                        new ResponseObject(true,Error.OK_MESSAGE,"")
-                );
-            }else{
-                return ResponseEntity.status(Error.LIST_EMPTY).body(
-                        new ResponseObject(false,Error.LIST_EMPTY_MESSAGE, "")
-                );
-            }
+                Optional<CartModel> check1 = Optional.ofNullable(cartService.getCartByID(cartID));
+                if(check1.isEmpty()){
+                    return ResponseEntity.status(Error.OK).body(
+                            new ResponseObject(true,Error.OK_MESSAGE,"Delete Cart Success !!!")
+                    );
+                }else{
+                    return ResponseEntity.status(Error.FAIL).body(
+                            new ResponseObject(false,Error.FAIL_MESSAGE,"Delete Cart Fail !!!")
+                    );
+                }
         }else{
-            return ResponseEntity.status(Error.FAIL).body(
-                    new ResponseObject(false,Error.FAIL_MESSAGE,"")
+            return ResponseEntity.status(Error.LIST_EMPTY).body(
+                    new ResponseObject(false,Error.LIST_EMPTY_MESSAGE,"Cart Not Exist !!!")
             );
         }
     }
@@ -237,10 +259,12 @@ public class CartController {
         String cartID = value.get("cartID");
         String address = value.get("address");
         String methodPay = value.get("methodPay");
+        String phone = value.get("phone");
+        String description = value.get("description");
         Optional<CartModel> check = Optional.ofNullable(cartService.getCartByID(cartID));
         if(check.isPresent()){
-            if(address != "" && methodPay != ""){
-                cartService.chageStatusCart(cartID,1,address,methodPay);
+            if(address != "" && methodPay != "" && phone != ""){
+                cartService.chageStatusCart(cartID,1,address,methodPay,phone,description);
                 CartModel check1 = cartService.getCartByID(cartID);
                 if(check1.getStatus() == 1){
                     return ResponseEntity.status(Error.OK).body(

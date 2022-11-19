@@ -1,5 +1,6 @@
 package com.example.JavaSpring.models;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -22,8 +23,12 @@ public class CartModel {
     String address;
     @Field("methodPay")
     String methodPay;
+    @Field("phone")
+    String phone;
+    @Field("description")
+    String description;
 
-    public CartModel(String _id, String cartID, String accID, int totalQuantity, Long totalCost, int status, String address, String methodPay) {
+    public CartModel(String _id, String cartID, String accID, int totalQuantity, Long totalCost, int status, String address, String methodPay, String phone, String description) {
         this._id = _id;
         this.cartID = cartID;
         this.accID = accID;
@@ -32,6 +37,8 @@ public class CartModel {
         this.status = status;
         this.address = address;
         this.methodPay = methodPay;
+        this.phone = phone;
+        this.description = description;
     }
 
     @Override
@@ -45,6 +52,8 @@ public class CartModel {
                 ", status=" + status +
                 ", address='" + address + '\'' +
                 ", methodPay='" + methodPay + '\'' +
+                ", phone='" + phone + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 
@@ -110,5 +119,21 @@ public class CartModel {
 
     public void setMethodPay(String methodPay) {
         this.methodPay = methodPay;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

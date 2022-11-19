@@ -17,4 +17,6 @@ public interface BillDetailService {
     List<BillDetailModel> getBillDetailByDay(String day);
 
     List<BillDetailModel> getBillDetailByMonth(String month);
+
+    void deleteBillDetail(String billDID);
 }

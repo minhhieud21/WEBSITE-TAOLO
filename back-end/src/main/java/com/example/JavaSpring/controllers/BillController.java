@@ -158,6 +158,8 @@ public class BillController {
                 }
                 Optional<List<BillDetailModel>> check1 = Optional.ofNullable(billDetailServicel.getBillDetailByBillID(billID));
                 if(check1.isPresent()){
+                    BillModel billModel = new BillModel(null,billID, billDetailServicel.autoLoadCost(billID), billDetailServicel.autoLoadQuantity(billID), CurCartModel.getAccID(),1, CurCartModel.getAddress(), CurCartModel.getMethodPay(), CurCartModel.getPhone(), CurCartModel.getDescription());
+                    billService.addBill(billModel);
                     return ResponseEntity.status(Error.OK).body(
                             new ResponseObject(true,Error.OK_MESSAGE, "Complete")
                     );
@@ -202,5 +204,57 @@ public class BillController {
         }
 
         return String.valueOf(year) + "-" + String.valueOf(month) + "-" + String.valueOf(day);
+    }
+
+    @PostMapping("/changeStatusBill")
+    ResponseEntity<ResponseObject> changeStatusBill(String billID, int status){
+        Optional<BillModel> check = Optional.ofNullable(billService.getBillByBillID(billID));
+        if(check.isPresent()){
+            billService.changeStatusBill(billID,status);
+            BillModel billModel = billService.getBillByBillID(billID);
+            if(billModel.getStatus() == status){
+                return ResponseEntity.status(Error.OK).body(
+                        new ResponseObject(true,Error.OK_MESSAGE, "Change Status Cart Success !!!")
+                );
+            }else{
+                return ResponseEntity.status(Error.FAIL).body(
+                        new ResponseObject(false,Error.FAIL_MESSAGE, "Change Status Cart Fail !!!")
+                );
+            }
+        }else{
+            return ResponseEntity.status(Error.FAIL).body(
+                    new ResponseObject(false,Error.FAIL_MESSAGE, "Bill Not Exist !!!")
+            );
+        }
+    }
+
+    @DeleteMapping("/deleteBill")
+    ResponseEntity<ResponseObject> deleteBill(String billID){
+        BillModel billModel = billService.getBillByBillID(billID);
+        Optional<BillModel> check = Optional.ofNullable(billModel);
+        if(check.isPresent()){
+            if(billModel.getStatus() == 0){
+                billDetailServicel.deleteBillDetail(billID);
+                billService.deleteBill(billID);
+                Optional<BillModel> billModelCheck = Optional.ofNullable(billService.getBillByBillID(billID));
+                if(billModelCheck.isEmpty()){
+                    return ResponseEntity.status(Error.OK).body(
+                            new ResponseObject(true,Error.OK_MESSAGE, "Delete Bill Success !!!")
+                    );
+                }else{
+                    return ResponseEntity.status(Error.FAIL).body(
+                            new ResponseObject(false,Error.FAIL_MESSAGE, "Delete Bill Fail !!!")
+                    );
+                }
+            }else{
+                return ResponseEntity.status(Error.FAIL).body(
+                        new ResponseObject(false,Error.FAIL_MESSAGE, "Bill Not Error !!!")
+                );
+            }
+        }else{
+            return ResponseEntity.status(Error.FAIL).body(
+                    new ResponseObject(false,Error.FAIL_MESSAGE, "Bill Not Exist !!!")
+            );
+        }
     }
 }

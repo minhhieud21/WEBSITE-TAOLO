@@ -16,4 +16,8 @@ public interface BillService {
     void addBill(BillModel billModel);
 
     BillModel getBillByDayDone(String BillID);
+
+    void changeStatusBill(String billID, int status);
+
+    void deleteBill(String billID);
 }

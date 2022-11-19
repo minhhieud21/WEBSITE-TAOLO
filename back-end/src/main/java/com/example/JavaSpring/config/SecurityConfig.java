@@ -68,10 +68,19 @@ public class SecurityConfig {
 				.antMatchers(HttpMethod.POST,"/api/v1/category/addCategory").access("hasAuthority('Admin')")
 				.antMatchers(HttpMethod.POST,"/api/v1/category/updateCategory").access("hasAuthority('Admin')")
 				//JWT Cart
-				.antMatchers(HttpMethod.GET,"/api/v1/category/ge").access("hasAuthority('Admin')")
-
-
-
+				.antMatchers(HttpMethod.GET,"/api/v1/cart/getCartByAccID").access("hasAnyAuthority('Admin','User')")
+				.antMatchers(HttpMethod.GET,"/api/v1/cart/getAllCartReadyCheckOut").access("hasAnyAuthority('Admin')")
+				.antMatchers(HttpMethod.GET,"/api/v1/cart/getCartReadyCheckOutByAccID").access("hasAnyAuthority('Admin','User')")
+				.antMatchers(HttpMethod.POST,"/api/v1/cart/addCart").access("hasAnyAuthority('Admin','User')")
+				.antMatchers(HttpMethod.POST,"/api/v1/cart/readyCheckout").access("hasAnyAuthority('Admin','User')")
+				.antMatchers(HttpMethod.POST,"/api/v1/cart/updateCart").access("hasAnyAuthority('Admin','User')")
+				.antMatchers(HttpMethod.DELETE,"/api/v1/cart/deleteCart").access("hasAnyAuthority('Admin','User')")
+				//JWT cart detail
+				.antMatchers(HttpMethod.DELETE,"/api/v1/cartdetail/deleteCartDetail").access("hasAnyAuthority('Admin','User')")
+				.antMatchers(HttpMethod.DELETE,"/api/v1/cartdetail/deleteAllCartDetail").access("hasAnyAuthority('Admin','User')")
+				.antMatchers(HttpMethod.POST,"/api/v1/cartdetail/updateCartDetail").access("hasAnyAuthority('Admin','User')")
+				//JWT Bill
+				.antMatchers(HttpMethod.GET,"/api/v1/bill").access("hasAnyAuthority('Admin')")
 
 				.antMatchers(HttpMethod.GET, "/api/v1/statistical/getStatisticalService").access("hasAnyAuthority('Admin')")
 

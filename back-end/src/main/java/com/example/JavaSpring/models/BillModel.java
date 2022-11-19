@@ -23,8 +23,12 @@ public class BillModel {
     String address;
     @Field("methodPay")
     String methodPay;
+    @Field("Phone")
+    String phone;
+    @Field("description")
+    String description;
 
-    public BillModel(String _id, String billID, Long totalCost, int toTalQuantity, String accID, int status, String address, String methodPay) {
+    public BillModel(String _id, String billID, Long totalCost, int toTalQuantity, String accID, int status, String address, String methodPay, String phone, String description) {
         this._id = _id;
         this.billID = billID;
         this.totalCost = totalCost;
@@ -33,6 +37,8 @@ public class BillModel {
         this.status = status;
         this.address = address;
         this.methodPay = methodPay;
+        this.phone = phone;
+        this.description = description;
     }
 
     @Override
@@ -46,6 +52,8 @@ public class BillModel {
                 ", status=" + status +
                 ", address='" + address + '\'' +
                 ", methodPay='" + methodPay + '\'' +
+                ", phone='" + phone + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 
@@ -111,5 +119,21 @@ public class BillModel {
 
     public void setMethodPay(String methodPay) {
         this.methodPay = methodPay;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

@@ -42,4 +42,29 @@ public class BillDetailServicelmpl implements BillDetailService{
     public List<BillDetailModel> getBillDetailByMonth(String month) {
         return billDetailRepository.getBillDetailByMonth(month);
     }
+
+    @Override
+    public void deleteBillDetail(String billID){
+        List<BillDetailModel> billDetailModelList = billDetailRepository.getBillDetailByBillID(billID);
+        billDetailRepository.deleteAll(billDetailModelList);
+    }
+
+    public int autoLoadQuantity(String billID){
+        int ck = 0;
+        List<BillDetailModel> billDetailModelList = billDetailRepository.getBillDetailByBillID(billID);
+        for(int i = 0; i < billDetailModelList.size();i++){
+            ck = ck + billDetailModelList.get(i).getQuantity();
+        }
+        return ck;
+    }
+
+    public long autoLoadCost(String billID){
+        long ck = 0;
+        List<BillDetailModel> billDetailModelList = billDetailRepository.getBillDetailByBillID(billID);
+        for(int i = 0; i < billDetailModelList.size();i++){
+            ck = ck + billDetailModelList.get(i).getCost();
+        }
+        return ck;
+    }
 }
+
