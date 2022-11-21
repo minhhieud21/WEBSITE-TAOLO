@@ -11,6 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -149,40 +150,53 @@ public class ReceiptController {
 
     @PostMapping("/showReceiptExcelFile")
     ResponseEntity<ResponseObject> showReceiptExcelFile(@RequestParam("list") MultipartFile[] list) throws IOException{
-        if(list.length == 1 && list[0].getOriginalFilename().equals("") == true ) {
-            return ResponseEntity.status(Error.LIST_EMPTY).body(
-                    new ResponseObject(false,Error.LIST_EMPTY_MESSAGE,"")
-            );
-        }else{
-            XSSFWorkbook workbook = new XSSFWorkbook(list[0].getInputStream());
-            XSSFSheet worksheet = workbook.getSheetAt(0);
-            List<Map<String,String>> NewProList = new ArrayList<>();
-            for(int i=1;i<worksheet.getPhysicalNumberOfRows() ;i++) {
-                XSSFRow row = worksheet.getRow(i);
-                Map<String,String> newPro = new TreeMap<>();
-                newPro.put("proID",row.getCell(1).getStringCellValue());
-                newPro.put("proName",row.getCell(2).getStringCellValue());
-                newPro.put("description",row.getCell(3).getStringCellValue());
-                newPro.put("price",String.valueOf((int)row.getCell(4).getNumericCellValue()));
-                newPro.put("cost",String.valueOf((int)row.getCell(5).getNumericCellValue()));
-                newPro.put("totalCost",String.valueOf((int)row.getCell(6).getNumericCellValue()));
-                newPro.put("cateID",row.getCell(7).getStringCellValue());
-                newPro.put("color",row.getCell(8).getStringCellValue());
-                newPro.put("quantity",String.valueOf((int) row.getCell(9).getNumericCellValue()));
-                newPro.put("warrantyMonth",String.valueOf((int) row.getCell(10).getNumericCellValue()));
-                NewProList.add(newPro);
-            }
-            if(NewProList.size() > 0){
-                return ResponseEntity.status(Error.OK).body(
-                        new ResponseObject(true,Error.OK_MESSAGE, NewProList)
-                );
-            }else{
+        if(StringUtils.cleanPath(list[0].getContentType()).equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
+            if(list.length > 1){
                 return ResponseEntity.status(Error.FAIL).body(
-                        new ResponseObject(false,Error.FAIL_MESSAGE, "Can Not read Data In File !!!")
+                        new ResponseObject(false, Error.FAIL_MESSAGE, "Just Add One File Excel !!!")
                 );
+            }else {
+                if (list.length == 1 && list[0].getOriginalFilename().equals("") == true) {
+                    return ResponseEntity.status(Error.LIST_EMPTY).body(
+                            new ResponseObject(false, Error.LIST_EMPTY_MESSAGE, "")
+                    );
+                } else {
+                    XSSFWorkbook workbook = new XSSFWorkbook(list[0].getInputStream());
+                    XSSFSheet worksheet = workbook.getSheetAt(0);
+                    List<Map<String, String>> NewProList = new ArrayList<>();
+                    for (int i = 1; i < worksheet.getPhysicalNumberOfRows(); i++) {
+                        XSSFRow row = worksheet.getRow(i);
+                        Map<String, String> newPro = new TreeMap<>();
+                        newPro.put("proID", row.getCell(1).getStringCellValue());
+                        newPro.put("proName", row.getCell(2).getStringCellValue());
+                        newPro.put("description", row.getCell(3).getStringCellValue());
+                        newPro.put("price", String.valueOf((int) row.getCell(4).getNumericCellValue()));
+                        newPro.put("cost", String.valueOf((int) row.getCell(5).getNumericCellValue()));
+                        newPro.put("totalCost", String.valueOf((int) row.getCell(6).getNumericCellValue()));
+                        newPro.put("cateID", row.getCell(7).getStringCellValue());
+                        newPro.put("color", row.getCell(8).getStringCellValue());
+                        newPro.put("quantity", String.valueOf((int) row.getCell(9).getNumericCellValue()));
+                        newPro.put("warrantyMonth", String.valueOf((int) row.getCell(10).getNumericCellValue()));
+                        NewProList.add(newPro);
+                    }
+                    if (NewProList.size() > 0) {
+                        return ResponseEntity.status(Error.OK).body(
+                                new ResponseObject(true, Error.OK_MESSAGE, NewProList)
+                        );
+                    } else {
+                        return ResponseEntity.status(Error.FAIL).body(
+                                new ResponseObject(false, Error.FAIL_MESSAGE, "Can Not read Data In File !!!")
+                        );
+                    }
+                }
             }
+        }else{
+            return ResponseEntity.status(Error.FAIL).body(
+                    new ResponseObject(false, Error.FAIL_MESSAGE, "This Is Not Excel File!!!")
+            );
         }
     }
+
 
     @DeleteMapping("/deleteReceipt")
     ResponseEntity<ResponseObject> deleteReceipt(String recID){
