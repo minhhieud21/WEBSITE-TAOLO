@@ -44,11 +44,19 @@ public class  StatisticalController {
                     new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
             );
         }
-        if(day == 0 && month == 0 && year == 0 || month == 0 || year == 0 || day == 0){
+        if(day == 0 && month == 0 && year == 0 || month == 0 || year == 0){
+            if(type == 0 && day == 0) {
                 LocalDate localDate = LocalDate.now();
                 year = localDate.getYear();
                 month = localDate.getMonthValue();
                 day = localDate.getDayOfMonth();
+            }
+            else {
+                LocalDate localDate = LocalDate.now();
+                year = localDate.getYear();
+                month = localDate.getMonthValue();
+                day = localDate.getDayOfMonth();
+            }
         }
         String date = "";
         String afterdate = "";
@@ -70,72 +78,119 @@ public class  StatisticalController {
     }
     public long[] Tongdoanhthu(String Date,String afterDate,int type){
         List<BillDetailModel> a = null;
+        List<BillDetailModel> aa =null;
         if(type==0){
            a = billDetailService.getBillDetailByDay(Date);
+           aa = billDetailService.getBillDetailByDay(afterDate);
         }
         else if(type==1){
             a = billDetailService.getBillDetailByMonth(Date);
+            aa = billDetailService.getBillDetailByMonth(afterDate);
         }
         long ketqua[] = new long[2] ;
+        ketqua[0]=0;
+        ketqua[1]=0;
+        List<String> dsBill = new ArrayList<>();
         if(a.isEmpty() == false){
-            ketqua[0]=0;
-            ketqua[1]=0;
-            List<String> dsBill = new ArrayList<>();
-            for (int i = 0 ; i < a.size();i++){
-                dsBill.add(a.get(i).getBillID());
+            dsBill.add(0,a.get(0).getBillID());
+            for (int i = 1 ; i < a.size();i++){
+                int dem = 0;
+                for (int j = 0 ; j < dsBill.size();j++){
+                    if(a.get(i).getBillID().equals(dsBill.get(j)) == true){
+                        break;
+                    }
+                    dem++;
+                    if(dem==dsBill.size()){
+                        dsBill.add(a.get(i).getBillID());
+                    }
+                }
             }
+        }
             if(dsBill.isEmpty() == false){
                 for (int i =0 ; i < dsBill.size();i++){
                     ketqua[0]=ketqua[0]+billService.getBillByDayDone(dsBill.get(i)).getTotalCost();
                 }}
-        }
-        List<BillDetailModel> aa = billDetailService.getBillDetailByDay(afterDate);
-        if(aa.isEmpty()==false){
-            List<String> dsBilla = new ArrayList<>();
-            for (int i = 0 ; i < aa.size();i++){
-                dsBilla.add(aa.get(i).getBillID());
+        List<String> dsBilla = new ArrayList<>();
+        if(aa.isEmpty() == false){
+            dsBilla.add(0,aa.get(0).getBillID());
+            for (int i = 1 ; i < aa.size();i++){
+                int dem = 0;
+                for (int j = 0 ; j < dsBilla.size();j++){
+                    if(aa.get(i).getBillID().equals(dsBilla.get(j)) == true){
+                        break;
+                    }
+                    dem++;
+                    if(dem==dsBilla.size()){
+                        dsBilla.add(aa.get(i).getBillID());
+                    }
+                }
             }
-            if (dsBilla.isEmpty() == false ){
-                for (int i =0 ; i < dsBilla.size();i++){
-                    ketqua[1]=ketqua[1]+billService.getBillByDayDone(dsBilla.get(i)).getTotalCost();
-                }}}
+        }
+        if(dsBilla.isEmpty() == false){
+            for (int i =0 ; i < dsBilla.size();i++){
+                ketqua[1]=ketqua[1]+billService.getBillByDayDone(dsBilla.get(i)).getTotalCost();
+            }}
         ketqua[1] = ketqua[0] - ketqua[1];
         return ketqua;
     }
     public long[] ThongKeSoLuong(String Date,String afterDate,int type){
         List<BillDetailModel> a = null;
+        List<BillDetailModel> aa =null;
         if(type==0){
             a = billDetailService.getBillDetailByDay(Date);
+            aa = billDetailService.getBillDetailByDay(afterDate);
         }
         else if(type==1){
             a = billDetailService.getBillDetailByMonth(Date);
+            aa = billDetailService.getBillDetailByMonth(afterDate);
         }
         long ketqua[] = new long[2] ;
+        ketqua[0]=0;
+        ketqua[1]=0;
+        List<String> dsBill = new ArrayList<>();
         if(a.isEmpty() == false){
-            ketqua[0]=0;
-            ketqua[1]=0;
-            List<String> dsBill = new ArrayList<>();
-            for (int i = 0 ; i < a.size();i++){
-                dsBill.add(a.get(i).getBillID());
+            dsBill.add(0,a.get(0).getBillID());
+            for (int i = 1 ; i < a.size();i++){
+                int dem = 0;
+                for (int j = 0 ; j < dsBill.size();j++){
+                    if(a.get(i).getBillID().equals(dsBill.get(j)) == true){
+                        break;
+                    }
+                    dem++;
+                    if(dem==dsBill.size()){
+                        dsBill.add(a.get(i).getBillID());
+                    }
+                }
             }
-            if(dsBill.isEmpty() == false){
-                for (int i =0 ; i < dsBill.size();i++){
-                    ketqua[0]=ketqua[0]+billService.getBillByDayDone(dsBill.get(i)).getToTalQuantity();
-                }}
         }
-        List<BillDetailModel> aa = billDetailService.getBillDetailByDay(afterDate);
-        if(aa.isEmpty()==false){
-            List<String> dsBilla = new ArrayList<>();
-            for (int i = 0 ; i < aa.size();i++){
-                dsBilla.add(aa.get(i).getBillID());
+        if(dsBill.isEmpty() == false){
+            for (int i =0 ; i < dsBill.size();i++){
+                ketqua[0]=ketqua[0]+billService.getBillByDayDone(dsBill.get(i)).getToTalQuantity();
+            }}
+        List<String> dsBilla = new ArrayList<>();
+        if(aa.isEmpty() == false){
+            dsBilla.add(0,aa.get(0).getBillID());
+            for (int i = 1 ; i < aa.size();i++){
+                int dem = 0;
+                for (int j = 0 ; j < dsBilla.size();j++){
+                    if(aa.get(i).getBillID().equals(dsBilla.get(j)) == true){
+                        break;
+                    }
+                    dem++;
+                    if(dem==dsBilla.size()){
+                        dsBilla.add(aa.get(i).getBillID());
+                    }
+                }
             }
-            if (dsBilla.isEmpty() == false ){
-                for (int i =0 ; i < dsBilla.size();i++){
-                    ketqua[1]=ketqua[1]+billService.getBillByDayDone(dsBilla.get(i)).getToTalQuantity();
-                }}}
+        }
+        if(dsBilla.isEmpty() == false){
+            for (int i =0 ; i < dsBilla.size();i++){
+                ketqua[1]=ketqua[1]+billService.getBillByDayDone(dsBilla.get(i)).getToTalQuantity();
+            }}
         ketqua[1] = ketqua[0] - ketqua[1];
         return ketqua;
     }
+
 
     public AbstractMap<String,Integer> thongkesanpham(String Date,int type){
         List<BillDetailModel> a = null;
@@ -169,7 +224,29 @@ public class  StatisticalController {
                         }
                     }
                 }
-        }}
-        return object;
+            }}
+        return sortByValue(object);
+    }
+    public static HashMap<String, Integer> sortByValue(HashMap<String, Integer> hm)
+    {
+        // Create a list from elements of HashMap
+        List<Map.Entry<String, Integer> > list =
+                new LinkedList<Map.Entry<String, Integer> >(hm.entrySet());
+
+        // Sort the list
+        Collections.sort(list, new Comparator<Map.Entry<String, Integer> >() {
+            public int compare(Map.Entry<String, Integer> o1,
+                               Map.Entry<String, Integer> o2)
+            {
+                return (o2.getValue()).compareTo(o1.getValue());
+            }
+        });
+
+        // put data from sorted list to hashmap
+        HashMap<String, Integer> temp = new LinkedHashMap<String, Integer>();
+        for (Map.Entry<String, Integer> aa : list) {
+            temp.put(aa.getKey(), aa.getValue());
+        }
+        return temp;
     }
 }
