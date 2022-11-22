@@ -38,115 +38,38 @@ public class  StatisticalController {
     }
 
     @GetMapping("/getStatisticalService")
-    ResponseEntity<ResponseObject> getProductByCateID(@RequestParam(defaultValue = "0") int type,@RequestParam(defaultValue = "0") int day,@RequestParam(defaultValue = "0") int month,@RequestParam(defaultValue = "0") int year) {
-        if(type >1 || type<0 || day < 0 || day > 31 || month < 0 || month > 12  ){
-            return ResponseEntity.status(Error.DATA_REQUEST_ERROR).body(
-                    new ResponseObject(false,Error.DATA_REQUEST_ERROR_MESSAGE,"")
+    ResponseEntity<ResponseObject> getProductByCateID(@RequestParam(defaultValue = "0") int year) {
+        if(year > LocalDate.now().getYear()){
+            return ResponseEntity.status(Error.FAIL).body(
+                    new ResponseObject(false,"Nam khong the lon hon nam hien tai","")
             );
         }
-        if(day == 0 && month == 0 && year == 0 || month == 0 || year == 0){
-            if(type == 0 && day == 0) {
+        if(year == 0){
                 LocalDate localDate = LocalDate.now();
                 year = localDate.getYear();
-                month = localDate.getMonthValue();
-                day = localDate.getDayOfMonth();
-            }
-            else {
-                LocalDate localDate = LocalDate.now();
-                year = localDate.getYear();
-                month = localDate.getMonthValue();
-                day = localDate.getDayOfMonth();
-            }
         }
         String date = "";
-        String afterdate = "";
-        if(type == 0){
-            date = year+"-"+month+"-"+day;
-            afterdate = AfterDay(day,month,year);
+        long temp[] = new long[12];
+        for(int i = 1; i < 13; i++ ) {
+            date = year + "-" + i+"-";
+            temp[i-1]=Tongdoanhthu(date);
         }
-        else if(type == 1){
-            date = year+"-"+month;
-            afterdate = AfterMonth((month-1),year);
-        }
+        long ketqua[] = new long[4];
+        ketqua[0]=temp[0]+temp[1]+temp[2];
+        ketqua[1]=temp[3]+temp[4]+temp[5];
+        ketqua[2]=temp[6]+temp[7]+temp[8];
+        ketqua[3]=temp[9]+temp[10]+temp[11];
         HashMap<String,Object> object = new HashMap<String,Object>();
-        object.put("tongdoanhthu",Tongdoanhthu(date,afterdate,type));
-        object.put("tongsoluong",ThongKeSoLuong(date,afterdate,type));
-        object.put("topsanpham",thongkesanpham(date,type));
+        object.put("tongdoanhthutheoquy",ketqua);
+        object.put("tongsoluongdaban",ThongKeSoLuong(String.valueOf(year+"-")));
+        object.put("topsanphambanchay",thongkesanpham(String.valueOf(year+"-")));
         return ResponseEntity.status(Error.OK).body(
                 new ResponseObject(true,Error.OK_MESSAGE,object)
         );
     }
-    public long[] Tongdoanhthu(String Date,String afterDate,int type){
-        List<BillDetailModel> a = null;
-        List<BillDetailModel> aa =null;
-        if(type==0){
-           a = billDetailService.getBillDetailByDay(Date);
-           aa = billDetailService.getBillDetailByDay(afterDate);
-        }
-        else if(type==1){
-            a = billDetailService.getBillDetailByMonth(Date);
-            aa = billDetailService.getBillDetailByMonth(afterDate);
-        }
-        long ketqua[] = new long[2] ;
-        ketqua[0]=0;
-        ketqua[1]=0;
-        List<String> dsBill = new ArrayList<>();
-        if(a.isEmpty() == false){
-            dsBill.add(0,a.get(0).getBillID());
-            for (int i = 1 ; i < a.size();i++){
-                int dem = 0;
-                for (int j = 0 ; j < dsBill.size();j++){
-                    if(a.get(i).getBillID().equals(dsBill.get(j)) == true){
-                        break;
-                    }
-                    dem++;
-                    if(dem==dsBill.size()){
-                        dsBill.add(a.get(i).getBillID());
-                    }
-                }
-            }
-        }
-            if(dsBill.isEmpty() == false){
-                for (int i =0 ; i < dsBill.size();i++){
-                    ketqua[0]=ketqua[0]+billService.getBillByDayDone(dsBill.get(i)).getTotalCost();
-                }}
-        List<String> dsBilla = new ArrayList<>();
-        if(aa.isEmpty() == false){
-            dsBilla.add(0,aa.get(0).getBillID());
-            for (int i = 1 ; i < aa.size();i++){
-                int dem = 0;
-                for (int j = 0 ; j < dsBilla.size();j++){
-                    if(aa.get(i).getBillID().equals(dsBilla.get(j)) == true){
-                        break;
-                    }
-                    dem++;
-                    if(dem==dsBilla.size()){
-                        dsBilla.add(aa.get(i).getBillID());
-                    }
-                }
-            }
-        }
-        if(dsBilla.isEmpty() == false){
-            for (int i =0 ; i < dsBilla.size();i++){
-                ketqua[1]=ketqua[1]+billService.getBillByDayDone(dsBilla.get(i)).getTotalCost();
-            }}
-        ketqua[1] = ketqua[0] - ketqua[1];
-        return ketqua;
-    }
-    public long[] ThongKeSoLuong(String Date,String afterDate,int type){
-        List<BillDetailModel> a = null;
-        List<BillDetailModel> aa =null;
-        if(type==0){
-            a = billDetailService.getBillDetailByDay(Date);
-            aa = billDetailService.getBillDetailByDay(afterDate);
-        }
-        else if(type==1){
-            a = billDetailService.getBillDetailByMonth(Date);
-            aa = billDetailService.getBillDetailByMonth(afterDate);
-        }
-        long ketqua[] = new long[2] ;
-        ketqua[0]=0;
-        ketqua[1]=0;
+    public long Tongdoanhthu(String Date){
+        List<BillDetailModel> a = billDetailService.getBillDetailByMonth(Date);
+        long ketqua = 0 ;
         List<String> dsBill = new ArrayList<>();
         if(a.isEmpty() == false){
             dsBill.add(0,a.get(0).getBillID());
@@ -165,41 +88,41 @@ public class  StatisticalController {
         }
         if(dsBill.isEmpty() == false){
             for (int i =0 ; i < dsBill.size();i++){
-                ketqua[0]=ketqua[0]+billService.getBillByDayDone(dsBill.get(i)).getToTalQuantity();
+                ketqua=ketqua+billService.getBillByDayDone(dsBill.get(i)).getTotalCost();
             }}
-        List<String> dsBilla = new ArrayList<>();
-        if(aa.isEmpty() == false){
-            dsBilla.add(0,aa.get(0).getBillID());
-            for (int i = 1 ; i < aa.size();i++){
+        return ketqua;
+    }
+    public long ThongKeSoLuong(String Date){
+        List<BillDetailModel> a = null;
+        a = billDetailService.getBillDetailByMonth(Date);
+        long ketqua = 0;
+        List<String> dsBill = new ArrayList<>();
+        if(a.isEmpty() == false){
+            dsBill.add(0,a.get(0).getBillID());
+            for (int i = 1 ; i < a.size();i++){
                 int dem = 0;
-                for (int j = 0 ; j < dsBilla.size();j++){
-                    if(aa.get(i).getBillID().equals(dsBilla.get(j)) == true){
+                for (int j = 0 ; j < dsBill.size();j++){
+                    if(a.get(i).getBillID().equals(dsBill.get(j)) == true){
                         break;
                     }
                     dem++;
-                    if(dem==dsBilla.size()){
-                        dsBilla.add(aa.get(i).getBillID());
+                    if(dem==dsBill.size()){
+                        dsBill.add(a.get(i).getBillID());
                     }
                 }
             }
         }
-        if(dsBilla.isEmpty() == false){
-            for (int i =0 ; i < dsBilla.size();i++){
-                ketqua[1]=ketqua[1]+billService.getBillByDayDone(dsBilla.get(i)).getToTalQuantity();
+        if(dsBill.isEmpty() == false){
+            for (int i =0 ; i < dsBill.size();i++){
+                ketqua=ketqua+billService.getBillByDayDone(dsBill.get(i)).getToTalQuantity();
             }}
-        ketqua[1] = ketqua[0] - ketqua[1];
         return ketqua;
     }
 
 
-    public AbstractMap<String,Integer> thongkesanpham(String Date,int type){
+    public AbstractMap<String,Integer> thongkesanpham(String Date){
         List<BillDetailModel> a = null;
-        if(type==0){
-            a = billDetailService.getBillDetailByDay(Date);
-        }
-        else if(type==1){
-            a = billDetailService.getBillDetailByMonth(Date);
-        }
+        a = billDetailService.getBillDetailByMonth(Date);
         HashMap<String,Integer> object = new HashMap<String,Integer>();
         List<String> check = new ArrayList<>();
         if(a.isEmpty() == false) {
