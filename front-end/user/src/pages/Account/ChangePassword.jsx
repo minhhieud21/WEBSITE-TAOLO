@@ -1,11 +1,10 @@
-import React, { useState,useContext } from "react"
+import React, { useState, useContext } from "react"
 import { useForm } from "react-hook-form"
 import { ErrorMessage } from "@hookform/error-message"
 import { changePassword } from "../../services"
 import { getLocalStorage } from "../../services/LocalStorageService"
 import { useNavigate } from "react-router-dom"
 import { CartAndProductContext } from "../../layouts/MainLayout/ContainerMainLayout"
-// import '../../assets/style.scss'
 
 export default function () {
 	const {
@@ -20,23 +19,22 @@ export default function () {
 	const [isPassShow, setIsPassShow] = useState(false)
 	const [isNewPassShow, setIsNewPassShow] = useState(false)
 	const [isConfirmPassShow, setConfirmPassShow] = useState(false)
-	const {token} = useContext(CartAndProductContext)
+	const { token } = useContext(CartAndProductContext)
 
 	const navigate = useNavigate()
 
 	const [changePassFail, setChangePassFail] = useState(false)
-
 
 	const handleChangePassword = (data) => {
 		const tmpData = {
 			accID: userId,
 			...data,
 		}
-		changePassword(tmpData,token)
+		changePassword(tmpData, token)
 			.then((res) => {
 				navigate("/")
 			})
-			.catch(e => setChangePassFail(true))
+			.catch((e) => setChangePassFail(true))
 	}
 
 	return (
@@ -57,14 +55,17 @@ export default function () {
 						/>
 						<i
 							className={isPassShow ? "fa fa-eye-slash" : "fa fa-eye"}
-					
 							onClick={() => setIsPassShow(!isPassShow)}
 						></i>
 					</div>
 					{errors.oldpassword && (
 						<p className="text-danger">Please enter your password</p>
 					)}
-					{changePassFail ? <p className="text-danger">Current password is incorrect</p> : "" }
+					{changePassFail ? (
+						<p className="text-danger">Current password is incorrect</p>
+					) : (
+						""
+					)}
 				</div>
 				<div className="mb-3">
 					<label className="form-label" htmlFor="exampleInputPassword1">
@@ -85,7 +86,6 @@ export default function () {
 						/>
 						<i
 							className={isNewPassShow ? "fa fa-eye-slash" : "fa fa-eye"}
-		
 							onClick={() => setIsNewPassShow(!isNewPassShow)}
 						></i>
 					</div>
@@ -108,7 +108,7 @@ export default function () {
 					</label>
 					<div className="pass-word">
 						<input
-							{...register("newpassword1", {
+							{...register("confirmpassword", {
 								required: "Please enter your confirm password",
 								minLength: {
 									value: 8,

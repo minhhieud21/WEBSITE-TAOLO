@@ -7,16 +7,11 @@ import Notifications from "views/Notifications.js";
 import Upgrade from "views/Upgrade.js";
 import UsersPage from "views/UsersPage";
 import Bill from "views/Bill";
+import Receipt from "views/Receipt";
+import Category from "views/Category";
+
 
 const dashboardRoutes = [
-  {
-    bottom: true,
-    path: "/upgrade",
-    name: "Go user page",
-    icon: "nc-icon nc-stre-left",
-    component: Upgrade,
-    layout: "/admin"
-  },
   {
     path: "/dashboard",
     name: "Dashboard",
@@ -41,38 +36,24 @@ const dashboardRoutes = [
   {
     path: "/bill",
     name: "Bill",
-    icon: "nc-icon nc-notes",
+    icon: "nc-icon nc-paper-2",
     component: Bill,
     layout: "/admin"
   },
   {
-    path: "/typography",
-    name: "Typography",
-    icon: "nc-icon nc-paper-2",
-    component: Typography,
+    path: "/receipt",
+    name: "Receipt",
+    icon: "nc-icon nc-notes",
+    component: Receipt,
     layout: "/admin"
   },
   {
-    path: "/icons",
-    name: "Icons",
-    icon: "nc-icon nc-atom",
-    component: Icons,
+    path: "/category",
+    name: "Category",
+    icon: "nc-icon nc-layers-3",
+    component: Category,
     layout: "/admin"
   },
-  {
-    path: "/maps",
-    name: "Maps",
-    icon: "nc-icon nc-pin-3",
-    component: Maps,
-    layout: "/admin"
-  },
-  {
-    path: "/notifications",
-    name: "Notifications",
-    icon: "nc-icon nc-bell-55",
-    component: Notifications,
-    layout: "/admin"
-  }
 ];
 
 export default dashboardRoutes;

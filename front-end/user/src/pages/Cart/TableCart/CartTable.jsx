@@ -1,8 +1,12 @@
 import React from "react"
+import { useContext } from "react"
 import { Link } from "react-router-dom"
+import { CartAndProductContext } from "../../../layouts/MainLayout/ContainerMainLayout"
 import ItemCart from "./ItemCart"
 
 const CartTable = () => {
+	const { itemcart } = useContext(CartAndProductContext)
+
 	return (
 		<>
 			<div className="col-lg-8 mb-4 mb-lg-0">
@@ -47,12 +51,14 @@ const CartTable = () => {
 								Continue shopping
 							</Link>
 						</div>
-						<div className="col-md-6 text-md-end">
-							<Link className="btn btn-outline-dark btn-sm" to="/checkout">
-								Procceed to checkout
-								<i className="fas fa-long-arrow-alt-right ms-2" />
-							</Link>
-						</div>
+						{itemcart && (
+							<div className="col-md-6 text-md-end">
+								<Link className="btn btn-outline-dark btn-sm" to="/checkout">
+									Procceed to checkout
+									<i className="fas fa-long-arrow-alt-right ms-2" />
+								</Link>
+							</div>
+						)}
 					</div>
 				</div>
 			</div>

@@ -1,9 +1,10 @@
 import React, { useContext } from "react"
 import ItemProduct from "../../../components/ItemProduct/ItemProduct"
+import Loading from "../../../components/Loading/Loading"
 import { CartAndProductContext } from "../../../layouts/MainLayout/ContainerMainLayout"
-
+import { formatVnd } from "../../../services"
 const HomeProduct = () => {
-	const { product } = useContext(CartAndProductContext)
+	const { product, isLoading } = useContext(CartAndProductContext)
 
 	return (
 		<>
@@ -15,6 +16,7 @@ const HomeProduct = () => {
 					<h2 className="h5 text-uppercase mb-4">Top trending products</h2>
 				</header>
 				<div className="row">
+					{isLoading && <Loading />}
 					{product &&
 						product.map((product) => (
 							<ItemProduct

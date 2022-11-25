@@ -26,8 +26,8 @@ export default function Logout({ username }) {
 				{username}
 			</button>
 			<ul className="dropdown-menu">
-				<li className="dropdown-item"><Link to={`/account`}>Setting</Link></li>
-				<li className="dropdown-item"><Link to={`/purchase`}>Purchase</Link></li>
+				<li className="dropdown-item"><Link to={`/account`}>Profile</Link></li>
+				<li className="dropdown-item"><Link to={`/purchase`}>History</Link></li>
 				<li className="dropdown-item" onClick={handleLogOut}>
 					Logout
 				</li>

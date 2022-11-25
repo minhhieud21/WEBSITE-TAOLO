@@ -6,7 +6,7 @@ import Home from "../pages/Home";
 import Login from "../pages/Login";
 import ProductDetail from "../pages/ProductDetail";
 import Shop from "../pages/Shop";
-import { setLocalStorage } from "../services/LocalStorageService"
+import { getLocalStorage, setLocalStorage } from "../services/LocalStorageService"
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import ForgotPassword from "../pages/Login/ForgotPassword";
@@ -16,12 +16,7 @@ import { PopupSuccess } from "../components/Popup/PopupSuccess";
 import { toast, ToastContainer } from "react-toastify";
 import SignUp from "../pages/SignUp";
 import Purchase from "../pages/Purchase";
-
-const notifySuccess = () => {
-  toast.success("Đăng nhập thành công!", {
-    position: toast.POSITION.BOTTOM_CENTER,
-  })
-}
+import NotFound from "../pages/NotfoundPage/NotFound";
 
 const Routers = () => {
   useEffect(() => {
@@ -33,9 +28,8 @@ const Routers = () => {
         }
         const token = await user.getIdToken();
         setLocalStorage("username", user.displayName)
-        PopupSuccess("ok")
+        PopupSuccess("Login successfully !")
       });
-
     return () => unregisterAuthObserver();
   }, []);
 
@@ -53,8 +47,9 @@ const Routers = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/" element={<Home />} />
+        <Route path="*" element={ <NotFound /> } />
+
       </Routes>
-      <ToastContainer />
     </>
   );
 };

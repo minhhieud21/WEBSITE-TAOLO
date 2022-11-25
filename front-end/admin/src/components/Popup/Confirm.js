@@ -12,16 +12,27 @@ import {
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import Product from 'views/Product';
+import { AdminContext } from 'layouts/Admin';
 
 function Confirm(props) {
-  const { className, isOpen, productName } = props;
-  const {del, setDel} = useContext();
-  const toggle = () => setDel(!del)
+  const { className, productName } = props;
+
+  const { isDelete, setIsDelete, confirmDelete, setConfirmDelete} = useContext(AdminContext)
+  
+  const toggle = () => {
+    setIsDelete(!isDelete)
+    setConfirmDelete(false) 
+  }
+
+  const confirm = () =>{
+    setIsDelete(!isDelete)
+    setConfirmDelete(true) 
+  } 
 
   return (
     <div>
       <Modal
-        isOpen={del}
+        isOpen={isDelete}
         className={className}
         backdrop={true}
       >
@@ -30,7 +41,7 @@ function Confirm(props) {
           Bạn có chắc muốn xóa sản phẩm {productName} ?
         </ModalBody>
         <ModalFooter>
-          <Button color="danger" onClick={toggle}>
+          <Button color="danger" onClick={confirm}>
             Xóa
           </Button>{' '}
           <Button color="secondary" onClick={toggle}>

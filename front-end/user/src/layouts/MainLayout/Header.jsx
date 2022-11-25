@@ -15,6 +15,7 @@ const Header = () => {
 	const { register, handleSubmit, getValues, setValue } = useForm()
 	const checkLogin = checkLocalStorage("username")
 
+	console.log(itemCart)
 	
 	const handleSearchProduct = () => {
 		const searchValue = getValues("searchValue")
@@ -73,7 +74,7 @@ const Header = () => {
 											<i className="fas fa-dolly-flatbed me-1 text-gray" />
 											Cart
 											<small className="text-gray fw-normal">
-												({itemCart.length})
+												{itemCart && `(${itemCart.length})`}
 											</small>
 										</Link>
 									</li>

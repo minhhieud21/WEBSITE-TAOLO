@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 // react-bootstrap components
@@ -12,232 +12,228 @@ import {
   Container,
   Row,
   Col,
-  InputGroup
+  InputGroup,
+  Modal
 } from "react-bootstrap";
 import { v4 as uuidv4 } from 'uuid';
 import { getAllCategory, addProduct } from '../services'
-import { categories,colors } from '../constant'
+import { categories, colors } from '../constant'
+import { AdminContext } from "layouts/Admin";
+import { useHistory } from "react-router";
+import { PopUpContext } from "./Product";
 
 
 function ProductAdd() {
 
   const [category, setCategory] = useState([])
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, getValues, formState: { errors } } = useForm();
+  const token = localStorage.getItem('token')
+  const history = useHistory()
+  const {isShow, setIsShow} = useContext(PopUpContext)
 
   useEffect(() => {
-    getAllCategory().then(res => {
-      console.log(res)
-      setCategory(res.data)
+    getAllCategory(token).then(res => {
+      setCategory(res.data.data)
     })
   }, [])
 
   const onSubmit = data => {
+    const img = getValues('image')[0]
     const productAdd = {
-      //...data,
+      ...data,
       proId: uuidv4(),
-      color: "Vàng",
-      cateId: "MBP",
-      proName: "test",
-      price: "123",
-      description: "test",
-      quantity: "1",
-      warrantyMonth: "12",
-      image: "123.png"
+      image: img
     }
-    //console.log(JSON.stringify(productAdd));
-    //const a = JSON.stringify(productAdd);
-    addProduct(productAdd).then(res =>{
-      console.log(res)
+
+    addProduct(productAdd, token).then(res => {
+      history.push('/admin/product')
     }).catch(err => console.log(err))
   }
 
   return (
     <>
-      {/* <Button>Back</Button> */}
-      <Container className="p-5">
-        <Row>
-          <Col md="8">
-            <Card>
-              <Card.Header>
-                <Card.Title as="h4">Add Product</Card.Title>
-              </Card.Header>
-              <Card.Body>
-                <Form onSubmit={handleSubmit(onSubmit)}>
-                  <Row>
-                    <Col className="pr-1" md="6">
-                      <Form.Group>
-                        <label htmlFor="proName">Product Name</label>
-                        <Form.Control
-                          type="text"
-                          id="proName"
-                          required
-                          {...register("proName", {
-                            required: "This input is required"
-                          })}
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="pl-1" md="6">
-                      <Form.Group>
-                        <label htmlFor="price">
-                          Price
-                        </label>
-                        <Form.Control
-                          placeholder="Price"
-                          type="text"
-                          id="price"
-                          required
-                          {...register("price")}
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-1" md="6">
-                      <Form.Group>
-                        <label>Color</label>
-                        <Form.Control
+   
+      <Modal show={isShow}  onHide={() => setIsShow(false)}>
+        <Col md="12" className="position-absolute">
+          <Card>
+            <Modal.Header as="h4"><h2>Add Product</h2></Modal.Header>
+            <Card.Body>
+              <Form onSubmit={handleSubmit(onSubmit)}>
+                <Row>
+                  <Col className="pr-1" md="6">
+                    <Form.Group>
+                      <label htmlFor="proName">Product Name</label>
+                      <Form.Control
+                        type="text"
+                        id="proName"
+
+                        {...register("proName", {
+                          required: true
+                        })}
+                      ></Form.Control>
+                    </Form.Group>
+                    {errors.proName && (
+                      <p className="text-danger">Product name is required</p>
+                    )}
+                  </Col>
+                  <Col className="pl-1" md="6">
+                    <Form.Group>
+                      <label htmlFor="price">
+                        Price
+                      </label>
+                      <Form.Control
+                        placeholder="Price"
+                        type="text"
+                        id="price"
+                        {...register("price", {
+                          required: true, min: 100, pattern: {
+                            value: /^[0-9]*$/
+                          },
+                        })}
+                      ></Form.Control>
+                    </Form.Group>
+                    {errors.price?.type === "required" && (
+                      <p className="text-danger">Please enter Price</p>
+                    )}
+                    {errors.price?.type === "min" && (
+                      <p className="text-danger">Price at least 100 </p>
+                    )}
+                    {errors.price?.type === 'pattern' && (
+                      <p className="text-danger">Price is number</p>
+                    )}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col className="pr-1" md="6">
+                    <Form.Group>
+                      <label>Color</label>
+                      <Form.Control
                         as='select'
-                          {...register("color")}
-                        >
-                          {colors.map((color,index) => <option key={index} value={color.value}>{color.value}</option>)}
-                          
-                        </Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="pl-1" md="6">
-                      <Form.Group>
-                        <label>Category</label>
-                        <Form.Control
+                        {...register("color")}
+                      >
+                        {colors.map((color, index) => <option key={index} value={color.value}>{color.value}</option>)}
+                      </Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col className="pl-1" md="6">
+                    <Form.Group>
+                      <label>Category</label>
+                      <Form.Control
                         as="select"
-                          {...register("cateId")}
-                          >
-                            {category.map(cate => <option key={cate.cateID} value={cate.cateID}>{cate.cateName}</option> )}
-                          
-                        </Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="12">
-                      <Form.Group>
-                        <label>Description</label>
-                        <Form.Control
-                          as="textarea"
-                          cols="80"
-                          rows="4"
-                          {...register("description")}
-                          placeholder=""
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-1" md="6">
-                      <Form.Group>
-                        <label>Quantity</label>
-                        <Form.Control
-                          placeholder=""
-                          type="text"
-                          required
-                          {...register("quantity")}
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col className="px-1" md="6">
-                      <Form.Group>
-                        <label>Warranty (Month)</label>
-                        <Form.Control
-                          placeholder="Country"
-                          type="text"
-                          required
-                          {...register("warrantyMonth")}
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="12">
-                      <Form.Group>
-                        <label className="">Product Image</label>
-                        <Form.Control
-                          type="file"
-                          multiple
-                          style={{"border":"none","padding":"0"}}
-                          {...register("image")}
-                        ></Form.Control>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Button
-                    className="btn-fill pull-right"
-                    type="submit"
-                    variant="info"
-                  >
-                    Add Product
-                  </Button>
-                  <div className="clearfix"></div>
-                </Form>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col md="4">
-            <Card className="card-user">
-              <div className="card-image">
-                <img
-                  alt="..."
-                  src={require("assets/img/photo-1431578500526-4d9613015464.jpeg")}
-                ></img>
-              </div>
-              <Card.Body>
-                <div className="author">
-                  <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                    <img
-                      alt="..."
-                      className="avatar border-gray"
-                      src={require("assets/img/faces/face-3.jpg")}
-                    ></img>
-                    <h5 className="title">Mike Andrew</h5>
-                  </a>
-                  <p className="description">michael24</p>
-                </div>
-                <p className="description text-center">
-                  "Lamborghini Mercy <br></br>
-                  Your chick she so thirsty <br></br>
-                  I'm in that two seat Lambo"
-                </p>
-              </Card.Body>
-              <hr></hr>
-              <div className="button-container mr-auto ml-auto">
+                        {...register("cateId")}
+                      >
+                        {category.map(cate => <option key={cate.cateID} value={cate.cateID}>{cate.cateName}</option>)}
+                      </Form.Control>
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md="12">
+                    <Form.Group>
+                      <label>Description</label>
+                      <Form.Control
+                        as="textarea"
+                        cols="80"
+                        rows="4"
+                        {...register("description", {
+                          required: true
+                        })}
+                        placeholder=""
+                      ></Form.Control>
+                    </Form.Group>
+                    {errors.description && (
+                      <p className="text-danger">Please enter Description</p>
+                    )}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col className="pr-1" md="6">
+                    <Form.Group>
+                      <label>Quantity</label>
+                      <Form.Control
+                        placeholder=""
+                        type="text"
+                        {...register("quantity", {
+                          required: true, min: 5, pattern: {
+                            value: /^[0-9]*$/
+                          },
+                        })}
+                      ></Form.Control>
+                    </Form.Group>
+                    {errors.quantity?.type === "required" && (
+                      <p className="text-danger">Please enter Quantity</p>
+                    )}
+                    {errors.quantity?.type === "min" && (
+                      <p className="text-danger">Quantity at least 5 </p>
+                    )}
+                    {errors.quantity?.type === 'pattern' && (
+                      <p className="text-danger">Quantity is number</p>
+                    )}
+                  </Col>
+                  <Col className="px-1" md="6">
+                    <Form.Group>
+                      <label>Warranty (Month)</label>
+                      <Form.Control
+                        placeholder="Country"
+                        type="text"
+                        {...register("warrantyMonth", {
+                          required: true, min: 6, pattern: {
+                            value: /^[0-9]*$/
+                          },
+                        })}
+                      ></Form.Control>
+                    </Form.Group>
+                    {errors.warrantyMonth?.type === "required" && (
+                      <p className="text-danger">Please enter Warranty</p>
+                    )}
+                    {errors.warrantyMonth?.type === "min" && (
+                      <p className="text-danger">Warranty at least 6 Month</p>
+                    )}
+                    {errors.warrantyMonth?.type === 'pattern' && (
+                      <p className="text-danger">Warranty is number</p>
+                    )}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md="12">
+                    <Form.Group>
+                      <label className="">Product Image</label>
+                      <Form.Control
+                        type="file"
+                        multiple
+                        style={{ "border": "none", "padding": "0" }}
+                        {...register("image", { required: true })}
+                      ></Form.Control>
+                    </Form.Group>
+                    {errors.image && (
+                      <p className="text-danger">Please import Image</p>
+                    )}
+                  </Col>
+                </Row>
+                <Row className="d-flex justify-content-around">
+                  
                 <Button
-                  className="btn-simple btn-icon"
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
-                  variant="link"
+                  className="btn-fill pull-right"
+                  type="submit"
+                  variant="info"
                 >
-                  <i className="fab fa-facebook-square"></i>
+                  Add Product
                 </Button>
                 <Button
-                  className="btn-simple btn-icon"
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
-                  variant="link"
+                  className="btn-fill w-25"
+                  type="submit"
+                  variant="secondary"
+                  onClick={() => setIsShow(false)}
                 >
-                  <i className="fab fa-twitter"></i>
+                  Hủy
                 </Button>
-                <Button
-                  className="btn-simple btn-icon"
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
-                  variant="link"
-                >
-                  <i className="fab fa-google-plus-square"></i>
-                </Button>
-              </div>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+                </Row>
+                <div className="clearfix"></div>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Modal>
     </>
   );
 }

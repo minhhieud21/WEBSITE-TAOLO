@@ -6,10 +6,13 @@ export const getCartDetailByCartID = (cartId) => {
 }
 
 
-export const updateCartDetail = async (cartDID,quantity) =>{
+export const updateCartDetail = async (cartDID,quantity,token) =>{
     await axios({
 		method: "post",
 		url: `${API_URL}${API_UPDATE_CART_DETAIL_BY_CART_DETAIL_ID}?cartDID=${cartDID}&quantity=${quantity}`,
+        headers:{
+            Authorization: token
+        }
 	})
 }
 

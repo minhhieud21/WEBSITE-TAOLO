@@ -60,7 +60,9 @@ const Login = () => {
 	}
 	return (
 		<>
-			<div className="card mb-4" id="forms">
+			<div className="card" style={{
+				   marginBottom: '229px'
+			}} id="forms">
 				<div className="card-header">Login</div>
 				<div className="card-body">
 					<form onSubmit={handleSubmit(handleBasicAuth)}>

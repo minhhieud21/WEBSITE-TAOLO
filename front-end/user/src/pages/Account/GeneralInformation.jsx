@@ -14,7 +14,7 @@ export default function () {
 	useEffect(() => {
 		getUserByUserId(userId,token)
 			.then((res) => {
-				console.log(res.data)
+				// console.log(res.data)
 				setUserInfo(res.data.data)
 			})
 			.catch((e) => console.log(e))

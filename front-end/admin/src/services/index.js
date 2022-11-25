@@ -1,5 +1,6 @@
 export * from './ProductService'
 export * from './UserService'
-export * from './CateService'
+export * from './CategoryService'
 export * from './AccountService'
 export * from './BillService'
+export * from './StatisticalService'

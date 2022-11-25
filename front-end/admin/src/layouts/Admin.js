@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { useLocation, Route, Switch } from "react-router-dom";
+import React, { Component, createContext, useEffect, useMemo, useState } from "react";
+import { useLocation, Route, Switch, useHistory } from "react-router-dom";
 
 import AdminNavbar from "components/Navbars/AdminNavbar";
 import Footer from "components/Footer/Footer";
@@ -9,6 +9,11 @@ import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
 import routes from "routes.js";
 
 import sidebarImage from "assets/img/sidebar-3.jpg";
+import Login from "components/Login/Login";
+import { getAllProduct } from "services";
+import { getCartDetailByCartID } from "services/CartService";
+
+export const AdminContext = createContext()
 
 function Admin() {
   const [image, setImage] = React.useState(sidebarImage);
@@ -16,9 +21,15 @@ function Admin() {
   const [hasImage, setHasImage] = React.useState(true);
   const location = useLocation();
   const mainPanel = React.useRef(null);
+  const token = localStorage.getItem('token')
+  const [isDelete, setIsDelete] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const history = useHistory()
+
+
   const getRoutes = (routes) => {
     return routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
+      if (prop.layout === "/admin" && token) {
         return (
           <Route
             path={prop.layout + prop.path}
@@ -27,7 +38,7 @@ function Admin() {
           />
         );
       } else {
-        return null;
+        return <Route path="/admin/login" component={Login} />
       }
     });
   };
@@ -45,7 +56,13 @@ function Admin() {
     }
   }, [location]);
   return (
-    <>
+    <AdminContext.Provider value={{
+      token,
+      isDelete,
+      setIsDelete,
+      confirmDelete,
+      setConfirmDelete
+    }}>
       <div className="wrapper">
         <Sidebar color={color} image={hasImage ? image : ""} routes={routes} />
         <div className="main-panel" ref={mainPanel}>
@@ -56,15 +73,7 @@ function Admin() {
           <Footer />
         </div>
       </div>
-      {/* <FixedPlugin
-        hasImage={hasImage}
-        setHasImage={() => setHasImage(!hasImage)}
-        color={color}
-        setColor={(color) => setColor(color)}
-        image={image}
-        setImage={(image) => setImage(image)}
-      /> */}
-    </>
+    </AdminContext.Provider>
   );
 }
 

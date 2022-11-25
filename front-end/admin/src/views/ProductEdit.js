@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useContext } from "react";
 import { useForm } from "react-hook-form";
-import { useHistory } from "react-router-dom"
+import { Link, useHistory } from "react-router-dom"
 
 import { ErrorMessage } from "@hookform/error-message";
 // react-bootstrap components
@@ -17,54 +17,64 @@ import {
   InputGroup
 } from "react-bootstrap";
 
-import { getAllCategory, getProductById, updateProduct } from '../services'
+import { changeStatus, getAllCategory, getProductById, updateProduct } from '../services'
 import { useParams } from "react-router";
 import { categories } from '../constant'
+import { AdminContext } from "layouts/Admin";
+import { Label } from "reactstrap";
 
 function ProductEdit() {
 
   const [product, setProduct] = useState({})
-  const [cateName, setCateName] = useState("")
-  const [productEdit, setProductEdit] = useState({})
-  const { register, watch, handleSubmit, formState: { errors } } = useForm({
-    defaultValues: useMemo(() => productEdit, [productEdit])
-  });
+  const { register, handleSubmit, formState: { errors }, reset,getValues } = useForm();
   const { productId } = useParams();
-  const watchAllFields = watch("proName", false);
+  const [active, setActive] = useState(false)
   const history = useHistory();
+
+  const token = localStorage.getItem('token')
 
   useEffect(() => {
     getProductById(productId).then(res => {
-      setProductEdit(res.data)
       setProduct(res.data)
+      reset({ ...res.data }) // set default value for useForm
+
     }).catch(e => console.log(e))
   }, [productId])
 
+  const changeProductStatus = async (proId) => {
+    setIsDelete(true)
+    const params = {
+      proId: proId,
+      status: 1
+    }
+    await changeStatus(params, token)
 
-  const onSubmit = data => {
-    const check = JSON.stringify(data) === JSON.stringify(productEdit);
-    const tmp = check ? {
+  }
+
+  const onSubmit = async data => {
+    const tmp = {
       ...data,
       proId: productId,
       image: product.Image ? product.Image : ""
-    } : {
-      ...productEdit,
-      proId: productId,
-      image: product.Image ? product.Image : ""
     }
-    console.log(tmp,check)
-    updateProduct(tmp).then(data => {
-      //history.push("/admin/product")
+    const params = {
+      proId: productId,
+      status: getValues("status")
+    }
+
+    await changeStatus(params, token)
+    updateProduct(tmp, token).then(data => {
+      history.push("/admin/product")
     }).catch(e => console.log(e))
 
   }
 
   return (
     <>
-      {/* <Button>Back</Button> */}
       <Container className="p-5">
+        <Link to="/admin/product">Back</Link>
         <Row>
-          <Col md="8">
+          <Col md="12">
             <Card>
               <Card.Header>
                 <Card.Title as="h4">Edit Product</Card.Title>
@@ -173,7 +183,7 @@ function ProductEdit() {
                     </Col>
                   </Row>
                   <Row>
-                    <Col md="12">
+                    <Col md="6">
                       <Form.Group>
                         <label className="mr-2">Product Image</label>
                         <input
@@ -181,72 +191,30 @@ function ProductEdit() {
                         ></input>
                       </Form.Group>
                     </Col>
+                    <Col className="pl-1" md="6">
+                      <Form.Group>
+                        <label>Category</label>
+                        <Form.Control
+                          as="select"
+                          {...register("status")}
+                        >
+                          <option value="1">Active</option>
+                          <option value="0">De-active</option>
+                        </Form.Control>
+                      </Form.Group>
+                    </Col>
                   </Row>
+
                   <Button
                     className="btn-fill pull-right mt-2"
                     type="submit"
                     variant="info"
                   >
-                    Add Product
+                    Update Product
                   </Button>
                   <div className="clearfix"></div>
                 </Form>
               </Card.Body>
-            </Card>
-          </Col>
-          <Col md="4">
-            <Card className="card-user">
-              <div className="card-image">
-                <img
-                  alt="..."
-                  src={require("assets/img/photo-1431578500526-4d9613015464.jpeg")}
-                ></img>
-              </div>
-              <Card.Body>
-                <div className="author">
-                  <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                    <img
-                      alt="..."
-                      className="avatar border-gray"
-                      src={require("assets/img/faces/face-3.jpg")}
-                    ></img>
-                    <h5 className="title">Mike Andrew</h5>
-                  </a>
-                  <p className="description">michael24</p>
-                </div>
-                <p className="description text-center">
-                  "Lamborghini Mercy <br></br>
-                  Your chick she so thirsty <br></br>
-                  I'm in that two seat Lambo"
-                </p>
-              </Card.Body>
-              <hr></hr>
-              <div className="button-container mr-auto ml-auto">
-                <Button
-                  className="btn-simple btn-icon"
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
-                  variant="link"
-                >
-                  <i className="fab fa-facebook-square"></i>
-                </Button>
-                <Button
-                  className="btn-simple btn-icon"
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
-                  variant="link"
-                >
-                  <i className="fab fa-twitter"></i>
-                </Button>
-                <Button
-                  className="btn-simple btn-icon"
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
-                  variant="link"
-                >
-                  <i className="fab fa-google-plus-square"></i>
-                </Button>
-              </div>
             </Card>
           </Col>
         </Row>

@@ -1,24 +1,46 @@
-import React from "react"
+import React, { useContext,useEffect,useState } from "react"
+import { CartAndProductContext } from "../../layouts/MainLayout/ContainerMainLayout"
+import { getCartReadyCheckOutByAccID, formatVnd } from "../../services"
+export default function WaitForConfirmOrder({itemCart}) {
 
-export default function WaitForConfirmOrder() {
+	
 	return (
 		<div
 			className="tab-pane fade active"
 			id="wait-for-confirm"
 			role="tabpanel"
-			aria-labelledby="wait-for-confirm-tab"
+			aria-labelledby="wait-for-confirm"
+
 		>
 			<div className="p-4 p-lg-5 bg-white">
-				<h6 className="text-uppercase">Wait for confirm</h6>
-				<p className="text-muted text-sm mb-0">
-					Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-					eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-					minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-					aliquip ex ea commodo consequat. Duis aute irure dolor in
-					reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-					pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-					culpa qui officia deserunt mollit anim id est laborum.
-				</p>
+				<h6 className="text-uppercase">Wait for order</h6>
+				<table className="table">
+					<thead>
+						<tr>
+							<th scope="col">Name</th>
+							<th scope="col">Phone</th>
+							<th scope="col">Address</th>
+							<th scope="col">Method Pay</th>
+							<th scope="col">Description</th>
+							<th scope="col">Total Quantity</th>
+							<th scope="col">Total Cost</th>
+						</tr>
+					</thead>
+					<tbody>
+						{itemCart &&
+							itemCart.map((item,index) => 
+								<tr key={index}>
+									<th scope="row">{item.name}</th>
+									<td>{item.phone}</td>
+									<td>{item.address}</td>
+									<td>{item.methodPay}</td>
+									<td>{item.description}</td>
+									<td>{item.totalQuantity}</td>
+									<td>{formatVnd(item.totalCost)}</td>
+								</tr>
+							)}
+					</tbody>
+				</table>
 			</div>
 		</div>
 	)

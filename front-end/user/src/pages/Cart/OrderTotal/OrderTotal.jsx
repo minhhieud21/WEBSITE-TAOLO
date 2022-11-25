@@ -1,21 +1,9 @@
-import React, { useContext, useState, useEffect, useCallback } from "react"
+import React, { useContext, useMemo } from "react"
 import { CartAndProductContext } from "../../../layouts/MainLayout/ContainerMainLayout"
+import { formatVnd } from "../../../services"
 
 const OrderTotal = () => {
-	const [totalCost, setTotalCost] = useState(0)
-
-	const { cartDetail } = useContext(CartAndProductContext)
-	
-	useEffect(() => {
-	}, [])
-	// const sumValue = ()=>{
-	// 	let sumValue = 0
-	// 	tmp.forEach((value) => {
-	// 		sumValue += value.cost
-	// 	})
-		
-	// 	return sumValue;
-	// }
+	const { cart } = useContext(CartAndProductContext)
 
 	return (
 		<>
@@ -28,14 +16,14 @@ const OrderTotal = () => {
 								<strong className="text-uppercase small font-weight-bold">
 									Subtotal
 								</strong>
-								{/* <span className="text-muted small">{sumValue()}</span> */}
+								<span className="text-muted small">{formatVnd(cart.totalCost)}</span>
 							</li>
 							<li className="border-bottom my-2" />
 							<li className="d-flex align-items-center justify-content-between mb-4">
 								<strong className="text-uppercase small font-weight-bold">
 									Total
 								</strong>
-								{/* <span>{sumValue()}</span> */}
+								<span>{formatVnd(cart.totalCost)}</span>
 							</li>
 							<li>
 								<form action="#">

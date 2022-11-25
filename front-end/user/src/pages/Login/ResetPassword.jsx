@@ -4,9 +4,10 @@ import { resetPassword } from "../../services"
 
 export default function ResetPassword() {
 	const { register, handleSubmit } = useForm()
+	const cookie = document.cookie
 
 	const handleResetPassword = async (data) => {
-		await resetPassword(data)
+		await resetPassword(data, cookie)
 	}
 	return (
 		<>

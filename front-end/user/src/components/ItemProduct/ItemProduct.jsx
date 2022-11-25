@@ -53,7 +53,7 @@ const ItemProduct = ({ proName, price, proId, img }) => {
 							{proName}
 						</Link>
 					</h6>
-					<p className="small text-muted">{price}</p>
+					<p className="small text-muted">{formatVnd(price)}</p>
 				</div>
 			</div>
 		</>

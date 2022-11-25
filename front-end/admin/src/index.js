@@ -19,15 +19,16 @@ import NotFound from "components/NotfoundPage";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
+const token = localStorage.getItem("token")
+
 root.render(
   <BrowserRouter>
     <Switch>
       <Route path="/admin/login" component={Login} />
       <Route path="/admin/user/:userId" component={UserEdit} />
-      <Route path="/admin/product/add" component={ProductAdd} />
       <Route path="/admin/product/:productId" component={ProductEdit} />
       <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
-      <Redirect from="/" to="/admin/dashboard" />
+      <Redirect from="/" to="/admin/login" />
       <Route path="*" component={NotFound} />
     </Switch>
   </BrowserRouter>

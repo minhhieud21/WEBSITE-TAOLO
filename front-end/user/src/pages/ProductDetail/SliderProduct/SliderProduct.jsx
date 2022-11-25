@@ -1,38 +1,45 @@
 import React from "react"
-import { useState } from "react"
+import { useState, useMemo, useContext } from "react"
 import DetailSliderProduct from "./DetailSliderProduct"
-import img from "../../../assets/img/product-detail-1.jpg"
-import img1 from "../../../assets/img/product-detail-2.jpg"
-import img2 from "../../../assets/img/product-detail-3.jpg"
-import { useContext } from "react"
 import { ProductDetailProvider } from "../ProductDetail"
+
 const SliderProduct = () => {
-	const [currentImg, setCurrentImg] = useState(img)
-	const arrImg = [img, img1, img2]
-	const { productDetail } = useContext(ProductDetailProvider)
-  
+	const [currentImg, setCurrentImg] = useState(0)
+	const { productDetail, arrImg } = useContext(ProductDetailProvider)
+
+	const imgSlice = useMemo(() => {
+		return arrImg.slice(0, 5)
+	}, [arrImg])
+
 	return (
 		<div className="col-lg-6">
 			{/* PRODUCT SLIDER*/}
 			<div className="row m-sm-0">
 				<div className="col-sm-2 p-sm-0 order-2 order-sm-1 mt-2 mt-sm-0 px-xl-2">
 					<div className="swiper product-slider-thumbs">
-						<div className="swiper-wrapper">
-							{arrImg.map((img, index) => (
-								<DetailSliderProduct
+						{imgSlice &&
+							imgSlice.map((imgSlice, index) => (
+								<div
+									className="swiper-wrapper"
 									key={index}
-									img={img}
-									callBack={() => setCurrentImg(img)}
-								/>
+									onClick={(e) => setCurrentImg(index)}
+								>
+									<DetailSliderProduct
+										img={`/Image/${productDetail.proId}/${imgSlice}`}
+									/>
+								</div>
 							))}
-						</div>
 					</div>
 				</div>
 				<div className="col-sm-10 order-1 order-sm-2">
 					<div className="swiper product-slider">
 						<div className="swiper-wrapper">
 							<div className="swiper-slide h-auto">
-								<img className="img-fluid" src={currentImg} alt="..." />
+								<img
+									className="img-fluid"
+									src={`/Image/${productDetail.proId}/${imgSlice[currentImg]}`}
+									alt="..."
+								/>
 							</div>
 						</div>
 					</div>

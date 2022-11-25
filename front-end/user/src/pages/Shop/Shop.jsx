@@ -8,23 +8,26 @@ import {
 	getProductByCateId,
 	searchProductByName,
 } from "../../services"
-import { CartAndProductContext } from "../../layouts/MainLayout/ContainerMainLayout"
+import Loading from "../../components/Loading/Loading"
+
 const Shop = () => {
 	const search = useLocation().search
 	const cateId = new URLSearchParams(search).get("cateId")
 	const searchValue = new URLSearchParams(search).get("name")
-	const { product } = useContext(CartAndProductContext)
 	const [products, setProducts] = useState([])
 	const [categories, setCategories] = useState([])
+	const [isLoading, setIsLoading] = useState(false)
 
 	useEffect(() => {
+		setIsLoading(true)
 		getAllCategories()
 			.then((res) => {
 				setCategories(res.data)
+				fetchProduct(cateId, searchValue)
 			})
-			.catch((e) => console.log(e))
+			.catch((e) => console.log(e)).finally(() => setIsLoading(false))
 
-		fetchProduct(cateId, searchValue)
+	
 	}, [cateId, searchValue])
 
 	const fetchProduct = (cateId, searchValue) => {
@@ -61,7 +64,7 @@ const Shop = () => {
 							{/* SHOP SIDEBAR*/}
 							<SideBar categories={categories} cateId={cateId} />
 							{/* SHOP LISTING*/}
-							<ListProduct products={products} />
+							<ListProduct products={products} isLoading={isLoading} />
 						</div>
 					</div>
 				</section>

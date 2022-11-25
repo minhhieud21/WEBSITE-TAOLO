@@ -4,7 +4,7 @@ import footer from "../../assets/js/footer.json"
 const Footer = () => {
   return (
     <>
-      <footer className="bg-dark text-white">
+      <footer className="bg-dark text-white ">
         <div className="container py-4">
           <div className="row py-5">
             <div className="col-md-4 mb-3 mb-md-0">
@@ -90,14 +90,14 @@ const Footer = () => {
             <div className="row">
               <div className="col-md-6 text-center text-md-start">
                 <p className="small text-muted mb-0">
-                  © 2021 All rights reserved.
+                  © 2022 All rights reserved.
                 </p>
               </div>
               <div className="col-md-6 text-center text-md-end">
                 <p className="small text-muted mb-0">
                   Template designed by{" "}
             
-                    Bootstrapious
+                    Taolo
                 
                 </p>
                 {/* If you want to remove the backlink, please purchase the Attribution-Free License. See details in readme.txt or license.txt. Thanks!*/}

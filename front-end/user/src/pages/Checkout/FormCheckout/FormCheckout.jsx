@@ -3,17 +3,24 @@ import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import { getLocalStorage, readyCheckout } from "../../../services"
 import { PopUpFail } from "../../../components/Popup/PopupFail"
+import { useContext } from "react"
+import { CartAndProductContext } from "../../../layouts/MainLayout/ContainerMainLayout"
 
 const FormCheckout = () => {
-	const { register, handleSubmit } = useForm()
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm()
 	const navigate = useNavigate()
-	const [methodPay, setMethodPay] = useState("")
+	const [methodPay, setMethodPay] = useState("cod")
 	const cartID = getLocalStorage("cartId")
-
+	const {token} = useContext(CartAndProductContext)
+	
 	const onSubmitCheckout = (data) => {
-		const infoCheckout = { ...data, methodPay,cartID }
-		readyCheckout(infoCheckout)
-			.then((res) => navigate('/'))
+		const infoCheckout = { ...data, methodPay, cartID }
+		readyCheckout(infoCheckout,token)
+			.then((res) => navigate("/"))
 			.catch((e) => console.log(e))
 	}
 
@@ -31,12 +38,15 @@ const FormCheckout = () => {
 							</label>
 							<input
 								className="form-control form-control-lg"
-								{...register("name")}
+								{...register("name", { required: true })}
 								type="text"
 								id="firstName"
 								placeholder="Enter your full name"
 							/>
 						</div>
+						{errors.name?.type === "required" && (
+							<p className="text-danger">Name is required</p>
+						)}
 						<div className="col-lg-12">
 							<label
 								className="form-label text-sm text-uppercase"
@@ -45,13 +55,16 @@ const FormCheckout = () => {
 								Address{" "}
 							</label>
 							<input
-								{...register("address")}
+								{...register("address", { required: true })}
 								className="form-control form-control-lg"
 								type="text"
 								id="email"
 								placeholder="Address"
 							/>
 						</div>
+						{errors.address?.type === "required" && (
+							<p className="text-danger">Address is required</p>
+						)}
 						<div className="col-lg-6">
 							<label
 								className="form-label text-sm text-uppercase"
@@ -60,11 +73,10 @@ const FormCheckout = () => {
 								Phone number{" "}
 							</label>
 							<input
-								{...register("phone")}
+								{...register("phone", { required: true, minLength: 10 })}
 								className="form-control form-control-lg"
 								type="tel"
 								id="phone"
-								placeholder="e.g. +02 245354745"
 							/>
 						</div>
 
@@ -92,7 +104,7 @@ const FormCheckout = () => {
 										className="form-check-label"
 										htmlFor="cod"
 									>
-										Thanh toán trực tiếp
+										COD
 									</label>
 								</div>
 								<div className="form-check">
@@ -116,6 +128,12 @@ const FormCheckout = () => {
 							</div>
 						</div>
 					</div>
+					{errors.phone?.type === "required" && (
+						<p className="text-danger">Phone is required</p>
+					)}{" "}
+					{errors.phone?.type === 'minLength' && (
+						<p className="text-danger">Phone is 10 digits</p>
+					)}
 					<div className="col-lg-12 form-group">
 						<label
 							className="form-label text-sm text-uppercase"
@@ -128,7 +146,7 @@ const FormCheckout = () => {
 							className="form-control form-control-lg"
 							type="tel"
 							id="phone"
-							placeholder="des"
+							placeholder="description"
 						/>
 					</div>
 					<div className="col-lg-12 form-group mt-3">

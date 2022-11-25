@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createContext } from "react"
+import React, { useEffect, useState, createContext, useMemo } from "react"
 import Footer from "./Footer"
 import Header from "./Header"
 import {
@@ -8,54 +8,62 @@ import {
 	getCartByUserId,
 	setLocalStorage,
 } from "../../services"
-import { useCallback } from "react"
 
 export const CartAndProductContext = createContext()
 
 const ContainerMainLayout = ({ children }) => {
 	const [product, setProduct] = useState([])
+	const [isLoading, setIsLoading] = useState(false)
 	const [cartId, setCartId] = useState("")
 	const [cartDetail, setCartDetail] = useState([])
-	const [itemCart, setItemCart] = useState([])
+	const [cart, setCart] = useState([])
 	const token = getLocalStorage("token")
 	const userId = getLocalStorage("userId")
 
 	useEffect(() => {
-		getCartByUserId(userId).then((res) => {
-			setLocalStorage("cartId", res.data.data.cartID)
-			setCartId(res.data.data.cartID)
-		})
-		
-		getAllProduct().then((res) => {
-			setProduct(res.data)
-		})
-	}, [])
-
-	useCallback(
-	  () => {
-		filterCartDetail()
-	  },
-	  [itemCart.length]
-	)
-	
-
-	const filterCartDetail = () =>{
-		const tmp = []
+		setIsLoading(true)
+		if (token && userId) {
+			getCartByUserId(userId, token).then((res) => {
+				if(res){
+					setCart(res.data.data)
+					setCartId(res.data.data.cartID)
+					setLocalStorage('cartId',res.data.data.cartID)
+				}
+			}).catch(e => e)
+		}
 		getCartDetailByCartID(cartId).then((res) => {
 			setCartDetail(res.data.data)
 		})
 
-		product.filter(pro => {
-			cartDetail.some(el => {
-				if(el.proID == pro.proId){
-					tmp.push(pro)
-					//setCartDetail(pro)
-				}
+		getAllProduct()
+			.then((res) => {
+				setProduct(res.data.content)
 			})
-		})
-		setItemCart(tmp)
-		return tmp;
-	}
+			.finally(() => {
+				setIsLoading(false)
+			})
+	}, [token,cartDetail.length])
+
+
+
+	const itemCart = useMemo(() => {
+		let itemCart = []
+		cartDetail.filter((cart) => ({
+			...cart,
+			...product.filter((pro) => {
+				if (cart.proID == pro.proId && cart.cartID === cartId) {
+					const tmp = {
+						...pro,
+						quantity: cart.quantity,
+						cost: cart.cost,
+						cartDID: cart.cartDID,
+					}
+					itemCart.push(tmp)
+				}
+			}),
+		}))
+		return itemCart
+	}, [product, cartDetail.length])
 
 	return (
 		<CartAndProductContext.Provider
@@ -64,10 +72,12 @@ const ContainerMainLayout = ({ children }) => {
 				setProduct,
 				cartDetail,
 				setCartDetail,
+				cart,
 				itemCart,
 				userId,
 				token,
-				cartId
+				cartId,
+				isLoading,
 			}}
 		>
 			<div className="container">

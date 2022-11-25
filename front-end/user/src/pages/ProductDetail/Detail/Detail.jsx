@@ -2,13 +2,13 @@ import React from "react"
 import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import {
-	getProductById,
 	decreaseQuantity,
 	increaseQuantity,
 	formatVnd,
 	getLocalStorage,
 	addCart,
 	setLocalStorage,
+	getCartByUserId,
 } from "../../../services"
 
 import { ToastContainer, toast } from "react-toastify"
@@ -23,9 +23,9 @@ const Detail = () => {
 	const userId = getLocalStorage("userId")
 	const [des, setDes] = useState([])
 
-	const { productDetail } = useContext(ProductDetailProvider)
+	const { productDetail, token } = useContext(ProductDetailProvider)
 	const { proId } = useParams()
-	
+
 	useEffect(() => {
 		if (getLocalStorage("username")) {
 			setIsLogged(true)
@@ -44,31 +44,35 @@ const Detail = () => {
 		})
 	}
 
-	const checkSuccessAddCart = () => {
-		return success ? notifySuccess() : notifyFail()
-	}
-
 	const addToCart = async () => {
-		const data = {
-			accID: userId,
-			proID: proId,
-			quantity: quantity,
+		if (token) {
+			const data = {
+				accID: userId,
+				proID: proId,
+				quantity: quantity,
+			}
+			addCart(data, token)
+				.then((res) => {
+					getCartByUserId(userId, token)
+						.then((res) => {
+							setLocalStorage("cartId", res.data.data.cartID)
+						})
+						.catch((e) => e)
+				})
+				.catch((e) => setSuccess(false))
+			if (success) {
+				notifySuccess()
+			} else {
+				notifyFail()
+			}
 		}
-		addCart(data)
-			.then((res) => {
-				// setLocalStorage('cartId',)
-				setSuccess(true)
-			})
-			.catch((e) => setSuccess(false))
-
-		checkSuccessAddCart()
 	}
 
 	return (
 		<>
 			<div className="col-lg-6">
 				<h1>{productDetail.proName}</h1>
-				<p className="text-muted lead">{productDetail.price}</p>
+				<p className="text-muted lead">{formatVnd(productDetail.price)}</p>
 				<p>{productDetail.description}</p>
 				{/* <ul>
 					{des.map((de, index) => (
@@ -113,7 +117,7 @@ const Detail = () => {
 							<Link
 								onClick={addToCart}
 								className="btn btn-primary text-white text-uppercase btn-sm btn-block h-100 d-flex align-items-center justify-content-center px-0"
-								to={isLogged ? "#" : "#"}
+								to={isLogged ? "#" : "/login"}
 							>
 								Add to cart
 							</Link>
@@ -121,7 +125,7 @@ const Detail = () => {
 					</div>
 				) : (
 					<div className="d-flex justify-content-center fs-1 text-danger text-uppercase">
-						Hết hàng
+						Out of stock!
 					</div>
 				)}
 				<br />
